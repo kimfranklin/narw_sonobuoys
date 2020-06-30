@@ -1,0 +1,27 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+
+data
+docs
+figures
+images with corresponding audio
+old code
+sono_for_other_people
+Math 4360 project
+
+*.pdf
+*.wav
+*.rda
+*.rds
+*.csv
+*.txt
+*.wsp
+*.xslx
+*.png
+*.jpg
+*.html
+*.docx
+
