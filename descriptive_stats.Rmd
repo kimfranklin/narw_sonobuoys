@@ -1,0 +1,628 @@
+---
+title: "decriptive_stats"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,echo = FALSE, include=FALSE}
+# read in data
+ifile = readRDS("data/processed/sight_dfs.rds")
+df= ifile
+
+# read in libraries 
+library(tidyr)
+library(tidyverse)
+```
+
+# Acoustic Stats
+### Duration
+```{r, echo=FALSE}
+#average deployment duration  
+dur_stats = summary(df$duration) 
+dur_stats
+dur_stdev = sd(df$duration)
+dur_stdev
+t.test(df$duration/60/60, conf.int = 0.95)
+#dplot = boxplot(df$duration/60/60, ylab="Duration Time (hours)")
+#are the durations similar among years?
+#t-test on means for comparing durations per year
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(duration)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(duration)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
+```
+
+### Number of calls total
+```{r, echo=FALSE}
+#number of calls total
+total_calls_stats = summary(df$sum_calls)
+total_calls_stats
+total_calls_stdev = sd(df$sum_calls)
+total_calls_stdev
+```
+
+### Number of calls by category total
+Gunshots
+```{r, echo=FALSE}
+#number of calls by category total 
+gs_stats = summary(df$num_gs)
+gs_stats 
+gs_stdev = sd(df$num_gs)
+gs_stdev 
+```
+
+Mid-frequency
+```{r,echo=FALSE}
+mf_stats = summary(df$num_mf)
+mf_stats 
+mf_stdev = sd(df$num_mf)
+mf_stdev
+```
+
+Up-calls
+```{r, echo=FALSE}
+up_stats = summary(df$num_up)
+up_stats
+up_stdev = sd(df$num_up)
+up_stdev
+```
+
+### call rate (call/hr)
+total
+```{r, echo=FALSE}
+total_call_rate_stats = summary(df$sum_calls_dur*60*60)
+total_call_rate_stats
+total_call_rate_stdev = sd(df$sum_calls_dur*60*60)
+total_call_rate_stdev
+```
+
+Gunshots
+```{r, echo=FALSE}
+gs_call_rate_stats = summary(df$gs_dur_hr)
+gs_call_rate_stats
+gs_call_rate_stdev = sd(df$gs_dur_hr)
+gs_call_rate_stdev
+```
+
+Midfrequency
+```{r, echo=FALSE}
+mf_call_rate_stats = summary(df$mf_dur_hr)
+mf_call_rate_stats
+mf_call_rate_stdev = sd(df$mf_dur_hr)
+mf_call_rate_stdev
+```
+
+Upcalls
+```{r, echo=FALSE}
+up_call_rate_stats = summary(df$up_dur_hr)
+up_call_rate_stats
+up_call_rate_stdev = sd(df$up_dur_hr)
+up_call_rate_stdev
+```
+
+# Visual stats
+### Number of whales sighted total
+```{r, echo=FALSE}
+#number of whales sighted total
+sight_stats = summary(df$num_sighting)
+sight_stats
+sight_stdev = sd(df$num_sighting)
+sight_stdev
+```
+
+### Number of whales by demogrpahics total
+Juvenile-Male
+```{r, echo=FALSE}
+#adult male, juv male, adult female, juv female
+juv_male_stats = summary(df$juvenile_male)
+juv_male_stats
+juv_male_stdev = sd(df$juvenile_male)
+juv_male_stdev
+```
+
+Juvenile-female
+```{r,echo=FALSE}
+juv_female_stats = summary(df$juvenile_female)
+juv_female_stats
+juv_female_stdev = sd(df$juvenile_female)
+juv_female_stdev
+```
+
+Adult-Male
+```{r,echo=FALSE}
+adult_male_stats = summary(df$adult_male)
+adult_male_stats
+adult_male_stdev = sd(df$adult_male)
+adult_male_stdev
+```
+
+Adult-Female
+```{r, echo=FALSE}
+adult_female_stats = summary(df$adult_female)
+adult_female_stats
+adult_female_stdev = sd(df$adult_female)
+adult_female_stdev
+```
+
+Adult
+```{r, echo=FALSE}
+#number of whales by demographics total
+#adult vs juv
+df2=df%>%
+  mutate(sum_adult=adult_female+adult_male)
+adult_stats = summary(df2$sum_adult)
+adult_stats
+adult_stdev = sd(df2$sum_adult)
+adult_stdev
+```
+
+juvenile
+```{r, echo=FALSE}
+juv_stats = summary(df$sum_juvenile)
+juv_stats
+juv_stdev = sd(df$sum_juvenile)
+juv_stdev
+```
+
+male
+```{r, echo=FALSE}
+male_stats = summary(df$sum_male)
+male_stats
+male_stdev = sd(df$sum_male)
+male_stdev
+```
+
+female
+```{r, echo=FALSE}
+female_stats = summary(df$sum_female)
+female_stats
+female_stdev = sd(df$sum_female)
+female_stdev
+```
+
+### Number of whales by behaviour total
+Total
+```{r, echo=FALSE}
+df3=df%>%
+  mutate(total_behv=feed+social+other_behv)
+total_stats = summary(df3$total_behv)
+total_stats
+total_stdev = sd(df3$total_behv)
+total_stdev
+```
+
+Feeding
+```{r, echo=FALSE}
+#number of whales by behaviour total
+#feed
+feed_stats = summary(df$feed)
+feed_stats
+feed_stdev = sd(df$feed)
+feed_stdev
+```
+
+Social behaviour
+```{r, echo=FALSE}
+#social behaviour
+social_stats = summary(df$social)
+social_stats
+social_stdev = sd(df$social)
+social_stdev
+```
+
+Other behaviour
+```{r, echo=FALSE}
+#other behaviour
+other_behv_stats = summary(df$other_behv)
+other_behv_stats
+other_behv_stdev = sd(df$other_behv)
+other_behv_stdev
+```
+
+# Visual-acoustic comparison
+```{r, echo=FALSE}
+df3 = df %>%
+  mutate(up_call_rate = up_dur_hr/num_sighting) %>%
+  mutate(mf_call_rate = mf_dur_hr/num_sighting) %>%
+  mutate(gs_call_rate = gs_dur_hr/num_sighting) %>%
+  mutate(call_rate = sum_calls_dur*60*60/num_sighting)
+```
+
+### call rate total
+```{r, echo=FALSE}
+total_callrate_stats = summary(df3$call_rate)
+total_callrate_stats
+total_callrate_stdev = sd(df3$call_rate)
+total_callrate_stdev
+```
+
+### Call rate by category total
+Gunshot
+```{r, echo=FALSE}
+gsrate_stats = summary(df3$gs_call_rate)
+gsrate_stats 
+gsrate_stdev = sd(df3$gs_call_rate)
+gsrate_stdev 
+```
+
+Mid-frequency
+```{r, echo=FALSE}
+mfrate_stats = summary(df3$mf_call_rate)
+mfrate_stats 
+mfrate_stdev = sd(df3$mf_call_rate)
+mfrate_stdev
+```
+
+Up-call
+```{r, echo=FALSE}
+uprate_stats = summary(df3$up_call_rate)
+uprate_stats
+uprate_stdev = sd(df3$up_call_rate)
+uprate_stdev
+```
+
+## comparing the two years
+POOLED t-Tests for comparing all variables of interest among the two years
+are number of whales similar among years?
+t-test on means for comparing sighted whales per year
+```{r, echo=FALSE}
+sight17 = df %>%
+  filter(year == '2017') %>%
+  select(num_sighting)
+   
+sight18 = df %>%
+  filter(year == '2018') %>%
+  select(num_sighting)
+ 
+t.test(sight17, sight18, var.equal = TRUE, conf.level = 0.95)
+
+as.numeric(sight17[[1]])
+
+stats = summary(sight17)
+stats
+stdev = sapply(sight17, sd)
+stdev
+
+stats = summary(sight18)
+stats
+stdev = sapply(sight18, sd)
+stdev
+```
+
+are the number of gs call similar among years?
+t-test on means for comparing gs calls per year
+```{r, echo=FALSE}
+c17 = df %>%
+  filter(year == '2017') %>%
+  select(gs_dur_hr)
+
+c18 = df %>%
+  filter(year == '2018') %>%
+  select(gs_dur_hr)
+
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
+are the number of up call similar among years?
+t-test on means for comparing up calls per year
+```{r, echo=FALSE}
+c17 = df %>%
+  filter(year == '2017') %>%
+  select(up_dur_hr)
+
+c18 = df %>%
+  filter(year == '2018') %>%
+  select(up_dur_hr)
+
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
+are the number of mf call similar among years?
+t-test on means for comparing mf calls per year
+```{r, echo=FALSE}
+c17 = df %>%
+  filter(year == '2017') %>%
+  select(mf_dur_hr)
+
+c18 = df %>%
+  filter(year == '2018') %>%
+  select(mf_dur_hr)
+
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
+are the feeding behaviour reports similar among years?
+t-test on means for comparing feeding per year
+```{r, echo=FALSE}
+c17 = df %>%
+  filter(year == '2017') %>%
+  select(feed)
+
+c18 = df %>%
+  filter(year == '2018') %>%
+  select(feed)
+ 
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
+are the social behaviour reports similar among years?
+t-test on means for comparing social per year
+```{r, echo=FALSE}
+c17 = df %>%
+  filter(year == '2017') %>%
+  select(social)
+
+c18 = df %>%
+  filter(year == '2018') %>%
+  select(social)
+
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
+are the other behaviour reports similar among years?
+t-test on means for comparing other_behv per year
+```{r, echo=FALSE}
+c17 = df %>%
+  filter(year == '2017') %>%
+  select(other_behv)
+
+c18 = df %>%
+  filter(year == '2018') %>%
+  select(other_behv)
+
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
+are the observed ages similar among years?
+t-test on means for comparing ages per year - juv
+```{r, echo=FALSE}
+c17 = df %>%
+  filter(year == '2017') %>%
+  select(sum_juvenile)
+
+c18 = df %>%
+  filter(year == '2018') %>%
+  select(sum_juvenile)
+
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
+are the observed ages similar among years?
+t-test on means for comparing ages per year - adult
+```{r, echo=FALSE}
+df2=df%>%
+  mutate(sum_adult=adult_female+adult_male)
+
+c17 = df2 %>%
+  filter(year == '2017') %>%
+  select(sum_adult)
+
+c18 = df2 %>%
+  filter(year == '2018') %>%
+  select(sum_adult)
+
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
+are the observed ages similar among sexes?
+t-test on means for comparing ages per year - female
+```{r, echo=FALSE}
+c17 = df %>%
+  filter(year == '2017') %>%
+  select(sum_female)
+
+c18 = df %>%
+  filter(year == '2018') %>%
+  select(sum_female)
+
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
+are the observed ages similar among years?
+t-test on means for comparing ages per year - male
+```{r, echo=FALSE}
+c17 = df %>%
+  filter(year == '2017') %>%
+  select(sum_male)
+
+c18 = df %>%
+  filter(year == '2018') %>%
+  select(sum_male)
+
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
+are the observed sex-ages similar among years?
+t-test on means for comparing sex-ages per year - adult female
+```{r, echo=FALSE}
+c17 = df %>%
+  filter(year == '2017') %>%
+  select(adult_female)
+
+c18 = df %>%
+  filter(year == '2018') %>%
+  select(adult_female)
+
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
+are the observed sex-ages similar among years?
+t-test on means for comparing sex-ages per year - adult male
+```{r, echo=FALSE}
+c17 = df %>%
+  filter(year == '2017') %>%
+  select(adult_male)
+
+c18 = df %>%
+  filter(year == '2018') %>%
+  select(adult_male)
+
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
+are the call rates similar among years?
+t-test on means for comparing call rates per year
+```{r, echo=FALSE}
+c17 = df %>%
+  filter(year == '2017') %>%
+  mutate(call_rate = sum_calls_dur*60*60/num_sighting)%>%
+  select(call_rate)
+
+c18 = df %>%
+  filter(year == '2018') %>%
+  mutate(call_rate = sum_calls_dur*60*60/num_sighting) %>%
+  select(call_rate)
+
+t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+
+stats = summary(c17)
+stats
+stdev = sapply(c17, sd)
+stdev
+
+stats = summary(c18)
+stats
+stdev = sapply(c18, sd)
+stdev
+```
+
