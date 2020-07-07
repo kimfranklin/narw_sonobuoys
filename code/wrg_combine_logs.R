@@ -7,7 +7,7 @@
 #dfile = 'data/interim/jdmartin_2019_deployment_combined_log.csv'
 
 # noaa file
-nfile = 'data/interim/NERW_Sonobuoy_Log_MASTER.csv'
+nfile = 'data/interim/position/NERW_Sonobuoy_Log_MASTER.csv'
 
 # load in the acoustic recordings duration times
 duration_times = readRDS('data/interim/duration_times.rds')
@@ -54,7 +54,7 @@ library(lubridate)
 # format noaa data --------------------------------------------------------
 
 # read in data
-noa = read_csv(nfile)
+noa = read.csv(nfile)
 
 # remove first lines (flights in GOM)
 noa = noa[-c(1:15),]
