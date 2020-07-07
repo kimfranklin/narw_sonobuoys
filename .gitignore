@@ -5,12 +5,11 @@
 
 
 data
-docs
+documents
 figures
-images with corresponding audio
-old code
+work
+old
 sono_for_other_people
-Math 4360 project
 
 *.pdf
 *.wav
