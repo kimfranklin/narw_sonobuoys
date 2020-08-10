@@ -5,13 +5,13 @@
 # input -------------------------------------------------------------------
 
 # defines input directory
-idir = 'data/raw/2018/noaa/processed/'
+idir = 'data/raw/acoustic/2019/noaa/processed/'
 
 # defines output directory
 odir = 'data/interim/'
 
 # defining characteristic for output file
-char = 'noaa_2018_'
+char = 'noaa_2019_'
 
 # setup -------------------------------------------------------------------
 
@@ -52,14 +52,14 @@ df = bind_rows(DF)
 
 # isolate platform name
 #platform = strsplit(idir,"/")[[1]][4]
-pname = as.character(strsplit(idir,"/")[[1]][4])
+pname = as.character(strsplit(idir,"/")[[1]][5])
 
 # add column with platform name
 #cbind(df, platform)
 df$platform = pname
 
 # isolate year from path
-yname = as.character(strsplit(idir,"/")[[1]][3])
+yname = as.character(strsplit(idir,"/")[[1]][4])
 
 # add column with year
 df$year = yname
@@ -69,10 +69,11 @@ df$id = paste0(df$year,'_', df$platform,'_', df$sono_id)
 
 # remove deployments that have no useful information
 #df = df[!(df$id=="2017_noaa_DEP17"),]
-df = df[!(df$id=="2018_noaa_DEP07"),]
-df = df[!(df$id=="2018_noaa_DEP13"),]
-df = df[!(df$id=="2018_noaa_DEP14"),]
-
+#df = df[!(df$id=="2018_noaa_DEP07"),]
+#df = df[!(df$id=="2018_noaa_DEP13"),]
+#df = df[!(df$id=="2018_noaa_DEP14"),]
+df = df[!(df$id=="2019_noaa_DEP75b"),]
+##df = df[!(df$id=="2019_noaa_DEP77"),]
 
 # save data frame
 saveRDS(df, file = ofile)
