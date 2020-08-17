@@ -1,37 +1,33 @@
-
-
+## wrg_proc_comb_log_selection.R ##
+# combining the full noaa selection table with log information
 
 # libraries
-library(readxl)
 library(tidyverse)
 library(lubridate)
+library(readxl)
 
-
-# read files
+# files
 log =  read_excel('data/raw/acoustic/position/noaa_sono_positions_ALL.xlsx')
 
 sel = readRDS('data/interim/all_noaa_selections.rds')
 
+ofile = 'data/interim/all_noaa_acoustic.rds'
 
 # process
-tmp = as.character(log$date)
-class(log$date)
-
 # fix up log
 log = log %>% 
-  transmute(date = as.Date(Date, format = '%Y-%m-%d'),
-            time = force_tz(time = as.POSIXct(paste0(date, ' ', `Time (ET)`), 
-                                              format = '%Y-%m-%d %H:%M:%S', tz = 'US/Eastern'), 
-                            tzone = 'UTC'),
-            lat = as.numeric(as.character(`Lat (Deg Min)`)),
-            lon = as.numeric(as.character(`Long (Deg Min)`)),
-            yday = yday(time),
-            week = week(time),
-            month = month(time),
-            year = year(time),
-            id = id)
+  transmute(date = date, # this is POSIXct POSIXt
+            time = time, # this is character
+            lat = lat, # this is numeric
+            lon = lon, # this is numeric
+            yday = yday,
+            week = week,
+            month = month,
+            id = id
+            )
 
 # merge log with selection table 
-sel = merge(x = log, y = log, by.x = 'id', by.y = 'id', all.x = TRUE)
+tmp = merge(x = sel, y = log, by.x = 'id', by.y = 'id', all.x = TRUE)
 
-
+# save tmp file
+saveRDS(tmp, ofile)
