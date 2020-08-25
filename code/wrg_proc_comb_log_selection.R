@@ -7,25 +7,32 @@ library(lubridate)
 library(readxl)
 
 # files
-log =  read_excel('data/raw/acoustic/position/noaa_sono_positions_ALL.xlsx')
+# read in log and combined selection data files
+log = read_excel('data/raw/acoustic/position/noaa_sono_positions_ALL.xlsx')
 
 sel = readRDS('data/interim/all_noaa_selections.rds')
 
+# output file 
 ofile = 'data/interim/all_noaa_acoustic.rds'
 
 # process
+
 # fix up log
 log = log %>% 
   transmute(date = date, # this is POSIXct POSIXt
-            time = time, # this is character
+            datetime = time, # this is character
+            time_UTC = format(as.POSIXct(`time UTC`, format= "%Y-%m-%d %H:%M:%S"),
+                              format = "%H:%M:%S"),
+            datetime_UTC = paste(date, time_UTC),
             lat = lat, # this is numeric
             lon = lon, # this is numeric
             yday = yday,
             week = week,
             month = month,
-            id = id
+            id = id,
+            duration = duration
             )
-
+                         
 # merge log with selection table 
 tmp = merge(x = sel, y = log, by.x = 'id', by.y = 'id', all.x = TRUE)
 
