@@ -11,7 +11,7 @@ noa1718 = read_excel('data/raw/visual/photo-id/2020-05-20-FranklinNEFSCGSL2017-2
 noa19 = read.csv('data/raw/visual/photo-id/2019NOAAGSL_sightings.csv')
 
 # out put file
-ofile = 'data/interim/all_noaa_photoid.rds'
+ofile = 'data/interim/all_noaa_photoid_comb.rds'
 
 # process
 
