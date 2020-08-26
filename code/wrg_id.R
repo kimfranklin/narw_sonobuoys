@@ -13,7 +13,7 @@ acou_df = readRDS('data/interim/all_noaa_acoustic.rds')
 dmax = 15
 
 # output file
-ofile = 'data/processed/wrg_all_noaa_photoid.rds'
+ofile = 'data/processed/all_noaa_photoid.rds'
 
 # set up ------------------------------------------------------------------
 
@@ -27,6 +27,13 @@ library(ggplot2)
 library(splitstackshape)
 library(dplyr)
 
+# make photo-id data and acoustic data in the same time zone UTC,acoustic 
+# is already in UTC so only photo-id needs to be in UTC
+id_df$date = as.POSIXct(id_df$date, tz = "EST")
+attributes(id_df$date)$tzone = "UTC"
+id_df$datetime = as.POSIXct(id_df$datetime, tz = "EST")
+attributes(id_df$datetime)$tzone = "UTC"
+
 # identifying unique deployment dates
 dep_dates = unique(acou_df$date)  
 
@@ -34,7 +41,6 @@ dep_dates = unique(acou_df$date)
 id_dep = id_df %>% filter(date %in% dep_dates)
 
 # getting the sightings within our 15 km range
-
 dep_df = acou_df %>% 
   filter(call_type == 'START') %>%
   transmute(
@@ -42,7 +48,8 @@ dep_df = acou_df %>%
     lat= lat,
     lon = lon, 
     date = date, 
-    time = as.POSIXct(datetime, format = '%H:%M:%S', tz = "EST"),
+    #time = as.POSIXct(datetime_UTC, format = "%H:%M:%S"), #as.POSIXct(strptime(datetime_UTC, format = "%Y-%m-%d %H:%M:%S"), format = "%H:%M:%S"), #as.POSIXct(datetime_UTC, format = '%H:%M:%S'), #format(datetime_UTC, "%H:%M:%S"), #format(strptime(datetime_UTC, "%Y-%m-%d %H:%M:%S"), "%H:%M:%S"), #as.POSIXct(substr(datetime_UTC,12,19), tz = "UTC"),
+    datetime = as.POSIXct(datetime_UTC, format = "%Y-%m-%d %H:%M:%S"),
     duration = (as.numeric(duration)*60*60)
   )
 
@@ -50,7 +57,7 @@ dep_df = acou_df %>%
 dep_df = dep_df[!duplicated(dep_df$id),]
 
 
-# for changing the time range before and after sono deplyoment
+# for changing the time range before and after sono deployment
 DF = list()
 t_buffer = 60*60*1
 
@@ -60,7 +67,7 @@ for(ii in 1:nrow(dep_df)){
   # get acou_df data
   ilat = dep_df$lat[ii]
   ilon = dep_df$lon[ii]
-  itime = dep_df$time[ii]
+  itime = dep_df$datetime[ii]
   idur = dep_df$duration[ii]
   idep = dep_df$id[ii]
   
@@ -68,18 +75,18 @@ for(ii in 1:nrow(dep_df)){
   idf = id_df
   idf$id = idep
   
-  # subset by timeFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIXFIX
+  # subset by time
   idf = idf %>% 
     filter(datetime > itime-t_buffer & datetime < itime+idur+t_buffer)
   
   # subset by space
   
-  # make new column to claculate distace from the buoy to maximum distance away
+  # make new column to calculate distance from the buoy to maximum distance away
   # a whale might be 
   idf$dist = geodDist(longitude2 = ilon, latitude2 = ilat, 
                       longitude1 = idf$lon, latitude1 = idf$lat, alongPath = FALSE)
   
-  # only sightings with in our specificed range (defined as dmax)
+  # only sightings with in our specified range (defined as dmax)
   idf = idf %>%
     filter(dist<dmax)
   
@@ -93,48 +100,31 @@ for(ii in 1:nrow(dep_df)){
 df = bind_rows(DF)
 
 # remove dead whale
-df = df[-grep("FLTG DEAD, TELBUOY", df$behaviour),]
+df = df[-grep("FLTG DEAD", df$behaviour),]
 
-# remove deployments that have no useful information
-df = df[!(df$id=="2017_noaa_DEP17"),]
-df = df[!(df$id=="2018_noaa_DEP07"),]
-df = df[!(df$id=="2018_noaa_DEP13"),]
-df = df[!(df$id=="2018_noaa_DEP14"),]
+# make NA behaviours NONE so they don't get lost
+df$behaviour[is.na(df$behaviour)] = 'NONE'
 
-# checking the right number of IDs are still there
-unique(df$id)
+# replace blank behaviour with NONE so they don't get lost
+df$behaviour[df$behaviour == ''] = 'NONE'
 
-# convert behaviour to character
-df$behaviour = as.character(df$behaviour)
-class(df$behaviour)
+# separate multiple behaviours into rows
+tmp = separate_rows(df, behaviour, sep = ",")
 
-# separating each behaviour so it has its own row in df
-#df = df %>%
-#mutate(behaviour = strsplit(as.character(behaviour), ", ")) 
-#%>%unnest(behaviour)
-#separate_rows(df, behaviour, convert = TRUE)
-#s = strsplit(df$behaviour, split = ", ")
-#dfsp = data.frame(id = rep(df$id, sapply(s, length)), behaviour = unlist(s))
-# merge behaviour to df
-#df = merge(x = df, y = dfsp, by.x = 'id', by.y = 'id', all.x = TRUE)
-df = separate_rows(df, behaviour, sep = ", ") # < super close but it splits the spaces as well as the commas too
-#df = listCol_1(cSplit_1(df, "behaviour", ", ", "long"))[]
+# trim leading white space from split behaviours
+tmp$behaviour = trimws(tmp$behaviour)
+
+# replace tmp with df
+df = tmp
 
 # look to see which behaviour needs to be renamed 
 unique(df$behaviour)
 table(df$behaviour)
-# 'HD LFT' and 'HDLFT' are the same
-# 'MCLSG' and 'MCLSG ' are the same
-# 'SAG' and 'SAG ' are the same
-# 'SUB FD' and 'SUB FD ' and 'SUBFD' are the same
-# 'TL SLH' and 'TL SLSH' are the same thing
-# renaming the behaviour
-df$behaviour = gsub('HDLFT' , 'HD LFT', df$behaviour)
-df$behaviour = gsub('MCLSG ' , 'MCLSG', df$behaviour)
-df$behaviour = gsub('SAG ' , 'SAG', df$behaviour)
-df$behaviour = gsub('SUBFD' , 'SUB FD', df$behaviour)
-df$behaviour = gsub('SUB FD ' , 'SUB FD', df$behaviour)
-df$behaviour = gsub('TL SLH' , 'TL SLSH', df$behaviour)
+
+# names on left are now written as names on the right
+df$behaviour = gsub('CALF W/ MOM', 'CALF W/MOM', df$behaviour)
+df$behaviour = gsub('W/ CALF' , 'W/CALF', df$behaviour)
+df$behaviour = gsub('MCSLG' , 'MCLSG', df$behaviour)
 
 # double checking all the behaviours
 unique(df$behaviour)
