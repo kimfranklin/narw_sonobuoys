@@ -125,6 +125,7 @@ table(df$behaviour)
 df$behaviour = gsub('CALF W/ MOM', 'CALF W/MOM', df$behaviour)
 df$behaviour = gsub('W/ CALF' , 'W/CALF', df$behaviour)
 df$behaviour = gsub('MCSLG' , 'MCLSG', df$behaviour)
+df$behaviour = gsub('AGG', 'AGG VSL', df$behaviour)
 
 # double checking all the behaviours
 unique(df$behaviour)
