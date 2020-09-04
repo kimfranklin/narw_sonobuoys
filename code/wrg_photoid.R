@@ -22,10 +22,9 @@ library(tidyverse)
 library(stringr)
 library(lubridate)
 library(tidyr)
-library(oce)
-library(ggplot2)
 library(splitstackshape)
 library(dplyr)
+library(oce)
 
 # make photo-id data and acoustic data in the same time zone UTC,acoustic 
 # is already in UTC so only photo-id needs to be in UTC
@@ -35,10 +34,12 @@ id_df$datetime = as.POSIXct(id_df$datetime, tz = "EST")
 attributes(id_df$datetime)$tzone = "UTC"
 
 # identifying unique deployment dates
-dep_dates = unique(acou_df$date)  
+dep_dates = unique(acou_df$date)
+dep_dates
 
 # subset photo-id df to only consider dates on which sonobuoys were deployed
 id_dep = id_df %>% filter(date %in% dep_dates)
+id_dep
 
 # getting the sightings within our 15 km range
 dep_df = acou_df %>% 
@@ -67,6 +68,7 @@ for(ii in 1:nrow(dep_df)){
   # get acou_df data
   ilat = dep_df$lat[ii]
   ilon = dep_df$lon[ii]
+  idate = dep_df$date[ii]
   itime = dep_df$datetime[ii]
   idur = dep_df$duration[ii]
   idep = dep_df$id[ii]
@@ -108,30 +110,12 @@ df$behaviour[is.na(df$behaviour)] = 'NONE'
 # replace blank behaviour with NONE so they don't get lost
 df$behaviour[df$behaviour == ''] = 'NONE'
 
-# separate multiple behaviours into rows
-tmp = separate_rows(df, behaviour, sep = ",")
+# make NA sex NONE so they don't get lost
+df$sex[is.na(df$sex)] = 'NONE'
 
-# trim leading white space from split behaviours
-tmp$behaviour = trimws(tmp$behaviour)
+# replace blank sex with NONE so they don't get lost
+df$sex[df$sex == ''] = 'NONE'
 
-# replace tmp with df
-df = tmp
-
-# look to see which behaviour needs to be renamed 
-unique(df$behaviour)
-table(df$behaviour)
-
-# names on left are now written as names on the right
-df$behaviour = gsub('CALF W/ MOM', 'CALF W/MOM', df$behaviour)
-df$behaviour = gsub('W/ CALF' , 'W/CALF', df$behaviour)
-df$behaviour = gsub('MCSLG' , 'MCLSG', df$behaviour)
-df$behaviour = gsub('AGG', 'AGG VSL', df$behaviour)
-df$behaviour = gsub('AGG VSL VSL', 'AGG VSL', df$behaviour)
-df$behaviour <- sub(" ", "_", df$behaviour)
-
-# double checking all the behaviours
-unique(df$behaviour)
-table(df$behaviour)
 
 # save file
 saveRDS(df, ofile)
