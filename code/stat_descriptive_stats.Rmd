@@ -1,8 +1,8 @@
 ---
 title: "decriptive_stats"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r,echo = FALSE, include=FALSE}
 # read in data
-ifile = readRDS("data/processed/sight_dfs.rds")
+ifile = readRDS("data/processed/proc_acou_photoid.rds")
 df= ifile
 
 # read in libraries 
@@ -204,10 +204,10 @@ female_stdev
 Total
 ```{r, echo=FALSE}
 df3=df%>%
-  mutate(total_behv=feed+social+other_behv)
-total_stats = summary(df3$total_behv)
+  mutate(total_behv=foraging+social+other_bhv)
+total_stats = summary(df3$total_bev)
 total_stats
-total_stdev = sd(df3$total_behv)
+total_stdev = sd(df3$total_bhv)
 total_stdev
 ```
 
@@ -215,9 +215,9 @@ Feeding
 ```{r, echo=FALSE}
 #number of whales by behaviour total
 #feed
-feed_stats = summary(df$feed)
+feed_stats = summary(df$foraging)
 feed_stats
-feed_stdev = sd(df$feed)
+feed_stdev = sd(df$foraging)
 feed_stdev
 ```
 
@@ -233,9 +233,9 @@ social_stdev
 Other behaviour
 ```{r, echo=FALSE}
 #other behaviour
-other_behv_stats = summary(df$other_behv)
+other_behv_stats = summary(df$other_bhv)
 other_behv_stats
-other_behv_stdev = sd(df$other_behv)
+other_behv_stdev = sd(df$other_bhv)
 other_behv_stdev
 ```
 
@@ -286,343 +286,343 @@ POOLED t-Tests for comparing all variables of interest among the two years
 are number of whales similar among years?
 t-test on means for comparing sighted whales per year
 ```{r, echo=FALSE}
-sight17 = df %>%
-  filter(year == '2017') %>%
-  select(num_sighting)
-   
-sight18 = df %>%
-  filter(year == '2018') %>%
-  select(num_sighting)
- 
-t.test(sight17, sight18, var.equal = TRUE, conf.level = 0.95)
-
-as.numeric(sight17[[1]])
-
-stats = summary(sight17)
-stats
-stdev = sapply(sight17, sd)
-stdev
-
-stats = summary(sight18)
-stats
-stdev = sapply(sight18, sd)
-stdev
+# sight17 = df %>%
+#   filter(year == '2017') %>%
+#   select(num_sighting)
+#    
+# sight18 = df %>%
+#   filter(year == '2018') %>%
+#   select(num_sighting)
+#  
+# t.test(sight17, sight18, var.equal = TRUE, conf.level = 0.95)
+# 
+# as.numeric(sight17[[1]])
+# 
+# stats = summary(sight17)
+# stats
+# stdev = sapply(sight17, sd)
+# stdev
+# 
+# stats = summary(sight18)
+# stats
+# stdev = sapply(sight18, sd)
+# stdev
 ```
 
 are the number of gs call similar among years?
 t-test on means for comparing gs calls per year
 ```{r, echo=FALSE}
-c17 = df %>%
-  filter(year == '2017') %>%
-  select(gs_dur_hr)
-
-c18 = df %>%
-  filter(year == '2018') %>%
-  select(gs_dur_hr)
-
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(gs_dur_hr)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(gs_dur_hr)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
 ```
 
 are the number of up call similar among years?
 t-test on means for comparing up calls per year
 ```{r, echo=FALSE}
-c17 = df %>%
-  filter(year == '2017') %>%
-  select(up_dur_hr)
-
-c18 = df %>%
-  filter(year == '2018') %>%
-  select(up_dur_hr)
-
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
-```
-
-are the number of mf call similar among years?
-t-test on means for comparing mf calls per year
-```{r, echo=FALSE}
-c17 = df %>%
-  filter(year == '2017') %>%
-  select(mf_dur_hr)
-
-c18 = df %>%
-  filter(year == '2018') %>%
-  select(mf_dur_hr)
-
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(up_dur_hr)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(up_dur_hr)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
+# ```
+# 
+# are the number of mf call similar among years?
+# t-test on means for comparing mf calls per year
+# ```{r, echo=FALSE}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(mf_dur_hr)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(mf_dur_hr)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
 ```
 
 are the feeding behaviour reports similar among years?
 t-test on means for comparing feeding per year
 ```{r, echo=FALSE}
-c17 = df %>%
-  filter(year == '2017') %>%
-  select(feed)
-
-c18 = df %>%
-  filter(year == '2018') %>%
-  select(feed)
- 
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(feed)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(feed)
+#  
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
 ```
 
 are the social behaviour reports similar among years?
 t-test on means for comparing social per year
 ```{r, echo=FALSE}
-c17 = df %>%
-  filter(year == '2017') %>%
-  select(social)
-
-c18 = df %>%
-  filter(year == '2018') %>%
-  select(social)
-
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(social)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(social)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
 ```
 
 are the other behaviour reports similar among years?
 t-test on means for comparing other_behv per year
 ```{r, echo=FALSE}
-c17 = df %>%
-  filter(year == '2017') %>%
-  select(other_behv)
-
-c18 = df %>%
-  filter(year == '2018') %>%
-  select(other_behv)
-
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(other_behv)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(other_behv)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
 ```
 
 are the observed ages similar among years?
 t-test on means for comparing ages per year - juv
 ```{r, echo=FALSE}
-c17 = df %>%
-  filter(year == '2017') %>%
-  select(sum_juvenile)
-
-c18 = df %>%
-  filter(year == '2018') %>%
-  select(sum_juvenile)
-
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(sum_juvenile)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(sum_juvenile)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
 ```
 
 are the observed ages similar among years?
 t-test on means for comparing ages per year - adult
 ```{r, echo=FALSE}
-df2=df%>%
-  mutate(sum_adult=adult_female+adult_male)
-
-c17 = df2 %>%
-  filter(year == '2017') %>%
-  select(sum_adult)
-
-c18 = df2 %>%
-  filter(year == '2018') %>%
-  select(sum_adult)
-
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
+# df2=df%>%
+#   mutate(sum_adult=adult_female+adult_male)
+# 
+# c17 = df2 %>%
+#   filter(year == '2017') %>%
+#   select(sum_adult)
+# 
+# c18 = df2 %>%
+#   filter(year == '2018') %>%
+#   select(sum_adult)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
 ```
 
 are the observed ages similar among sexes?
 t-test on means for comparing ages per year - female
 ```{r, echo=FALSE}
-c17 = df %>%
-  filter(year == '2017') %>%
-  select(sum_female)
-
-c18 = df %>%
-  filter(year == '2018') %>%
-  select(sum_female)
-
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(sum_female)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(sum_female)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
 ```
 
 are the observed ages similar among years?
 t-test on means for comparing ages per year - male
 ```{r, echo=FALSE}
-c17 = df %>%
-  filter(year == '2017') %>%
-  select(sum_male)
-
-c18 = df %>%
-  filter(year == '2018') %>%
-  select(sum_male)
-
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(sum_male)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(sum_male)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
 ```
 
 are the observed sex-ages similar among years?
 t-test on means for comparing sex-ages per year - adult female
 ```{r, echo=FALSE}
-c17 = df %>%
-  filter(year == '2017') %>%
-  select(adult_female)
-
-c18 = df %>%
-  filter(year == '2018') %>%
-  select(adult_female)
-
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(adult_female)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(adult_female)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
 ```
 
 are the observed sex-ages similar among years?
 t-test on means for comparing sex-ages per year - adult male
 ```{r, echo=FALSE}
-c17 = df %>%
-  filter(year == '2017') %>%
-  select(adult_male)
-
-c18 = df %>%
-  filter(year == '2018') %>%
-  select(adult_male)
-
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(adult_male)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(adult_male)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
 ```
 
 are the call rates similar among years?
 t-test on means for comparing call rates per year
 ```{r, echo=FALSE}
-c17 = df %>%
-  filter(year == '2017') %>%
-  mutate(call_rate = sum_calls_dur*60*60/num_sighting)%>%
-  select(call_rate)
-
-c18 = df %>%
-  filter(year == '2018') %>%
-  mutate(call_rate = sum_calls_dur*60*60/num_sighting) %>%
-  select(call_rate)
-
-t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
-
-stats = summary(c17)
-stats
-stdev = sapply(c17, sd)
-stdev
-
-stats = summary(c18)
-stats
-stdev = sapply(c18, sd)
-stdev
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   mutate(call_rate = sum_calls_dur*60*60/num_sighting)%>%
+#   select(call_rate)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   mutate(call_rate = sum_calls_dur*60*60/num_sighting) %>%
+#   select(call_rate)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# 
+# stats = summary(c17)
+# stats
+# stdev = sapply(c17, sd)
+# stdev
+# 
+# stats = summary(c18)
+# stats
+# stdev = sapply(c18, sd)
+# stdev
 ```
 
