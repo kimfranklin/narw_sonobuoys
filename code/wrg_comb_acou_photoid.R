@@ -92,6 +92,15 @@ am = id_df %>%
   filter(age == 'A') %>%
   filter(sex == 'M') %>%
   count(id)
+calf = id_df %>%
+  filter(age == 'C') %>%
+  count(id)
+uns = id_df %>%
+  filter(sex == 'X') %>%
+  count(id)
+una = id_df %>%
+  filter(age == 'U') %>%
+  count(id)
 
 # merging sightings with number of jf, jm, af, am
 df = merge(x = df, y = jf, by.x = 'id', by.y = 'id', all.x = TRUE)
@@ -106,8 +115,42 @@ df = df %>% rename(adult_female = n)
 df = merge(x = df, y = am, by.x = 'id', by.y = 'id', all.x = TRUE)
 df = df %>% rename(adult_male = n)
 
+df = merge(x = df, y = calf, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(calf = n)
+
+df = merge(x = df, y = uns, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(unknown_sex = n)
+
+df = merge(x = df, y = una, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(unknown_age = n)
+
+# separate multiple behaviours into rows
+tmp = separate_rows(id_df, behaviour, sep = ",")
+
+# trim leading white space from split behaviours
+tmp$behaviour = trimws(tmp$behaviour)
+
+# replace tmp with df
+id_dfs = tmp
+
+# look to see which behaviour needs to be renamed 
+unique(id_dfs$behaviour)
+table(id_dfs$behaviour)
+
+# names on left are now written as names on the right
+id_dfs$behaviour = gsub('CALF W/ MOM', 'CALF W/MOM', id_dfs$behaviour)
+id_dfs$behaviour = gsub('W/ CALF' , 'W/CALF', id_dfs$behaviour)
+id_dfs$behaviour = gsub('MCSLG' , 'MCLSG', id_dfs$behaviour)
+id_dfs$behaviour = gsub('AGG', 'AGG VSL', id_dfs$behaviour)
+id_dfs$behaviour = gsub('AGG VSL VSL', 'AGG VSL', id_dfs$behaviour)
+id_dfs$behaviour <- sub(" ", "_", id_dfs$behaviour)
+
+# double checking all the behaviours
+unique(id_dfs$behaviour)
+table(id_dfs$behaviour)
+
 # count for each behaviour for each deployment
-df_test = subset(id_df, select = c("id","behaviour"))
+df_test = subset(id_dfs, select = c("id","behaviour"))
 unique((df_test$behaviour))
 
 df_test = count(df_test, vars = id, wt_var = behaviour)
@@ -172,6 +215,7 @@ df_test = df_test[!duplicated(df_test), ]
 df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
 
 
+
 # remove columns that aren't behaviours
 drops <- c("WH_CHN","BLK_BEL","WH_BEL","BLK_CHN","FEM","MALE","SUCTG")
 df = df[ , !(names(df) %in% drops)]
@@ -184,6 +228,7 @@ df$foraging = (df$SUB_FD+
                  df$SKM_FD+
                  df$CO_FD+
                  df$LEAD)
+#df$foraging = df$foraging/df$num_sightings
 df$social = (df$SAG+
                df$BOD_CNT+
                df$ROLL+
@@ -195,7 +240,24 @@ df$social = (df$SAG+
                df$BRCH+
                df$BUBLS+
                df$TL_SLSH+
-               df$RACE)
+               df$RACE+
+               df$FCL)
+#df$social = df$social/df$num_sightings
+df$social_notsag = (df$BOD_CNT+
+                      df$ROLL+
+                      df$BEL_UP+
+                      df$`BEL/BEL`+
+                      df$LBTL+
+                      df$UW_EXH+
+                      df$BRCH+
+                      df$BUBLS+
+                      df$TL_SLSH)
+#df$social_notsag = (df$social_notsag/df$num_sightings)
+df$social_sag = (df$SAG+
+                   df$FCL+
+                   df$APPR+
+                   df$RACE)
+#df$social_sag = df$social_sag/df$num_sightings
 df$other_bhv= (df$MUD+
                    df$MOPN+
                    df$DFCN+
@@ -205,11 +267,13 @@ df$other_bhv= (df$MUD+
                    df$FL+
                    df$POST+
                    df$UNUSUAL_BEH)
+#df$other_bhv = df$other_bhv/df$num_sightings
 df$mom_calf = (df$CALF+
                  df$`CALF_W/MOM`+
                  df$`CALF_W/OTHERS`+
                  df$`W/CALF`+
                  df$NURS)
+#df$mom_calf = df$mom_calf/df$num_sightings
 df$entg_eff = (df$AGG_VSL+
                  df$DSENTGL_ATT+
                  df$ENTGL+
@@ -218,7 +282,21 @@ df$entg_eff = (df$AGG_VSL+
                  df$NOT_FL+
                  df$PRT_DSENTGL+
                  df$SATTG_GONE)
-
+#df$entg_eff = df$entg_eff/df$num_sightings
+drop <- c("AGG_VSL","APPR","AVD","BEL_UP","BEL/BEL","BOD_CNT","BRCH","BUBLS",
+"CALF","CALF_W/MOM","CALF_W/OTHERS","CO_FD","DFCN","DSENTGL_ATT","ENTGL","FCL",
+"FL","FRST_ENTGL","HDLFT","LBTL","LEAD","LN_GONE","MCLSG","MOPN","MUD","NONE",
+"NOT_FL","NURS","POST","PRT_DSENTGL","RACE","ROLL","SAG","SATTG_GONE","SKM_FD",
+"SUB_FD","SUB_FD?","TL_SLSH","UNUSUAL_BEH","UW_EXH","W/CALF","W/CETACEAN")
+tmp = df[,!(names(df) %in% drop)]
+df= tmp
 
 # save file 
 saveRDS(df, file = 'data/processed/proc_acou_photoid.rds')
+
+#df = readRDS('data/processed/proc_acou_photoid.rds')
+dfs = id_df %>%
+  filter(date == '2017-06-29')
+table(dfs$EGNO)
+sum(table(dfs$EGNO))
+unique(dfs$EGNO)
