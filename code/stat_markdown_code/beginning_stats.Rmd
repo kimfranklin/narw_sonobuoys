@@ -1,0 +1,1449 @@
+---
+title: "beginning_stats"
+output:
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown for begnning the statistical analysis for sonobuoy honours
+
+Readinging in the data
+```{r}
+ifile = readRDS("data/processed/proc_acou_photoid.rds")
+df1= ifile
+```
+
+
+```{r, include=FALSE}
+#Some useful libraries for plotting
+library(tidyverse)
+library(viridis)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+library(grid)
+library(plotly)
+library(RColorBrewer)
+library(oce)
+library(xtable)
+library(mapproj)
+#library(gganimate)
+#source('D:/narw_sonobuoys/functions.R')
+```
+
+## Visual stacked plots 
+
+## stacked bargraph using ggplot {.tabset}
+### Behaviour
+```{r}
+# plt = df %>%
+#   select(as.numeric("yday"), "year", "foraging", "social", "other_bhv") %>%
+#   gather(key = "behaviour" , value = "cval", foraging, social, other_bhv) %>%
+#   filter(behaviour %in% c('forgaging', 'social', 'other_bhv')) %>%
+#   ggplot(aes(x = id, y = cval, fill = behaviour))+
+#   geom_bar(position="stack", stat = 'identity')+
+#   scale_fill_viridis(discrete = TRUE, option = "D", 
+#                      breaks=c("foraging", "social", "other_bhv"),
+#                      labels=c("Feeding", "Socializing","Other Behaviour"))+
+#   labs(fill = "Behaviour",
+#        x = NULL,
+#        y = NULL,
+#        title = 'Sighted behaviour within 15 km plus an hour before and after recording')+
+#   # facet by year
+#   facet_wrap(~year)+
+#   ylab('Sighted Behaviour per Deployment')+
+#   xlab('')+
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+#         legend.position="right")+
+#   #theme(axis.title.x = element_blank(), axis.text.x = element_blank())+
+#   #theme(text = element_text(size=20))+
+#   theme(axis.text.y = element_text(colour = "black"))+
+#   theme(axis.text.x = element_text(colour = "black"))
+# plt
+
+pltb = df1 %>%
+  select("yday", "foraging", "social", "other_bhv") %>%
+  gather(key = "behaviour" , value = "cval", foraging, social, other_bhv) %>%
+  filter(behaviour %in% c('foraging', 'social', 'other_bhv')) %>%
+  ggplot(aes(x = as.Date(yday,'1970-01-01'), y = cval, fill = behaviour))+
+  geom_bar(position = 'stack', stat = 'identity', width = 2)+
+  scale_fill_viridis(discrete = TRUE, option = "E", 
+                     breaks=c("foraging", "social", "other_bhv"),
+                     labels=c("Feeding", "Socializing","Other Behaviour"))+
+  labs(fill = "Behaviour",
+       x = NULL,
+       y = NULL,
+       title = 'Sighted behaviour within 15 km plus an hour before and after recording')+
+  # facet by year
+  #facet_wrap(~year)+
+  ylab('Sighted Whale Behaviour')+
+  xlab('Week')+
+  scale_x_date(date_breaks="weeks", date_labels="%b-%d")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        legend.position="bottom")+
+  theme(axis.text.x = element_text(), 
+        legend.position="right")+
+  #theme(axis.title.x = element_blank(), axis.text.x = element_blank())+
+  theme(text = element_text(size=20))+
+  theme(axis.text.y = element_text(colour = "black"))+
+  theme(axis.text.x = element_text(colour = "black"))
+pltb
+```
+
+### Calls
+```{r}
+# plt = df %>%
+#   select(as.numeric("yday"), "year", "up_dur_hr", "mf_dur_hr", "gs_dur_hr") %>%
+#   gather(key = "call_type" , value = "cval", up_dur_hr, mf_dur_hr, gs_dur_hr) %>%
+#   filter(call_type %in% c('up_dur_hr', 'mf_dur_hr', 'gs_dur_hr')) %>%
+#   ggplot(aes(x = id, y = cval, fill = call_type))+
+#   geom_bar(position="stack", stat = 'identity')+
+#   scale_fill_viridis(discrete = TRUE, option = "D", 
+#                      breaks=c("up_dur_hr", "mf_dur_hr", "gs_dur_hr"),
+#                      labels=c("Up Call", "Mid-frequency","Gunshot"))+
+#   labs(fill = "Call Type",
+#        x = NULL,
+#        y = NULL,
+#        title = 'Calls detected per duration of deployment')+
+#   # facet by year
+#   #facet_wrap(~year)+
+#   ylab('Calls per deployment per duration')+
+#   xlab('')+
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+#         legend.position="right")+
+#   #theme(axis.title.x = element_blank(), axis.text.x = element_blank())+
+#   #theme(text = element_text(size=20))+
+#   theme(axis.text.y = element_text(colour = "black"))+
+#   theme(axis.text.x = element_text(colour = "black"))
+# plt
+
+
+pltc = df1 %>%
+  select("yday", "year", "up_dur_hr", "mf_dur_hr", "gs_dur_hr") %>%
+  gather(key = "call_type" , value = "cval", up_dur_hr, mf_dur_hr, gs_dur_hr) %>%
+  filter(call_type %in% c('up_dur_hr', 'mf_dur_hr', 'gs_dur_hr')) %>%
+  ggplot(aes(x = as.Date(yday,'1970-01-01'), y = cval, fill = call_type))+
+  geom_bar(position="stack", stat = 'identity', width = 2)+
+  scale_fill_grey(start = 0, end = .9,  
+                     breaks=c("up_dur_hr", "mf_dur_hr", "gs_dur_hr"),
+                     labels=c("Upcall", "Mid-frequency","Gunshot"))+
+  theme_bw()+
+  theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
+  labs(fill = "Call Type",
+       x = NULL,
+       y = NULL,
+       title = 'Calls detected per duration of deployment')+
+  # facet by year
+  #facet_wrap(~year)+
+  ylab('Call Rate (call/hour)')+
+  xlab('Week')+
+  scale_x_date(date_breaks="weeks", date_labels="%b-%d")+
+  scale_y_continuous(breaks = seq(0,275,50))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        legend.position="bottom")+
+  theme(axis.text.x = element_text(), 
+        legend.position="right")+
+  #theme(axis.title.x = element_blank(), axis.text.x = element_blank())+
+  theme(text = element_text(size=20))+
+  theme(axis.text.y = element_text(colour = "black"))+
+  theme(axis.text.x = element_text(colour = "black"))
+pltc
+```
+
+### Demographics
+```{r}
+# plt = df %>%
+#   select(as.numeric("yday"), "year", "juvenile_male", "juvenile_female", "adult_male", "adult_female") %>%
+#   gather(key = "age_sex" , value = "cval", juvenile_male, juvenile_female, adult_male, adult_female) %>%
+#   #add to make sure character or factor to fix legend and graph colour?
+#   filter(age_sex %in% c("juvenile_male", "juvenile_female", "adult_male", "adult_female")) %>%
+#   ggplot(aes(x = id, y = cval, fill = age_sex))+
+#   geom_bar(position="stack", stat = 'identity')+
+#   scale_fill_viridis(discrete = TRUE, option = "D", 
+#                      breaks=c("juvenile_male", "juvenile_female", "adult_male", "adult_female"),
+#                      labels=c("Juvenile, Male", "Juvenile, Female","Adult, Male", "Adult, Female"))+
+#   labs(fill = "Age Class, Sex",
+#        x = NULL,
+#        y = NULL,
+#        title = 'Sightings within 15 km plus an hour before and after recording')+
+#   # facet by year
+#   #facet_wrap(~year)+
+#   ylab('Sightings per deployment duration')+
+#   xlab('')+
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+#         legend.position="right")+
+#   #theme(axis.title.x = element_blank(), axis.text.x = element_blank())+
+#   #theme(text = element_text(size=20))+
+#   theme(axis.text.y = element_text(colour = "black"))+
+#   theme(axis.text.x = element_text(colour = "black"))
+# plt
+
+
+pltd = df1 %>%
+  select("yday", "year", "juvenile_male", "juvenile_female", "adult_male", "adult_female") %>%
+  gather(key = "age_sex" , value = "cval", juvenile_male, juvenile_female, adult_male, adult_female) %>%
+  #add to make sure character or factor to fix legend and graph colour?
+  filter(age_sex %in% c("juvenile_male", "juvenile_female", "adult_male", "adult_female")) %>%
+  ggplot(aes(x = as.Date(yday,'1970-01-01'), y = cval, fill = age_sex))+
+  geom_bar(position="stack", stat = 'identity', width = 2)+
+  scale_fill_viridis(discrete = TRUE, option = "D", 
+                     breaks=c("juvenile_male", "juvenile_female", "adult_male", "adult_female"),
+                     labels=c("Juvenile, Male", "Juvenile, Female","Adult, Male", "Adult, Female"))+
+  labs(fill = "Age Class, Sex",
+       x = NULL,
+       y = NULL,
+       title = 'Sightings within 15 km plus an hour before and after recording')+
+  # facet by year
+  #facet_wrap(~year)+
+  ylab('Sighted Whales')+
+  xlab('Week')+
+  theme(axis.text.x = element_text(), 
+        legend.position="right")+
+  scale_x_date(date_breaks="weeks", date_labels="%b-%d")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        legend.position="bottom")+
+  theme(axis.text.x = element_text(), 
+        legend.position="right")+
+  #theme(axis.title.x = element_blank(), axis.text.x = element_blank())+
+  theme(text = element_text(size=20))+
+  theme(axis.text.y = element_text(colour = "black"))+
+  theme(axis.text.x = element_text(colour = "black"))
+pltd
+```
+
+## important figures that need to consider!!!!
+```{r}
+
+plt = df1 %>%
+  ggplot(aes(x=as.Date(yday,'1970-01-01'), y=num_sighting))+
+  geom_point()+
+  geom_smooth(method = 'lm')
+plt
+
+plt = df1 %>%
+  ggplot(aes(x=as.Date(yday,'1970-01-01'), y=up_dur_hr))+
+  geom_point()
+plt
+
+
+plt = df1 %>%
+  ggplot(aes(x=num_sighting, y=up_dur_hr))+
+  geom_point()+
+  geom_smooth(method = 'lm')
+plt
+
+```
+
+## Maps
+sighting size over space, colour is day and size is number animals sighted
+```{r}
+# read in map data
+load('data/processed/map_data.rda')
+
+# city positions
+cities = data.frame(
+  name = c("Shippagan", "Percé"),
+  lat = c(47.7439, 48.5244),
+  lon = c(-64.7057, -64.2127)
+)
+
+# gsl map
+gsl = ggplot() + 
+  coord_map(xlim = c(-65,-61.75), ylim = c(47,49))+
+  
+  # land and bathymetry
+   geom_polygon(data = nam, aes(x = long, y = lat, group = group),
+               fill = "darkgrey", color = NA) +
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-50),colour="grey", size=0.3)+
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-100),colour="grey", size=1)+
+  # 
+  # city labels
+  geom_point(data = cities, aes(x = lon, y = lat), color = "darkslategrey", size = 1)+
+  geom_text(data = cities, aes(x = lon, y = lat, label = name), color =
+              "darkslategrey", nudge_y = 0.07, size = 3)+
+  
+  # sonobuoy positions
+  geom_point(data = df1, aes(x = lon, y = lat, size = num_sighting, 
+                            colour = yday, shape =as.character(year)))+
+  #, alpha = 0.7)+
+    scale_fill_manual(values = c("black",'red'))+
+  
+  # formatting
+  ylab("Longitude (N)")+xlab("Latitude (W)")+
+  theme_bw()+
+  theme(legend.title = element_blank(), 
+        legend.position = 'bottom', 
+        legend.direction = "horizontal",
+        panel.spacing = unit(2, "lines"))+
+  theme(text = element_text(size=15))+
+  theme(axis.text.x = element_text(colour = "black"))+
+  theme(axis.text.y = element_text(colour = "black"))
+
+gsl
+
+```
+
+## Maps with calls and behaviour as size {.tabset}
+### Up calls 
+```{r}
+# read in map data
+load('data/processed/map_data.rda')
+
+# city positions
+cities = data.frame(
+  name = c("Shippagan", "Percé"),
+  lat = c(47.7439, 48.5244),
+  lon = c(-64.7057, -64.2127)
+)
+
+# gsl map
+gsl = ggplot() + 
+  coord_map(xlim = c(-65,-62.7), ylim = c(47.2,48.5))+
+  
+  # land and bathymetry
+   geom_polygon(data = nam, aes(x = long, y = lat, group = group),
+              fill = "darkgrey", color = NA) +
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-50),colour="grey", size=0.3)+
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-100),colour="grey", size=1)+
+  # 
+  # city labels
+  geom_point(data = cities, aes(x = lon, y = lat), color = "darkslategrey", size = 1)+
+  geom_text(data = cities, aes(x = lon, y = lat, label = name), color =
+              "darkslategrey", nudge_y = 0.07, size = 3)+
+  
+  # sonobuoy positions
+  geom_point(data = df1, aes(x = lon, y = lat, size = up_dur_hr, colour = yday))+
+    scale_radius(range=c(3,8))+
+  
+  # facet by year
+  facet_wrap(~year)+
+  
+  # formatting
+  ylab("Longitude (N)")+xlab("Latitude (W)")+
+  theme_bw()+
+  theme(legend.title = element_blank(), 
+        legend.position = 'bottom', 
+        legend.direction = "horizontal",
+        panel.spacing = unit(2, "lines"))+
+  theme(text = element_text(size=15))+
+  theme(axis.text.x = element_text(colour = "black"))+
+  theme(axis.text.y = element_text(colour = "black"))
+
+gsl
+
+```
+
+### Gunshots
+```{r}
+# read in map data
+load('data/processed/map_data.rda')
+
+# city positions
+cities = data.frame(
+  name = c("Shippagan", "Percé"),
+  lat = c(47.7439, 48.5244),
+  lon = c(-64.7057, -64.2127)
+)
+
+# gsl map
+gsl = ggplot() + 
+  coord_map(xlim = c(-65,-62.7), ylim = c(47.2,48.5))+
+  
+  # land and bathymetry
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),
+               fill = "darkgrey", color = NA) +
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-50),colour="grey", size=0.3)+
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-100),colour="grey", size=1)+
+  # 
+  # city labels
+  geom_point(data = cities, aes(x = lon, y = lat), color = "darkslategrey", size = 1)+
+  geom_text(data = cities, aes(x = lon, y = lat, label = name), color =
+              "darkslategrey", nudge_y = 0.07, size = 3)+
+  
+  # sonobuoy positions
+  geom_point(data = df1, aes(x = lon, y = lat, size = gs_dur_hr, colour = yday))+
+  scale_radius(range=c(3,8))+
+    
+  # facet by year
+  facet_wrap(~year)+
+  
+  # formatting
+  ylab("Longitude (N)")+xlab("Latitude (W)")+
+  theme_bw()+
+  theme(legend.title = element_blank(), 
+        legend.position = 'bottom', 
+        legend.direction = "horizontal",
+        panel.spacing = unit(2, "lines"))+
+  theme(text = element_text(size=15))+
+  theme(axis.text.x = element_text(colour = "black"))+
+  theme(axis.text.y = element_text(colour = "black"))
+
+gsl
+
+```
+
+### Mid-frequency
+```{r}
+# read in map data
+load('data/processed/map_data.rda')
+
+# city positions
+cities = data.frame(
+  name = c("Shippagan", "Percé"),
+  lat = c(47.7439, 48.5244),
+  lon = c(-64.7057, -64.2127)
+)
+
+# gsl map
+gsl = ggplot() + 
+  coord_map(xlim = c(-65,-62.7), ylim = c(47.2,48.5))+
+  
+  # land and bathymetry
+   geom_polygon(data = nam, aes(x = long, y = lat, group = group),
+                fill = "darkgrey", color = NA) +
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-50),colour="grey", size=0.3)+
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-100),colour="grey", size=1)+
+  # 
+  # city labels
+  geom_point(data = cities, aes(x = lon, y = lat), color = "darkslategrey", size = 1)+
+  geom_text(data = cities, aes(x = lon, y = lat, label = name), color =
+              "darkslategrey", nudge_y = 0.07, size = 3)+
+  
+  # sonobuoy positions
+  geom_point(data = df1, aes(x = lon, y = lat, size = mf_dur_hr, colour = yday))+
+  scale_radius(range=c(3,8))+
+  
+  # facet by year
+  facet_wrap(~year)+
+  
+  # formatting
+  ylab("Longitude (N)")+xlab("Latitude (W)")+
+  theme_bw()+
+  theme(legend.title = element_blank(), 
+        legend.position = 'bottom', 
+        legend.direction = "horizontal",
+        panel.spacing = unit(2, "lines"))+
+  theme(text = element_text(size=15))+
+  theme(axis.text.x = element_text(colour = "black"))+
+  theme(axis.text.y = element_text(colour = "black"))
+
+gsl
+
+```
+
+### Feeding behaviour
+```{r}
+# read in map data
+load('data/processed/map_data.rda')
+
+# city positions
+cities = data.frame(
+  name = c("Shippagan", "Percé"),
+  lat = c(47.7439, 48.5244),
+  lon = c(-64.7057, -64.2127)
+)
+
+# gsl map
+gsl = ggplot() + 
+  coord_map(xlim = c(-65,-62.7), ylim = c(47.2,48.5))+
+  
+  # land and bathymetry
+   geom_polygon(data = nam, aes(x = long, y = lat, group = group),
+               fill = "darkgrey", color = NA) +
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-50),colour="grey", size=0.3)+
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-100),colour="grey", size=1)+
+  # 
+  # city labels
+  geom_point(data = cities, aes(x = lon, y = lat), color = "darkslategrey", size = 1)+
+  geom_text(data = cities, aes(x = lon, y = lat, label = name), color =
+              "darkslategrey", nudge_y = 0.07, size = 3)+
+  
+  # sonobuoy positions
+  geom_point(data = df1, aes(x = lon, y = lat, size = foraging, colour = yday))+
+  scale_radius(range=c(3,8))+
+  
+  # facet by year
+  facet_wrap(~year)+
+  
+  # formatting
+  ylab("Longitude (N)")+xlab("Latitude (W)")+
+  theme_bw()+
+  theme(legend.title = element_blank(), 
+        legend.position = 'bottom', 
+        legend.direction = "horizontal",
+        panel.spacing = unit(2, "lines"))+
+  theme(text = element_text(size=15))+
+  theme(axis.text.x = element_text(colour = "black"))+
+  theme(axis.text.y = element_text(colour = "black"))
+
+gsl
+
+```
+
+### Social behaviour
+```{r}
+# read in map data
+load('data/processed/map_data.rda')
+
+# city positions
+cities = data.frame(
+  name = c("Shippagan", "Percé"),
+  lat = c(47.7439, 48.5244),
+  lon = c(-64.7057, -64.2127)
+)
+
+# gsl map
+gsl = ggplot() + 
+  coord_map(xlim = c(-65,-62.7), ylim = c(47.2,48.5))+
+  
+  # land and bathymetry
+   geom_polygon(data = nam, aes(x = long, y = lat, group = group),
+                fill = "darkgrey", color = NA) +
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-50),colour="grey", size=0.3)+
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-100),colour="grey", size=1)+
+  # 
+  # city labels
+  geom_point(data = cities, aes(x = lon, y = lat), color = "darkslategrey", size = 1)+
+  geom_text(data = cities, aes(x = lon, y = lat, label = name), color =
+              "darkslategrey", nudge_y = 0.07, size = 3)+
+  
+  # sonobuoy positions
+  geom_point(data = df1, aes(x = lon, y = lat, size = social, colour = yday))+
+  scale_radius(range=c(3,8))+
+  
+  # facet by year
+  facet_wrap(~year)+
+  
+  # formatting
+  ylab("Longitude (N)")+xlab("Latitude (W)")+
+  theme_bw()+
+  theme(legend.title = element_blank(), 
+        legend.position = 'bottom', 
+        legend.direction = "horizontal",
+        panel.spacing = unit(2, "lines"))+
+  theme(text = element_text(size=15))+
+  theme(axis.text.x = element_text(colour = "black"))+
+  theme(axis.text.y = element_text(colour = "black"))
+
+gsl
+
+```
+
+### Other behaviour
+```{r}
+# read in map data
+load('data/processed/map_data.rda')
+
+# city positions
+cities = data.frame(
+  name = c("Shippagan", "Percé"),
+  lat = c(47.7439, 48.5244),
+  lon = c(-64.7057, -64.2127)
+)
+
+# gsl map
+gsl = ggplot() + 
+  coord_map(xlim = c(-65,-62.7), ylim = c(47.2,48.5))+
+  
+  # land and bathymetry
+   geom_polygon(data = nam, aes(x = long, y = lat, group = group),
+               fill = "darkgrey", color = NA) +
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-50),colour="grey", size=0.3)+
+  # geom_contour(data = bf, aes(x=x, y=y, z=z),
+  #               breaks=c(-100),colour="grey", size=1)+
+  # 
+  # city labels
+  geom_point(data = cities, aes(x = lon, y = lat), color = "darkslategrey", size = 1)+
+  geom_text(data = cities, aes(x = lon, y = lat, label = name), color =
+              "darkslategrey", nudge_y = 0.07, size = 3)+
+  
+  # sonobuoy positions
+  geom_point(data = df1, aes(x = lon, y = lat, size = other_bhv, colour = yday))+
+  scale_radius(range=c(3,8))+
+  
+  # facet by year
+  facet_wrap(~year)+
+  
+  # formatting
+  ylab("Longitude (N)")+xlab("Latitude (W)")+
+  theme_bw()+
+  theme(legend.title = element_blank(), 
+        legend.position = 'bottom', 
+        legend.direction = "horizontal",
+        panel.spacing = unit(2, "lines"))+
+  theme(text = element_text(size=15))+
+  theme(axis.text.x = element_text(colour = "black"))+
+  theme(axis.text.y = element_text(colour = "black"))
+
+gsl
+
+```
+
+## Seasonality in behaviour
+
+**Question:** Does feeding decrease while socializing behaviour increases over the course of the season?
+
+``` {r}
+# ggplot()+
+#   geom_point(data = df, aes(x = yday, y = feed), color = 'black')+
+#   geom_point(data = df, aes(x = yday, y = social), color = 'blue')
+ifile = readRDS("data/processed/proc_acou_photoid.rds")
+df1= ifile
+library(tidyverse)
+library(viridis)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+library(grid)
+library(plotly)
+library(RColorBrewer)
+library(oce)
+library(xtable)
+library(mapproj)
+plt = df1 %>%
+  select("yday", "year", "foraging", "social") %>%
+  gather(key = "behaviour" , value = "cval", foraging, social) %>%
+  filter(behaviour %in% c('foraging', 'social')) %>%
+  ggplot(aes(x = as.Date(yday,'1970-01-01'), y = cval))+
+  geom_point(aes(colour = behaviour), size = 3)+
+  geom_smooth(aes(color = behaviour, fill = behaviour), method = "lm",
+              se = TRUE, fullrange = TRUE, show.legend = FALSE)+
+  scale_colour_viridis(discrete = TRUE, option = "D",
+                       breaks=c("foraging", "social"),
+                       labels=c("Feeding", "Socalizing"))+
+  labs(colour = "Behaviour Type",
+       x = NULL,
+       y = NULL)+
+  scale_x_date(date_breaks="weeks", date_labels="%b-%d")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        legend.position="bottom")+
+  theme(axis.text.x = element_text(), 
+        legend.position="right")+
+  theme(text = element_text(size=20))+
+  theme(axis.text.y = element_text(colour = "black"))+
+  theme(axis.text.x = element_text(colour = "black"))+
+  ylab('Behaviour Occurance')+
+  xlab('Week')
+
+plt
+```
+
+**Answer:** Yes. Feeding seems to happen early, and socializing happens later. The trend is pretty weak and only convincing when you lump years.
+
+## Seasonality in calling
+
+**Question:** Does calling behaviour increase over the course of the season?
+
+``` {r}
+ifile = readRDS("data/processed/proc_acou_photoid.rds")
+df1= ifile
+library(tidyverse)
+library(viridis)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+library(grid)
+library(plotly)
+library(RColorBrewer)
+library(oce)
+library(xtable)
+library(mapproj)
+# ggplot()+
+#   geom_point(data = df, aes(x = yday, y = up_dur_hr), color = 'black')+
+#   geom_point(data = df, aes(x = yday, y = mf_dur_hr), color = 'blue')+
+#   geom_point(data = df, aes(x = yday, y = gs_dur_hr), color = 'red')
+
+# ggplot()+
+#   geom_point(data = df, aes(x = yday, y = up_dur_hr), color = 'black')
+# 
+# ggplot()+
+#   geom_point(data = df, aes(x = yday, y = mf_dur_hr), color = 'blue')
+# 
+# ggplot()+
+#   geom_point(data = df, aes(x = yday, y = gs_dur_hr), color = 'red')
+
+plt = df1 %>%
+  select("yday", "year", "up_dur_hr", "mf_dur_hr", "gs_dur_hr") %>%
+  gather(key = "call_type" , value = "cval", up_dur_hr, mf_dur_hr, gs_dur_hr) %>%
+  filter(call_type %in% c('up_dur_hr', 'mf_dur_hr', 'gs_dur_hr')) %>%
+  ggplot(aes(x = as.Date(yday,'1970-01-01'), y = cval))+
+  geom_point(aes(colour = call_type), size = 3)+
+  scale_colour_viridis(discrete = TRUE, option = "D",
+                   breaks=c("up_dur_hr", "mf_dur_hr", "gs_dur_hr"),
+                   labels=c("Up call", "Mid-frequency","Gunshot"))+
+  #facet_wrap(~call_type)+
+  labs(colour = "Call Type",
+       x = NULL,
+       y = NULL)+
+  theme(text = element_text(size=20))+
+  scale_x_date(date_breaks="weeks", date_labels="%b-%d")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        legend.position="bottom")+
+  theme(axis.text.x = element_text(), 
+        legend.position="right")+
+  theme(axis.text.y = element_text(colour = "black"))+
+  theme(axis.text.x = element_text(colour = "black"))+
+  ylab('Call Rate (call/hour)')+
+  xlab('Week')
+plt
+
+```
+
+**Answer:** Yes. Not with upcalls, but with gunshots and MF
+
+## Sightings vs call counts
+
+**Question:** Does calling rate change over the course of the season?
+
+```{r}
+ifile = readRDS("data/processed/proc_acou_photoid.rds")
+df1= ifile
+library(tidyverse)
+library(viridis)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+library(grid)
+library(plotly)
+library(RColorBrewer)
+library(oce)
+library(xtable)
+library(mapproj)
+
+# df %>%
+#   mutate(call_rate = sum_calls_dur*60*60/num_sighting) %>%
+#   ggplot()+
+#   geom_point(aes(x = yday, y = call_rate), color = 'black')
+
+plt = df1 %>%
+  mutate(call_rate = sum_calls_dur*60*60/num_sighting) %>%
+  ggplot()+
+  geom_point(aes(x = as.Date(yday,'1970-01-01'), y = call_rate), color = 'black', size = 3)+
+  geom_smooth(aes(x = as.Date(yday,'1970-01-01'), y = call_rate), method = "lm", color='black',
+              se = TRUE, fullrange = TRUE)+
+  scale_x_date(date_breaks="weeks", date_labels="%b-%d")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        legend.position="bottom")+
+  theme(text = element_text(size=20))+
+  theme(axis.text.y = element_text(colour = "black"))+
+  theme(axis.text.x = element_text(colour = "black"))+
+  ylab('Call Rate per Sighting (call/hour/whale)')+
+  xlab('Week')
+plt
+
+```
+
+**Answer:** Yes! Calls per hour per whale appears to increase over the course of the season. Note that this is a sum of all call types.
+
+**Question:** Does upcall calling rate change over the course of the season?
+
+```{r}
+
+df1 %>%
+  mutate(call_rate = up_dur_hr/num_sighting) %>%
+  ggplot()+
+  geom_point(aes(x = yday, y = call_rate), color = 'black')
+
+```
+
+**Answer:** Maybe. There is a bit of a decline, but also several large outliers. Not nearly as clear as when using the other two call types.
+
+## Gunshot vs MF
+
+**Question:** Is there a consistent ratio between gunshots and mf?
+
+```{r}
+df1 %>%
+  mutate(gm_ratio = num_mf / num_gs) %>%
+  ggplot()+
+  geom_point(aes(x = yday, y = gm_ratio))
+```
+
+**Answer:** Not really. Maybe around 4-5 for some deployments, but not all and highly variable...
+
+**Question:** Is there a consistent ratio between mf and upcalls? Could this be used to detect/predict socializing behaviour?
+
+```{r}
+df1 %>%
+  mutate(gm_ratio = num_mf / num_up) %>%
+  ggplot()+
+  geom_point(aes(x = yday, y = gm_ratio, color = social))
+```
+
+**Answer:** Yes! Make sure to double check the data - maybe too many points??
+
+## Abundance vs seasonality
+
+**Question:** Does abundance change over the season?
+
+```{r}
+df1 %>%
+  ggplot()+
+  geom_point(aes(x = yday, y = num_sighting))
+```
+
+**Answer:** Likely not...
+
+## Demographic vs seasonality
+
+**Question:** Does male:female ratio change over the season?
+
+```{r}
+df1 %>%
+  ggplot()+
+  geom_point(aes(x = yday, y = 1/ratio_female_male))
+```
+
+**Answer:** Looks like it's more variable initially and converges over the course of the season
+
+
+
+
+## Pair plots for identifying patterns
+Making the pairs plots sighting and calls
+```{r}
+ dfs = subset(df1, select=c('num_sighting',
+                           'up_dur_hr',
+                           'gs_dur_hr',
+                           'mf_dur_hr',
+                           'yday',
+                           'juvenile_female',
+                           'juvenile_male',
+                           'adult_male',
+                           'adult_female'))
+ pairs(dfs)
+```
+
+calls to behaviour
+```{r}
+dfs = subset(df1, select=c('up_dur_hr',
+                          'gs_dur_hr',
+                          'mf_dur_hr',
+                          'yday',
+                          'foraging',
+                          'social',
+                          'other_bhv',
+                          'social_sag',
+                          'social_notsag',
+                          'entg_eff',
+                          'mom_calf'))
+pairs(dfs)
+```
+
+2017 the difference between dep 19 and 20 from the rest
+looking at behaviour in 2017 with calls
+```{r}
+# library(tidyverse)
+# library(dplyr)
+# yr17 = df %>%
+#   filter(year == '2017')
+# yr2017s = subset(yr17, select = c('up_dur_hr',
+#                           'gs_dur_hr',
+#                           'mf_dur_hr',
+#                           'SUB_FD',
+#                           'DFCN',
+#                           'BOD_CNT',
+#                           'SAG',
+#                           'ROLL',
+#                           'HD_LFT'))
+# pairs(yr2017s)
+```
+
+looking at behaviour in 2018 with calls
+```{r}
+# yr18 = df %>%
+#   filter(year == '2018')
+# yr2018s = subset(yr18, select = c('up_dur_hr',
+#                           'gs_dur_hr',
+#                           'mf_dur_hr',
+#                           'SUB_FD',
+#                           'DFCN',
+#                           'BOD_CNT',
+#                           'SAG',
+#                           'ROLL',
+#                           'HD_LFT'))
+# pairs(yr2018s)
+```
+
+## t-test for duration
+```{r}
+# shapiro.test(df$duration)
+# d = sum(df$duration)
+# meand = d/18
+# meand = meand/60/60
+# t.test(df$duration/60/60, conf.int = 0.95)
+# boxplot(df$duration/60/60)
+```
+
+## POOLED t-Tests for comparing all variables of interest among the two years
+are number of whales similar among years?
+t-test on means for comparing sighted whales per year
+```{r}
+# sight17 = df1 %>%
+#   filter(year == '2017') %>%
+#   select(num_sighting)
+#    
+# sight18 = df1 %>%
+#   filter(year == '2018') %>%
+#   select(num_sighting)
+#  
+# 
+# t.test(sight17, sight18, var.equal = TRUE, conf.level = 0.95)
+# # b1 = boxplot(sight17)
+# # b2 = boxplot(sight18)
+
+```
+thus yes, because they are not statisitcally significant 
+
+are the number of gs call similar among years?
+t-test on means for comparing gs calls per year
+```{r}
+# c17 = df1 %>%
+#   filter(year == '2017') %>%
+#   select(gs_dur_hr)
+# 
+# c18 = df1 %>%
+#   filter(year == '2018') %>%
+#   select(gs_dur_hr)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+thus yes, because they are not statisitcally significant 
+
+are the number of up call similar among years?
+t-test on means for comparing up calls per year
+```{r}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(up_dur_hr)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(up_dur_hr)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+thus yes, because they are not statisitcally significant 
+
+are the number of mf call similar among years?
+t-test on means for comparing mf calls per year
+```{r}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(mf_dur_hr)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(mf_dur_hr)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# # b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+thus yes, because they are not statisitcally significant 
+
+are the feeding behaviour reports similar among years?
+t-test on means for comparing feeding per year
+```{r}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(feed)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(feed)
+#  
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+thus yes, because they are not statisitcally significant
+
+are the social behaviour reports similar among years?
+t-test on means for comparing social per year
+```{r}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(social)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(social)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+thus yes, because they are not statisitcally significant
+
+are the other behaviour reports similar among years?
+t-test on means for comparing feeding per year
+```{r}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(other_behv)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(other_behv)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# # b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+thus yes, because they are not statisitcally significant
+
+are the observed ages similar among years?
+t-test on means for comparing ages per year - juv
+```{r}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(sum_juvenile)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(sum_juvenile)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+thus yes, because they are not statisitcally significant
+
+are the observed ages similar among years?
+t-test on means for comparing ages per year - adult
+```{r}
+# df2=df%>%
+#   mutate(sum_adult=adult_female+adult_male)
+# 
+# c17 = df2 %>%
+#   filter(year == '2017') %>%
+#   select(sum_adult)
+# 
+# c18 = df2 %>%
+#   filter(year == '2018') %>%
+#   select(sum_adult)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# # b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+significant for 0.05 = alpha, this is because it was significant for the females, see t-test below of just adult females 
+
+are the observed ages similar among sexes?
+t-test on means for comparing ages per year - female
+```{r}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(sum_female)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(sum_female)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# # b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+thus yes, because they are not statisitcally significant
+
+are the observed ages similar among years?
+t-test on means for comparing ages per year - male
+```{r}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(sum_male)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(sum_male)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+thus yes, because they are not statisitcally significant
+
+are the observed sex-ages similar among years?
+t-test on means for comparing sex-ages per year - adult female
+```{r}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(adult_female)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(adult_female)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+significant if alpha = 0.05
+
+
+are the observed sex-ages similar among years?
+t-test on means for comparing sex-ages per year - adult male
+```{r}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(adult_male)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(adult_male)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+thus yes because they are not statisitcally significant
+
+are the durations similar among years?
+t-test on means for comparing durations per year
+```{r}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   select(duration)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   select(duration)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+thus yes, because they are not statisitcally significant
+
+are the call rates similar among years?
+t-test on means for comparing call rates per year
+```{r}
+# c17 = df %>%
+#   filter(year == '2017') %>%
+#   mutate(call_rate = sum_calls_dur*60*60/num_sighting)%>%
+#   select(call_rate)
+# 
+# c18 = df %>%
+#   filter(year == '2018') %>%
+#   mutate(call_rate = sum_calls_dur*60*60/num_sighting) %>%
+#   select(call_rate)
+# 
+# t.test(c17, c18, var.equal = TRUE, conf.level = 0.95)
+# # 
+# # b1 = boxplot(c17)
+# b2 = boxplot(c18)
+```
+thus, yes because they are not statsitcally significant 
+
+## Regressions for seasonality 
+basic regressions with season as the x-asis
+
+are sightings similar over the season?
+```{r}
+# lm = lm(df$num_sighting~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+
+are gs_dur_hr calls similar over the season?
+```{r}
+# lm = lm(df$gs_dur_hr~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+NO, significant
+
+are up_dur_hr calls similar over the season? 
+```{r}
+# lm = lm(df$up_dur_hr~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+
+are mf_dur_hr calls similar over the season?
+```{r}
+# lm = lm(df$mf_dur_hr~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+NO, significant
+
+are feed behaviour similar over the season?
+```{r}
+# lm = lm(df$feed~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+NO, significant
+
+are social behaviour similar over the season?
+```{r}
+# lm = lm(df$social~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+NO, significant
+
+are other behaviour similar over the season?
+```{r}
+# lm = lm(df$other_behv~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+
+are age-juv similar over the season?
+```{r}
+# lm = lm(df$sum_juvenile~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+
+are age-adult similar over the season?
+```{r}
+# df= df %>%
+#   mutate(sum_adult = adult_female+adult_male)
+# lm = lm(df$sum_adult~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+
+are sex-female similar over the season?
+```{r}
+# lm = lm(df$sum_female~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+
+are sex-male similar over the season?
+```{r}
+# lm = lm(df$sum_male~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+
+are adult female similar over the season?
+```{r}
+# lm = lm(df$adult_female~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+
+are adult male similar over the season?
+```{r}
+# lm = lm(df$adult_male~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+
+are durations similar over the season?
+```{r}
+# lm = lm(df$duration~df$yday)
+# anova(lm) 
+# summary(lm)
+```
+
+are call rates similar over the season?
+```{r}
+# df = df %>%
+#   mutate(call_rate = sum_calls_dur*60*60/num_sighting)
+# lm = lm(df$call_rate~df$yday)
+# anova(lm)
+# summary(lm)
+```
+NO, significant
+
+## Regressions over space (latitude)
+basic regressions with latitude as the x-asis
+
+are sightings similar over latitude?
+```{r}
+# lm = lm(df$num_sighting~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are gs_dur_hr calls similar over latitude?
+```{r}
+# lm = lm(df$gs_dur_hr~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are up_dur_hr calls similar over latitude?
+```{r}
+# lm = lm(df$up_dur_hr~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are mf_dur_hr calls similar over latitude?
+```{r}
+# lm = lm(df$mf_dur_hr~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are feed behaviour similar over latitude?
+```{r}
+# lm = lm(df$feed~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are social behaviour similar over latitude?
+```{r}
+# lm = lm(df$social~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are other behaviour similar over latitude?
+```{r}
+# lm = lm(df$other_behv~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are age-juv similar over latitude?
+```{r}
+# lm = lm(df$sum_juvenile~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are age-adult similar over latitude?
+```{r}
+# df= df %>%
+#   mutate(sum_adult = adult_female+adult_male)
+# lm = lm(df$sum_adult~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are sex-female similar over latitude?
+```{r}
+# lm = lm(df$sum_female~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are sex-male similar over latitude?
+```{r}
+# lm = lm(df$sum_male~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are adult female similar over latitude?
+```{r}
+# lm = lm(df$adult_female~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are adult male similar over latitude?
+```{r}
+# lm = lm(df$adult_male~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are durations similar over latitude?
+```{r}
+# lm = lm(df$duration~df$lat)
+# anova(lm) 
+# summary(lm)
+```
+
+are call rates similar over latitude?
+```{r}
+# df = df %>%
+#   mutate(call_rate = sum_calls_dur*60*60/num_sighting)
+# lm = lm(df$call_rate~df$lat)
+# anova(lm)
+# summary(lm)
+```
+
+
+
+## Regressions that were significant 
+basic regressions and anova tests that were significant 
+```{r}
+# # i don like this tho, many whales does not imply all each making a single #sound
+# lm = lm(df$sum_calls~df$num_sighting)
+#  anova(lm) #SIGNIFICANT now, wasnt before added the rest of dep 16 data
+#  summary(lm) #Rsquare = 0.2334, 0.1823
+#  cor(x=df$num_sighting, y=df$sum_calls)
+#  
+#  lm = lm(df$sum_calls~df$adult_male)
+#  anova(lm) #SIGNIFICANT!!!!!! 
+#  summary(lm) #Rsquared = 0.3009, 0.2543
+#  
+# #i think this is the key to saying that the number of males depends on the
+# # the number of mf calls there are 
+#  lm = lm(df$num_mf~df$adult_male)
+#  anova(lm) #SIGNIFICANT!!!!!
+#  summary(lm) #Rsquared = 0.3419, 0.298
+#  #plot(lm)
+#  lm = lm(df$mf_dur_hr~df$adult_male)
+#  anova(lm) #SIGNIFICANT!!!!!
+#  
+#  lm = lm(df$mf_dur_hr~df$gs_dur_hr)
+#  #plot(lm)
+#  anova(lm) #SIGNIFICANT!!!!!!
+#  summary(lm)
+#  
+#  lm = lm(df$mf_dur_hr~df$adult_male+df$juvenile_male+df$num_sighting+df$gs_dur_hr)
+#  anova(lm) #SIGNIFICANT!!!!!!
+#  
+#  lm2a = lm(df$num_mf~df$adult_male+df$juvenile_male)
+#  anova(lm2a) #BOTH ARE SIGNIFICANT!!!!!
+# #males are not making midfrequency calls
+#  summary(lm2a) #rsquared = 0.4977, 0.4259 
+#  #plot(lm2a)
+#  
+#  lm2b = lm(df$mf_dur_hr~df$adult_male)
+#  anova(lm2b) #SIGNIFICANT!!!!!!
+#  summary(lm2b)
+#  
+#  lm4 = lm(df$mf_dur_hr~df$num_sighting)
+#  anova(lm4) #SIGNIFICANT!!!!well duh most of the whales are male
+#  summary(lm4)
+```
