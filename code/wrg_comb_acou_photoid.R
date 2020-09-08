@@ -8,7 +8,7 @@ library(dplyr)
 library(stringr)
 
 # read in the data files
-acou_df = readRDS("data/interim/all_noaa_acoustic.rds")
+acou_df = readRDS("data/processed/all_noaa_acoustic.rds")
   
 id_df = readRDS("data/processed/all_noaa_photoid.rds")
 
@@ -214,8 +214,6 @@ df_test = subset(acou_df, select = c("id","yday"))
 df_test = df_test[!duplicated(df_test), ]
 df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
 
-
-
 # remove columns that aren't behaviours
 drops <- c("WH_CHN","BLK_BEL","WH_BEL","BLK_CHN","FEM","MALE","SUCTG")
 df = df[ , !(names(df) %in% drops)]
@@ -233,40 +231,40 @@ df$social = (df$SAG+
                df$BOD_CNT+
                df$ROLL+
                df$BEL_UP+
-               df$APPR+
+               # df$APPR+
                df$`BEL/BEL`+
                df$LBTL+
                df$UW_EXH+
                df$BRCH+
-               df$BUBLS+
+               # df$BUBLS+
                df$TL_SLSH+
                df$RACE+
                df$FCL)
 #df$social = df$social/df$num_sightings
-df$social_notsag = (df$BOD_CNT+
-                      df$ROLL+
-                      df$BEL_UP+
-                      df$`BEL/BEL`+
-                      df$LBTL+
-                      df$UW_EXH+
-                      df$BRCH+
-                      df$BUBLS+
-                      df$TL_SLSH)
-#df$social_notsag = (df$social_notsag/df$num_sightings)
-df$social_sag = (df$SAG+
-                   df$FCL+
-                   df$APPR+
-                   df$RACE)
+# df$social_notsag = (df$BOD_CNT+
+#                       df$ROLL+
+#                       df$BEL_UP+
+#                       df$`BEL/BEL`+
+#                       df$LBTL+
+#                       df$UW_EXH+
+#                       df$BRCH+
+#                       # df$BUBLS+
+#                       df$TL_SLSH)
+# #df$social_notsag = (df$social_notsag/df$num_sightings)
+# df$social_sag = (df$SAG+
+#                    df$FCL+
+#                    # df$APPR+
+#                    df$RACE)
 #df$social_sag = df$social_sag/df$num_sightings
 df$other_bhv= (df$MUD+
                    df$MOPN+
                    df$DFCN+
                    df$HDLFT+
-                   df$`SUB_FD?`+
+                   # df$`SUB_FD?`+
                    df$AVD+
                    df$FL+
-                   df$POST+
-                   df$UNUSUAL_BEH)
+                   df$POST)#+
+                   # df$UNUSUAL_BEH)
 #df$other_bhv = df$other_bhv/df$num_sightings
 df$mom_calf = (df$CALF+
                  df$`CALF_W/MOM`+
@@ -293,10 +291,3 @@ df= tmp
 
 # save file 
 saveRDS(df, file = 'data/processed/proc_acou_photoid.rds')
-
-#df = readRDS('data/processed/proc_acou_photoid.rds')
-dfs = id_df %>%
-  filter(date == '2017-06-29')
-table(dfs$EGNO)
-sum(table(dfs$EGNO))
-unique(dfs$EGNO)
