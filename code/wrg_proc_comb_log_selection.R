@@ -13,7 +13,7 @@ log = read_excel('data/raw/acoustic/position/noaa_sono_positions_ALL.xlsx')
 sel = readRDS('data/interim/all_noaa_selections.rds')
 
 # output file 
-ofile = 'data/interim/all_noaa_acoustic.rds'
+ofile = 'data/processed/all_noaa_acoustic.rds'
 
 # process
 
