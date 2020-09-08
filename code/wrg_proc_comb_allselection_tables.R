@@ -4,7 +4,7 @@
 # input -------------------------------------------------------------------
 
 # defines input directory
-idir = 'data/raw/acoustic/'
+idir = 'data/raw/acoustic'
 
 # defines output directory
 odir = 'data/interim/'
@@ -74,6 +74,7 @@ df = df[!(df$id=="2018_noaa_DEP07"),]
 df = df[!(df$id=="2018_noaa_DEP13"),]
 df = df[!(df$id=="2018_noaa_DEP14"),]
 df = df[!(df$id=="2019_noaa_DEP75b"),]
+df = df[df$id !='2017_noaa_DEP17',]
 
 # save data frame
 saveRDS(df, file = ofile)
