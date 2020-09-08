@@ -8,7 +8,7 @@ library(tidyverse)
 # files
 # read in photo-id files
 noa1718 = read_excel('data/raw/visual/photo-id/2020-05-20-FranklinNEFSCGSL2017-2018DatawithAssocAgeSex.xlsx')
-noa19 = read.csv('data/raw/visual/photo-id/2019NOAAGSL_sightings.csv')
+noa19 = read.csv('data/raw/visual/photo-id/2019NOAAGSL_sightingsUPDATED.csv')
 
 # out put file
 ofile = 'data/interim/all_noaa_photoid_comb.rds'
@@ -72,7 +72,7 @@ tmp = noa19 %>%
     month = SightingMonth,
     day = SightingDay,
     time = SightingTime,
-    datetime = as.POSIXct(DateTime, format = "%Y-%m-%d %H:%M:%S", tz = 'EST'),
+    datetime = as.POSIXct(DateTime, format = "%m/%d/%Y %H:%M", tz = 'EST'),
     lat = Latitude,
     lon = Longitude,
     age = AgeClass,
@@ -81,6 +81,9 @@ tmp = noa19 %>%
     )
 
 noa19 = tmp
+
+# remove bowhead sightings
+noa19 = noa19[!(noa19$EGNO=="BOWH"),]
 
 # change NA ages to 'NA' so data can read NA as a type of age
 noa19$age[is.na(noa19$age)] = 'NA'
