@@ -2,23 +2,33 @@
 # combining and warngling processed NOAA 2017, 2018, 2019 acoustic and photo-id
 # data into the complete data file for drawing results and conclusions
 
-# libraries
+# libraries ---------------------------------------------------------------
+
 library(tidyverse)
 library(dplyr)
 library(stringr)
 
-# read in the data files
+# input -------------------------------------------------------------------
+
+# read in processed acoustic data file
 acou_df = readRDS("data/processed/all_noaa_acoustic.rds")
   
+# read in processed photo-id data file
 id_df = readRDS("data/processed/all_noaa_photoid.rds")
 
-# process
-# process
+# setup -------------------------------------------------------------------
+
+# output file name
+ofile = 'data/processed/proc_acou_photoid.rds'
+
+# process -----------------------------------------------------------------
+
 # count the sightings per deployment
 vis = count(id_df, id)
-vis
 
-# replace ga for gs and mg for mf
+# adding acoustic data to data frame 
+
+# replace miss-spelled call names
 acou_df$call_type[acou_df$call_type == 'ga'] = 'gs'
 acou_df$call_type[acou_df$call_type == 'mg'] = 'mf'
 acou_df$call_type[acou_df$call_type == 'mf '] = 'mf'
@@ -41,6 +51,8 @@ duration = acou_df %>%
   filter(call_type == 'START') %>%
   select(c('id','duration'))
 duration = duration[!duplicated(duration$id), ]
+
+# adding demogrpahic data to data frame
 
 # merging sightings with number of calls for up, mf and gs
 df = merge(x = vis, y = up, by.x = 'id', by.y = 'id', all.x = TRUE)
@@ -74,8 +86,8 @@ df = df %>%
     num_gs = num_gs,
     duration = duration)
 
-# count the number of juvenile female, juvenile male, adult female, adult male
-# per deployment 
+# count the number of juvenile female, juvenile male, adult female, adult male,
+# calf, unknown age, unknown age per deployment 
 jf = id_df %>%
   filter(age == 'J') %>%
   filter(sex == 'F') %>%
@@ -124,6 +136,8 @@ df = df %>% rename(unknown_sex = n)
 df = merge(x = df, y = una, by.x = 'id', by.y = 'id', all.x = TRUE)
 df = df %>% rename(unknown_age = n)
 
+# adding behaviour data to data frame 
+
 # separate multiple behaviours into rows
 tmp = separate_rows(id_df, behaviour, sep = ",")
 
@@ -163,6 +177,77 @@ df_test = df_test %>%
 colnames(df_test)[1] = "id"
 
 df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# recategorizing behviours (lumping)
+df$foraging = (df$SUB_FD+
+                 df$MCLSG+
+                 df$SKM_FD+
+                 df$CO_FD+
+                 df$LEAD)
+#df$foraging = df$foraging/df$num_sightings
+df$social = (df$SAG+
+               df$BOD_CNT+
+               df$ROLL+
+               df$BEL_UP+
+               # df$APPR+
+               df$`BEL/BEL`+
+               df$LBTL+
+               df$UW_EXH+
+               df$BRCH+
+               # df$BUBLS+
+               df$TL_SLSH+
+               df$RACE+
+               df$FCL)
+#df$social = df$social/df$num_sightings
+# df$social_notsag = (df$BOD_CNT+
+#                       df$ROLL+
+#                       df$BEL_UP+
+#                       df$`BEL/BEL`+
+#                       df$LBTL+
+#                       df$UW_EXH+
+#                       df$BRCH+
+#                       # df$BUBLS+
+#                       df$TL_SLSH)
+# #df$social_notsag = (df$social_notsag/df$num_sightings)
+# df$social_sag = (df$SAG+
+#                    df$FCL+
+#                    # df$APPR+
+#                    df$RACE)
+#df$social_sag = df$social_sag/df$num_sightings
+df$other_bhv= (df$MUD+
+                 df$MOPN+
+                 df$DFCN+
+                 df$HDLFT+
+                 # df$`SUB_FD?`+
+                 df$AVD+
+                 df$FL+
+                 df$POST)#+
+# df$UNUSUAL_BEH)
+#df$other_bhv = df$other_bhv/df$num_sightings
+df$mom_calf = (df$CALF+
+                 df$`CALF_W/MOM`+
+                 df$`CALF_W/OTHERS`+
+                 df$`W/CALF`+
+                 df$NURS)
+#df$mom_calf = df$mom_calf/df$num_sightings
+df$entg_eff = (df$AGG_VSL+
+                 df$DSENTGL_ATT+
+                 df$ENTGL+
+                 df$FRST_ENTGL+
+                 df$LN_GONE+
+                 df$NOT_FL+
+                 df$PRT_DSENTGL+
+                 df$SATTG_GONE)
+#df$entg_eff = df$entg_eff/df$num_sightings
+drop <- c("AGG_VSL","APPR","AVD","BEL_UP","BEL/BEL","BOD_CNT","BRCH","BUBLS",
+          "CALF","CALF_W/MOM","CALF_W/OTHERS","CO_FD","DFCN","DSENTGL_ATT","ENTGL","FCL",
+          "FL","FRST_ENTGL","HDLFT","LBTL","LEAD","LN_GONE","MCLSG","MOPN","MUD","NONE",
+          "NOT_FL","NURS","POST","PRT_DSENTGL","RACE","ROLL","SAG","SATTG_GONE","SKM_FD",
+          "SUB_FD","SUB_FD?","TL_SLSH","UNUSUAL_BEH","UW_EXH","W/CALF","W/CETACEAN")
+tmp = df[,!(names(df) %in% drop)]
+df= tmp
+
+# adding other variables of interest ( based off of current variables) to data frame
 
 # convert calls to calls per hour for each deployment duration
 tmp = as.numeric(df$duration)
@@ -219,75 +304,5 @@ drops <- c("WH_CHN","BLK_BEL","WH_BEL","BLK_CHN","FEM","MALE","SUCTG")
 df = df[ , !(names(df) %in% drops)]
 colnames(df)
 
-# recategorizing behviours (lumping)
-
-df$foraging = (df$SUB_FD+
-                 df$MCLSG+
-                 df$SKM_FD+
-                 df$CO_FD+
-                 df$LEAD)
-#df$foraging = df$foraging/df$num_sightings
-df$social = (df$SAG+
-               df$BOD_CNT+
-               df$ROLL+
-               df$BEL_UP+
-               # df$APPR+
-               df$`BEL/BEL`+
-               df$LBTL+
-               df$UW_EXH+
-               df$BRCH+
-               # df$BUBLS+
-               df$TL_SLSH+
-               df$RACE+
-               df$FCL)
-#df$social = df$social/df$num_sightings
-# df$social_notsag = (df$BOD_CNT+
-#                       df$ROLL+
-#                       df$BEL_UP+
-#                       df$`BEL/BEL`+
-#                       df$LBTL+
-#                       df$UW_EXH+
-#                       df$BRCH+
-#                       # df$BUBLS+
-#                       df$TL_SLSH)
-# #df$social_notsag = (df$social_notsag/df$num_sightings)
-# df$social_sag = (df$SAG+
-#                    df$FCL+
-#                    # df$APPR+
-#                    df$RACE)
-#df$social_sag = df$social_sag/df$num_sightings
-df$other_bhv= (df$MUD+
-                   df$MOPN+
-                   df$DFCN+
-                   df$HDLFT+
-                   # df$`SUB_FD?`+
-                   df$AVD+
-                   df$FL+
-                   df$POST)#+
-                   # df$UNUSUAL_BEH)
-#df$other_bhv = df$other_bhv/df$num_sightings
-df$mom_calf = (df$CALF+
-                 df$`CALF_W/MOM`+
-                 df$`CALF_W/OTHERS`+
-                 df$`W/CALF`+
-                 df$NURS)
-#df$mom_calf = df$mom_calf/df$num_sightings
-df$entg_eff = (df$AGG_VSL+
-                 df$DSENTGL_ATT+
-                 df$ENTGL+
-                 df$FRST_ENTGL+
-                 df$LN_GONE+
-                 df$NOT_FL+
-                 df$PRT_DSENTGL+
-                 df$SATTG_GONE)
-#df$entg_eff = df$entg_eff/df$num_sightings
-drop <- c("AGG_VSL","APPR","AVD","BEL_UP","BEL/BEL","BOD_CNT","BRCH","BUBLS",
-"CALF","CALF_W/MOM","CALF_W/OTHERS","CO_FD","DFCN","DSENTGL_ATT","ENTGL","FCL",
-"FL","FRST_ENTGL","HDLFT","LBTL","LEAD","LN_GONE","MCLSG","MOPN","MUD","NONE",
-"NOT_FL","NURS","POST","PRT_DSENTGL","RACE","ROLL","SAG","SATTG_GONE","SKM_FD",
-"SUB_FD","SUB_FD?","TL_SLSH","UNUSUAL_BEH","UW_EXH","W/CALF","W/CETACEAN")
-tmp = df[,!(names(df) %in% drop)]
-df= tmp
-
 # save file 
-saveRDS(df, file = 'data/processed/proc_acou_photoid.rds')
+saveRDS(df, file = ofile)
