@@ -61,7 +61,7 @@ noa1718 = tmp
 
 # adding datetime column
 tmp = paste0(noa1718$year,"-",noa1718$month,"-",noa1718$day," ",noa1718$time)
-noa1718$datetime = as.POSIXct(tmp, format = "%Y-%m-%d %H%M", tz = 'EST')
+noa1718$datetime = as.POSIXct(tmp, format = "%Y-%m-%d %H%M", tz = "Etc/GMT+4")
 
 # place all numeric ages into categorical age groups calf is 0 years old or 
 # categorized as C (C=0) juvenile is 1 to 9 years old or categorized as J 
@@ -84,7 +84,7 @@ tmp = rbind(noa1718sub, noa1718sub2)
 
 noa1718 = tmp
 
-# for 2019 data from NOAA (Tim Cole)
+# for 2019 data from NOAA (Tim ColeLeah Crowe)
 tmp = noa19 %>%
   transmute(
     EGNO = EGNO,
@@ -92,7 +92,7 @@ tmp = noa19 %>%
     month = SightingMonth,
     day = SightingDay,
     time = SightingTime,
-    datetime = as.POSIXct(DateTime, format = "%m/%d/%Y %H:%M", tz = 'EST'),
+    datetime = as.POSIXct(DateTime, format = "%m/%d/%Y %H:%M", tz = "Etc/GMT+4"),
     lat = Latitude,
     lon = Longitude,
     age = AgeClass,
@@ -114,29 +114,26 @@ id_df = rbind(noa1718, noa19)
 # create a date column
 id_df$date = as.Date(id_df$datetime)
 
+# convert datetime to UTC from EDT
+# note to check what time zones r recognizes type 'OlsonNames()' in console
+attributes(id_df$datetime)$tzone = "UTC"
+
 # save id dataframe - just as a precaution
 saveRDS(id_df, ofilea)
 
 # wrangling the data
 
-# make photo-id data and acoustic data in the same time zone UTC,acoustic 
-# is already in UTC so only photo-id needs to be in UTC
-id_df$date = as.POSIXct(id_df$date, tz = "EST")
-attributes(id_df$date)$tzone = "UTC"
-id_df$datetime = as.POSIXct(id_df$datetime, tz = "EST")
-attributes(id_df$datetime)$tzone = "UTC"
-
-# covert dates to Date objects
-id_df$date = as.Date(id_df$date)
+# covert acoustic data dates to Date objects
 acou_df$date = as.Date(acou_df$date)
 
-# identifying unique deployment dates
-#dep_dates = unique(acou_df$date)
-#dep_dates
-
-# subset photo-id df to only consider dates on which sonobuoys were deployed
-#id_dep = id_df %>% filter(date %in% dep_dates)
-#id_dep
+# in progress to figure out how to subset the visual data by time WORK IN PROGRESS!!!
+# # identifying unique deployment dates
+# dep_dates = unique(acou_df$date)
+# dep_dates
+# 
+# # subset photo-id df to only consider dates on which sonobuoys were deployed
+# id_dep = id_df %>% filter(date %in% dep_dates)
+# id_dep
 
 # subsetting acoustic data to properly subset photo-id data (have corresponding time 
 # and distance ranges)
