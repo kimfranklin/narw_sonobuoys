@@ -52,39 +52,24 @@ duration = acou_df %>%
   select(c('id','duration'))
 duration = duration[!duplicated(duration$id), ]
 
-# adding demogrpahic data to data frame
-
 # merging sightings with number of calls for up, mf and gs
 df = merge(x = vis, y = up, by.x = 'id', by.y = 'id', all.x = TRUE)
 df = df %>% 
   transmute(
     id = id, 
     num_sighting = n.x,
-    num_up = n.y) 
+    up = n.y) 
+
 df = merge(x = df, y = mf, by.x = 'id', by.y = 'id', all.x = TRUE)
-df = df %>% 
-  transmute(
-    id = id, 
-    num_sighting = num_sighting,
-    num_up = num_up,
-    num_mf = n)
+df = df %>% rename(mf = n)
+
 df = merge(x = df, y = gs, by.x = 'id', by.y = 'id', all.x = TRUE)
-df = df %>% 
-  transmute(
-    id = id, 
-    num_sighting = num_sighting,
-    num_up = num_up,
-    num_mf = num_mf,
-    num_gs = n)
+df = df %>% rename(gs = n)
+
 df = merge(x = df, y = duration, by.x = 'id', by.y = 'id', all.x = TRUE)
-df = df %>% 
-  transmute(
-    id = id, 
-    num_sighting = num_sighting,
-    num_up = num_up,
-    num_mf = num_mf,
-    num_gs = num_gs,
-    duration = duration)
+df = df %>% rename(duration = duration)
+
+# adding demographic data to data frame
 
 # count the number of juvenile female, juvenile male, adult female, adult male,
 # calf, unknown age, unknown age per deployment 
@@ -178,13 +163,16 @@ colnames(df_test)[1] = "id"
 
 df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
 
+# change all NAs to 0 
+df[is.na(df)] = 0
+
 # recategorizing behviours (lumping)
 df$foraging = (df$SUB_FD+
                  df$MCLSG+
                  df$SKM_FD+
                  df$CO_FD+
                  df$LEAD)
-#df$foraging = df$foraging/df$num_sightings
+
 df$social = (df$SAG+
                df$BOD_CNT+
                df$ROLL+
@@ -198,7 +186,7 @@ df$social = (df$SAG+
                df$TL_SLSH+
                df$RACE+
                df$FCL)
-#df$social = df$social/df$num_sightings
+
 # df$social_notsag = (df$BOD_CNT+
 #                       df$ROLL+
 #                       df$BEL_UP+
@@ -208,12 +196,12 @@ df$social = (df$SAG+
 #                       df$BRCH+
 #                       # df$BUBLS+
 #                       df$TL_SLSH)
-# #df$social_notsag = (df$social_notsag/df$num_sightings)
+
 # df$social_sag = (df$SAG+
 #                    df$FCL+
 #                    # df$APPR+
 #                    df$RACE)
-#df$social_sag = df$social_sag/df$num_sightings
+
 df$other_bhv= (df$MUD+
                  df$MOPN+
                  df$DFCN+
@@ -221,15 +209,17 @@ df$other_bhv= (df$MUD+
                  # df$`SUB_FD?`+
                  df$AVD+
                  df$FL+
-                 df$POST)#+
+                 df$POST+
+                 df$FLIP+
+                 df$WIWO)#+
 # df$UNUSUAL_BEH)
-#df$other_bhv = df$other_bhv/df$num_sightings
+
 df$mom_calf = (df$CALF+
                  df$`CALF_W/MOM`+
                  df$`CALF_W/OTHERS`+
                  df$`W/CALF`+
                  df$NURS)
-#df$mom_calf = df$mom_calf/df$num_sightings
+
 df$entg_eff = (df$AGG_VSL+
                  df$DSENTGL_ATT+
                  df$ENTGL+
@@ -238,49 +228,33 @@ df$entg_eff = (df$AGG_VSL+
                  df$NOT_FL+
                  df$PRT_DSENTGL+
                  df$SATTG_GONE)
-#df$entg_eff = df$entg_eff/df$num_sightings
+
 drop <- c("AGG_VSL","APPR","AVD","BEL_UP","BEL/BEL","BOD_CNT","BRCH","BUBLS",
           "CALF","CALF_W/MOM","CALF_W/OTHERS","CO_FD","DFCN","DSENTGL_ATT","ENTGL","FCL",
           "FL","FRST_ENTGL","HDLFT","LBTL","LEAD","LN_GONE","MCLSG","MOPN","MUD","NONE",
           "NOT_FL","NURS","POST","PRT_DSENTGL","RACE","ROLL","SAG","SATTG_GONE","SKM_FD",
-          "SUB_FD","SUB_FD?","TL_SLSH","UNUSUAL_BEH","UW_EXH","W/CALF","W/CETACEAN")
+          "SUB_FD","SUB_FD?","TL_SLSH","UNUSUAL_BEH","UW_EXH","W/CALF","W/CETACEAN","BLK_BEL",
+          "BLK_CHN","FEM","MALE","SUCTG","WH_BEL","WH_CHN","WIWO","FLIP")
 tmp = df[,!(names(df) %in% drop)]
 df= tmp
 
-# adding other variables of interest ( based off of current variables) to data frame
+# change behaviours so that they are rates
+tmp = df$foraging/df$num_sighting
+df$foraging_bhv_whale = tmp
 
-# convert calls to calls per hour for each deployment duration
-tmp = as.numeric(df$duration)
-df$duration = tmp
-df$up_dur_hr = df$num_up/(df$duration/60/60)
-df$mf_dur_hr = df$num_mf/(df$duration/60/60)
-df$gs_dur_hr = df$num_gs/(df$duration/60/60)
+tmp = df$social/df$num_sighting
+df$social_bhv_whale = tmp
 
-# round the sightings per hour to 3 decimal places 
-round(df$up_dur_hr, 3)
-round(df$mf_dur_hr, 3)
-round(df$gs_dur_hr, 3)
+tmp = df$other_bhv/df$num_sighting
+df$other_bhv_bhv_whale = tmp
 
-# change all NAs to 0 
-df[is.na(df)] = 0
+# adding other variables of interest (based off of current variables) to data frame
 
-# seperate the year from the id to make it a new column
+# separate the year from the id to make it a new column
 yr = str_split_fixed(df$id, "_", 2)
-yr
 yr<-yr[,-2] # delete column 2 which is the other half of the id
 df$year = yr
-
-# change the year to numeric instead of character
-df$year = as.numeric(df$year)
-class(df$year)
-
-# other columns of interest added
-df$sum_calls = (df$num_up+df$num_mf+df$num_gs)
-df$ratio_female_male = (df$adult_male/df$adult_female)
-df$sum_calls_dur = (df$sum_calls/df$duration)
-df$sum_juvenile = (df$juvenile_female+df$juvenile_male)
-df$sum_female = (df$juvenile_female+df$adult_female)
-df$sum_male = (df$juvenile_male+df$adult_male)
+df$year = as.numeric(df$year) # change the year to numeric instead of character
 
 #adding lat and lon and date and yday 
 df_test = subset(acou_df, select = c("id","lat"))
@@ -299,10 +273,35 @@ df_test = subset(acou_df, select = c("id","yday"))
 df_test = df_test[!duplicated(df_test), ]
 df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
 
-# remove columns that aren't behaviours
-drops <- c("WH_CHN","BLK_BEL","WH_BEL","BLK_CHN","FEM","MALE","SUCTG")
-df = df[ , !(names(df) %in% drops)]
-colnames(df)
+# call rate (call/hour) - calls per hour for each deployment duration
+tmp = as.numeric(df$duration)
+df$duration = tmp
+df$up_per_hr = df$up/(df$duration/60/60)
+df$mf_per_hr = df$mf/(df$duration/60/60)
+df$gs_per_hr = df$gs/(df$duration/60/60)
+
+# round the sightings per hour to 3 decimal places 
+round(df$up_per_hr, 3)
+round(df$mf_per_hr, 3)
+round(df$gs_per_hr, 3)
+
+# call production rate (call/hour/whale) - calls per hour (deployment duration) per sighted whale
+df$up_per_hr_per_whale = df$up/(df$duration/60/60)/df$num_sighting
+df$mf_per_hr_per_whale = df$mf/(df$duration/60/60)/df$num_sighting
+df$gs_per_hr_per_whale = df$gs/(df$duration/60/60)/df$num_sighting
+
+# round the sightings per hour to 3 decimal places 
+round(df$up_per_hr_per_whale, 3)
+round(df$mf_per_hr_per_whale, 3)
+round(df$gs_per_hr_per_whale, 3)
+
+# other columns of interest added
+df$sum_calls = (df$up+df$mf+df$gs)
+df$ratio_female_male = (df$adult_male/df$adult_female)
+df$sum_calls_dur = (df$sum_calls/df$duration)
+df$sum_juvenile = (df$juvenile_female+df$juvenile_male)
+df$sum_female = (df$juvenile_female+df$adult_female)
+df$sum_male = (df$juvenile_male+df$adult_male)
 
 # save file 
 saveRDS(df, file = ofile)
