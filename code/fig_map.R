@@ -1,20 +1,33 @@
-# thesis_map
+## fig_map.R ##
+# sonobuoy deployment map
 
-# figure directory
-fig_dir = 'figures/'
+# libraries ---------------------------------------------------------------
 
-# input files
-ifile = readRDS("data/processed/sight_dfs.rds")
-df= ifile
-
-#Some useful libraries for plotting
 library(tidyverse)
 library(RColorBrewer)
 library(oce)
 library(mapproj)
 
+# input -------------------------------------------------------------------
+
+# input files
+ifile = readRDS("data/processed/proc_acou_photoid.rds")
+
 # read in map data
 load('data/processed/map_data.rda')
+
+# setup -------------------------------------------------------------------
+
+# data
+df= ifile
+
+# output file 
+ofile = 'sono_map_new.png'
+
+# figure directory
+fig_dir = 'figures/'
+
+# process -----------------------------------------------------------------
 
 # city positions
 cities = data.frame(
@@ -25,7 +38,7 @@ cities = data.frame(
 
 # gsl map
 gsl = ggplot() + 
-  coord_map(xlim = c(-65,-63), ylim = c(47,48.75))+
+  coord_map(xlim = c(-65,-62.1), ylim = c(47.25,48.75))+
   
   # land and bathymetry
   geom_polygon(data = nam, aes(x = long, y = lat, group = group),
@@ -44,13 +57,13 @@ gsl = ggplot() +
   # city labels
   geom_point(data = cities, aes(x = lon, y = lat), color = "darkslategrey", size = 1)+
   geom_text(data = cities, aes(x = lon, y = lat, label = name), color =
-              "darkslategrey", nudge_y = 0.07, size = 3, family = "serif")+
+              "darkslategrey", nudge_y = 0.07, size = 4, family = "serif")+
   
   # sonobuoy positions
   geom_point(data = df, aes(x = lon, y = lat,
                             shape = as.character(year)), size = 3)+
-  #scale_colour_manual(values = c("black",'red'))+
-  scale_shape_manual(values = c(1,2))+
+  #scale_colour_manual(values = c("black","red","blue"))+
+  scale_shape_manual(values = c(1,2,0))+
   
   # formatting
   #ylab("Longitude (N)")+xlab("Latitude (W)")+
@@ -75,5 +88,5 @@ gsl = ggplot() +
 
 gsl
 
-ggsave(gsl, filename = paste0(fig_dir, 'sono_map.png'), 
+ggsave(gsl, filename = paste0(fig_dir, ofile), 
        height = 8, width = 6, dpi = 300)
