@@ -11,16 +11,17 @@ data will be sufficient in the future to derive right whale behaviours with out
 visual aid. 
 
 ## wrangling scripts order
-run the scripts in order astaring with #1 to #5
-1. wrg_proc_comb_allselection_tables.R
-  - produces 'data/interim/all_noaa_selections.rds'
-2. wrg_proc_comb_log_selection.R
-  - produces 'data/processed/all_noaa_acoustic.rds'
-3. wrg_comb_photoid.R
-  - produces 'data/interim/all_noaa_photoid_comb.rds'
-4. wrg_photoid.R
-  - produces 'data/processed/all_noaa_photoid.rds'
-5. wrg_comb_acou_photoid.R
+run the scripts in order staring with #1 to #3 
+1. wrg_acoustic.R
+  - it is wrg_proc_comb_allselection_tables.R combined with 
+  wrg_proc_comb_log_selection.R
+    - it produces 'data/interim/all_noaa_selections.rds' and 
+    'data/processed/all_noaa_acoustic.rds
+2. wrg_photo_id.R 
+  - it is wrg_comb_photoid.R combined with wrg_photoid.R
+    - it produces 'data/interim/all_noaa_photoid_comb.rds' and 
+    'data/processed/all_noaa_photoid.rds'
+3. wrg_comb_acou_photoid.R
   - produces 'data/processed/proc_acou_photoid.rds'
 
 Two data files in interim and three data files in processed should be produced
