@@ -28,7 +28,7 @@ log = read_excel('data/raw/acoustic/position/noaa_sono_positions_ALL.xlsx')
 # saving output file for selection tables 
 ofilea = paste0(odir, char, 'selections.rds')
 
-# saving output file for the full complete acousitc data set
+# saving output file for the full complete acoustic data set
 ofileb = 'data/processed/all_noaa_acoustic.rds'
 
 # process -----------------------------------------------------------------
