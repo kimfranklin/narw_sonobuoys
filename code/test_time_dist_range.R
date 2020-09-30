@@ -22,7 +22,7 @@ plot_maps = TRUE
 
 # read in the data
 # sighting effort data
-sight_df = read.csv("data/raw/visual/sightings/sightings_eff_2017-2019.csv")
+sight_df = read.csv("data/raw/visual/sightings/Kim Franklin NEAQ&NEFSC 2017-2019 GoStL effort & cetaceans 05-22-2020.xlsx - KIM_0522.csv")
 
 # complete acoustic data
 acou_df = readRDS('data/processed/all_noaa_acoustic.rds')
@@ -48,7 +48,7 @@ acou_df$date = tmp
 dep_dates = unique(acou_df$date)  
 
 # subset sightings df to only consider dates on which sonobuoys were deployed
-sightings_dep = sight_df %>% filter(date %in% dep_dates)
+#sightings_dep = sight_df %>% filter(date %in% dep_dates)
 
 # change duration to numeric
 tmp = as.numeric(acou_df$duration)
@@ -63,7 +63,7 @@ dep_df = acou_df %>%
     lon = lon, 
     date = date, 
     datetime = datetime_UTC,
-    deplyoment_duration = (duration*60*60)
+    deplyoment_duration = (duration)
   )
 
 # remove duplicated rows
@@ -88,9 +88,8 @@ for(ii in 1:nrow(dep_df)){
 
   # subset by time
   
-  idf = sightings_dep %>% 
+  idf = sight_df %>% 
     filter(datetime > itime-t_buffer & datetime < itime+idur+t_buffer)
-
   
   # subset by space
 
@@ -115,6 +114,12 @@ for(ii in 1:nrow(dep_df)){
 # flatten list to data frame
 df = bind_rows(DF)
 
+# remove sightings not in same day - nope all same day thus the loop is double counting
+tmp = df %>%
+  filter(date %in% dep_dates)
+tmp2 = sight_df %>%
+  filter(date %in% dep_dates)
+  
 # remove dead whale
 #df = df[-grep("FLTG DEAD, TELBUOY", df$behaviour),]
 
@@ -152,29 +157,29 @@ if(plot_maps){
        points(x, y, bg = 'grey', pch = 21)
   )
   
-  with(subset(itrk, name == 'jdmartin'),
-       lines(x, y, col = 'blue')
-  )
-  
-  with(subset(iobs, name == 'jdmartin'),
-       points(x, y, bg = 'blue', pch = 21)
-  )
+  # with(subset(itrk, name == 'jdmartin'),
+  #      lines(x, y, col = 'blue')
+  # )
+  #
+  # with(subset(iobs, name == 'jdmartin'),
+  #      points(x, y, bg = 'blue', pch = 21)
+  # )
   
   # determine gliders deployments
-  igld = subset(itrk, platform == 'slocum')
+  # igld = subset(itrk, platform == 'slocum')
   
-  for(idep in unique(igld$id)){
-    
-    with(subset(itrk, id == idep),
-         lines(x, y, col = 'red')
-    )
-    
-    with(subset(iobs, id == idep),
-         points(x, y, bg = 'red', pch = 21)
-    )
-    
-  }
-  
+  # for(idep in unique(igld$id)){
+  #   
+  #   with(subset(itrk, id == idep),
+  #        lines(x, y, col = 'red')
+  #   )
+  #   
+  #   with(subset(iobs, id == idep),
+  #        points(x, y, bg = 'red', pch = 21)
+  #   )
+  #   
+  # }
+  # 
   # filled circle
   plot_filled_circle(r = dmax)
   
