@@ -17,7 +17,7 @@ noa1718 = read_excel('data/raw/visual/photo-id/2020-05-20-FranklinNEFSCGSL2017-2
 noa19 = read.csv('data/raw/visual/photo-id/2019NOAAGSL_sightingsUPDATED.csv')
 
 # read in processed acoustic deployment data
-acou_df = readRDS('data/processed/all_noaa_acoustic.rds')
+log_df = readRDS('data/processed/log.rds')
 
 # setup -------------------------------------------------------------------
 
@@ -124,7 +124,7 @@ saveRDS(id_df, ofilea)
 # wrangling the data
 
 # covert acoustic data dates to Date objects
-acou_df$date = as.Date(acou_df$date)
+#acou_df$date = as.Date(acou_df$date)
 
 # in progress to figure out how to subset the visual data by time WORK IN PROGRESS!!!
 # # identifying unique deployment dates
@@ -137,32 +137,34 @@ acou_df$date = as.Date(acou_df$date)
 
 # subsetting acoustic data to properly subset photo-id data (have corresponding time 
 # and distance ranges)
-dep_df = acou_df %>% 
-  filter(call_type == 'START') %>%
-  transmute(
-    id = id,
-    lat= lat,
-    lon = lon, 
-    date = date, 
-    #time = as.POSIXct(datetime_UTC, format = "%H:%M:%S"), #as.POSIXct(strptime(datetime_UTC, format = "%Y-%m-%d %H:%M:%S"), format = "%H:%M:%S"), #as.POSIXct(datetime_UTC, format = '%H:%M:%S'), #format(datetime_UTC, "%H:%M:%S"), #format(strptime(datetime_UTC, "%Y-%m-%d %H:%M:%S"), "%H:%M:%S"), #as.POSIXct(substr(datetime_UTC,12,19), tz = "UTC"),
-    datetime = as.POSIXct(datetime_UTC, format = "%Y-%m-%d %H:%M:%S"),
-    duration = (as.numeric(duration)*60*60)
-  )
 
-# remove duplicated rows
-dep_df = dep_df[!duplicated(dep_df$id),]
+# dep_df = acou_df %>% 
+#   filter(call_type == 'START') %>%
+#   transmute(
+#     id = id,
+#     lat= lat,
+#     lon = lon, 
+#     date = date, 
+#     #time = as.POSIXct(datetime_UTC, format = "%H:%M:%S"), #as.POSIXct(strptime(datetime_UTC, format = "%Y-%m-%d %H:%M:%S"), format = "%H:%M:%S"), #as.POSIXct(datetime_UTC, format = '%H:%M:%S'), #format(datetime_UTC, "%H:%M:%S"), #format(strptime(datetime_UTC, "%Y-%m-%d %H:%M:%S"), "%H:%M:%S"), #as.POSIXct(substr(datetime_UTC,12,19), tz = "UTC"),
+#     datetime = as.POSIXct(datetime_UTC, format = "%Y-%m-%d %H:%M:%S"),
+#     duration = (as.numeric(duration)*60*60) ###need to double check this...is it not in seconds already?
+#   )
+# 
+# # remove duplicated rows
+# dep_df = dep_df[!duplicated(dep_df$id),]
+# 
 
 # loop in time and space
-DF = vector('list', length = nrow(dep_df))
-for(ii in 1:nrow(dep_df)){
+DF = vector('list', length = nrow(log_df))
+for(ii in 1:nrow(log_df)){
   
   # get acou_df data
-  ilat = dep_df$lat[ii]
-  ilon = dep_df$lon[ii]
-  idate = dep_df$date[ii]
-  itime = dep_df$datetime[ii]
-  idur = dep_df$duration[ii]
-  idep = dep_df$id[ii]
+  ilat = log_df$lat[ii]
+  ilon = log_df$lon[ii]
+  idate = log_df$date[ii]
+  itime = log_df$datetime[ii]
+  idur = log_df$duration[ii]
+  idep = log_df$id[ii]
   
   # subset sightings by time
   idf = id_df %>% 
