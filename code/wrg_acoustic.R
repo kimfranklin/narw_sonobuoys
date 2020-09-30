@@ -31,6 +31,9 @@ ofilea = paste0(odir, char, 'selections.rds')
 # saving output file for the full complete acoustic data set
 ofileb = 'data/processed/all_noaa_acoustic.rds'
 
+# saving log file for easy access
+ofilec = 'data/processed/log.rds'
+  
 # process -----------------------------------------------------------------
 
 # combining selection tables 
@@ -92,22 +95,67 @@ df = df[df$id !='2017_noaa_DEP17',]
 # save all selection tables combined dataframe - just as a precaution 
 saveRDS(df, file = ofilea)
 
-# combining log with all selections
+# combining log information with all selections
+
+# get duration from selection tables
+# separate start and end call types from call data
+test = df %>%
+  filter(call_type %in% c('START','END'))
+
+# get the difference between each start and end time
+test = test %>%
+  mutate(durationA = End.Time..s. - lag(Begin.Time..s.))
+
+# set na duration to 0
+test$durationA[is.na(test$durationA)] = 0
+
+# set all START call types durations to 0, we don't want to include the time where there's no difar/blacking out
+test$durationA[test$call_type == 'START'] <- 0
+
+# sum the durations by deployment id
+tmp = aggregate(test$durationA, by=list(id = test$id), FUN=sum)
+
+# change duration column name
+colnames(tmp)[which(names(tmp) == "x")] <- "duration"
+
 # fix up log data
 log = log %>% 
-  transmute(date = date, # this is POSIXct POSIXt
+  transmute(date = as.Date(date), # this is POSIXct POSIXt
             # datetime = time, # this is character
             # time_UTC_correct_from_Tim_Cole_gps_records = format(as.POSIXct(`time UTC`, format= "%Y-%m-%d %H:%M:%S"),
             #                   format = "%H:%M:%S"),
-            datetime_UTC = datetime_UTC_correct,
+            datetime = datetime_UTC_correct,
             lat = lat, # this is numeric
             lon = lon, # this is numeric
             yday = yday,
             week = week,
             month = month,
             id = id,
-            duration = duration
+            #duration = duration
   )
+
+# remove deployments  not useful
+log = log[!(log$id=="2017_noaa_DEP17"),]
+log = log[!(log$id=="2018_noaa_DEP07"),]
+log = log[!(log$id=="2018_noaa_DEP13"),]
+log = log[!(log$id=="2018_noaa_DEP14"),]
+log = log[!(log$id=="2018_noaa_DEP17"),]
+log = log[!(log$id=="2018_noaa_DEP18"),]
+log = log[!(log$id=="2019_noaa_DEP75b"),]
+log = log[!(log$id=="2019_noaa_DEP77"),]
+log = log[!(log$id=="2019_noaa_DEP27"),]
+log = log[!(log$id=="2019_noaa_DEP28"),]
+log = log[!(log$id=="2019_noaa_DEP29"),]
+log = log[!(log$id=="2019_noaa_DEP30"),]
+log = log[!(log$id=="2019_noaa_DEP31"),]
+log = log[!(log$id=="2019_noaa_DEP32"),]
+
+# combine calculated duration to log
+tmpa = merge(x = log, y = tmp, by.x = 'id', by.y = 'id', all.x = TRUE)
+log = tmpa
+
+# save changes to log
+saveRDS(log, ofilec)
 
 # merge log with selection table 
 tmp = merge(x = df, y = log, by.x = 'id', by.y = 'id', all.x = TRUE)
