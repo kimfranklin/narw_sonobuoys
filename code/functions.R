@@ -18,6 +18,19 @@ plot_filled_circle = function(x = 0, y = 0, r = 1, fill_col = 'grey', npoints = 
   polygon(tmp, border = NA, col = fill_col)
 }
 
+make_circle = function(x = 0, y = 0, r = 1, npoints = 100){
+  
+  # create circle
+  tt = seq(0,2*pi,length.out = npoints)
+  xx = x + r * cos(tt)
+  yy = y + r * sin(tt)
+  
+  # store coordinates
+  coords = data.frame(x = xx, y = yy)
+  
+  return(coords)
+}
+
 read_selection_table = function(ifile, platform){
   # read selection table from raven
   
