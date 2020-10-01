@@ -15,8 +15,9 @@ run the scripts in order staring with #1 to #3
 1. wrg_acoustic.R
   - it is wrg_proc_comb_allselection_tables.R combined with 
   wrg_proc_comb_log_selection.R
-    - it produces 'data/interim/all_noaa_selections.rds' and 
-    'data/processed/all_noaa_acoustic.rds
+    - it produces 'data/interim/all_noaa_selections.rds', 
+    'data/processed/log.rds' and,
+    'data/processed/all_noaa_acoustic.rds'
 2. wrg_photo_id.R 
   - it is wrg_comb_photoid.R combined with wrg_photoid.R
     - it produces 'data/interim/all_noaa_photoid_comb.rds' and 
@@ -24,4 +25,4 @@ run the scripts in order staring with #1 to #3
 3. wrg_comb_acou_photoid.R
   - produces 'data/processed/proc_acou_photoid.rds'
 
-Two data files in interim and three data files in processed should be produced
+Two data files in interim and four data files in processed should be produced
