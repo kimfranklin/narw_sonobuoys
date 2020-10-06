@@ -28,7 +28,7 @@ ofilea = 'data/interim/all_noaa_photoid_comb.rds'
 ofileb = 'data/processed/all_noaa_photoid.rds'
 
 # maximum km for filtering sightings
-dmax = 15
+dmax = 150
 
 # time added before and after each deployment to filter sightings
 #t_buffer = 60*60*1
