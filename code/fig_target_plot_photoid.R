@@ -28,7 +28,7 @@ log = readRDS('data/processed/log.rds')
 # process -----------------------------------------------------------------
 
 # if directory does not exist make sure it does
-lapply(state.name, function(x) if(!dir.exists('figures/target_plot_photoid')) dir.create('figures/target_plot_photoid'))
+if(!dir.exists('figures/target_plot_photoid')){dir.create('figures/target_plot_photoid')}
 
 # choose a specific deployment
 
