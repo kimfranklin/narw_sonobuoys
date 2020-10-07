@@ -17,7 +17,7 @@ run the scripts in order staring with #1 to #3
   deployment (was script wrg_proc_comb_allselection_tables.R)
     - it produces 'data/interim/all_noaa_selections.rds' (saved in interim)
   - the second half of of the script adds log information to the collection of
-  selection tables (was script wrg_proc_comb_log_selection.R); it calculates 
+  selection tables (was script wrg_proc_comb_log_selection.R); it also calculates 
   the deployment durations and saves the log information as its own rds
     - it produces 'data/processed/log.rds' (saved in processed) and
     'data/processed/all_noaa_acoustic.rds' (saved in processed)
