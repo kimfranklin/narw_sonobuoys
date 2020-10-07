@@ -9,6 +9,7 @@ library(tidyverse)
 library(lubridate)
 library(readxl)
 
+
 # input -------------------------------------------------------------------
 
 # defines input directory
@@ -23,6 +24,7 @@ char = 'all_noaa_'
 # master log file - edited version
 log = read_excel('data/raw/acoustic/position/noaa_sono_positions_ALL.xlsx')
 
+
 # setup -------------------------------------------------------------------
 
 # saving output file for selection tables 
@@ -34,9 +36,10 @@ ofileb = 'data/processed/all_noaa_acoustic.rds'
 # saving log file for easy access
 ofilec = 'data/processed/log.rds'
   
-# process -----------------------------------------------------------------
 
+# process part I ----------------------------------------------------------
 # combining selection tables 
+
 # find all years 
 flista = list.files(path = idir, pattern = '20*', full.names = TRUE)
 
@@ -44,7 +47,6 @@ flista = list.files(path = idir, pattern = '20*', full.names = TRUE)
 flist = list.files(path = paste0(flista,'/noaa/processed'), pattern = '*_selections.txt$', full.names = TRUE)
 
 # define empty list to hold selections
-DFa = vector('list',length = length(flista))
 DF = vector('list',length = length(flist))
 
 # loop through and read in selection tables
@@ -85,81 +87,70 @@ df = bind_rows(DF)
 df$id = paste0(df$year,'_', df$platform,'_', df$sono_id)
 
 # remove deployments that have no useful information
-df = df[!(df$id=="2017_noaa_DEP17"),]
-df = df[!(df$id=="2018_noaa_DEP07"),]
-df = df[!(df$id=="2018_noaa_DEP13"),]
-df = df[!(df$id=="2018_noaa_DEP14"),]
-df = df[!(df$id=="2019_noaa_DEP75b"),]
-df = df[df$id !='2017_noaa_DEP17',]
+# note: 2017_noaa_DEP17 and 2018_noaa_DEP07 do not have high scoring calls and were not included in thesis data
+df = df[!(df$id=="2019_noaa_DEP75b"),] # still recording when went back to same area
 
 # save all selection tables combined dataframe - just as a precaution 
 saveRDS(df, file = ofilea)
 
+
+# process part II ---------------------------------------------------------
 # combining log information with all selections
 
 # get duration from selection tables
 # separate start and end call types from call data
-test = df %>%
+dur_calc = df %>%
   filter(call_type %in% c('START','END'))
 
 # get the difference between each start and end time
-test = test %>%
-  mutate(durationA = End.Time..s. - lag(Begin.Time..s.))
+dur_calc = dur_calc %>%
+  mutate(duration = End.Time..s. - lag(Begin.Time..s.))
 
 # set na duration to 0
-test$durationA[is.na(test$durationA)] = 0
+dur_calc$duration[is.na(dur_calc$duration)] = 0
 
-# set all START call types durations to 0, we don't want to include the time where there's no difar/blacking out
-test$durationA[test$call_type == 'START'] <- 0
+# set all START call types durations to 0; we don't want to include the time where there's no difar/blacking out
+dur_calc$duration[dur_calc$call_type == 'START'] <- 0
 
 # sum the durations by deployment id
-tmp = aggregate(test$durationA, by=list(id = test$id), FUN=sum)
+tmp = aggregate(dur_calc$duration, by=list(id = dur_calc$id), FUN=sum)
 
 # change duration column name
 colnames(tmp)[which(names(tmp) == "x")] <- "duration"
 
+# remove deployments  not useful
+# note: 2017_noaa_DEP17 and 2018_noaa_DEP07 do not have high scoring calls and were not included in thesiS
+log = log[!(log$id=="2018_noaa_DEP18"),] # for some reason I don't have this deployment recordings
+log = log[!(log$id=="2019_noaa_DEP75b"),] # still recording when went back to same area
+
+# remove deployments not successful
+log = log %>%
+  filter(deploy_sucess == 'yes')
+
+# only take deployments that happened in June, July, August
+log = log %>%
+  filter(month %in% c('6', '7', '8'))
+
 # fix up log data
 log = log %>% 
   transmute(date = as.Date(date), # this is POSIXct POSIXt
-            # datetime = time, # this is character
-            # time_UTC_correct_from_Tim_Cole_gps_records = format(as.POSIXct(`time UTC`, format= "%Y-%m-%d %H:%M:%S"),
-            #                   format = "%H:%M:%S"),
             datetime = datetime_UTC_correct,
             lat = lat, # this is numeric
             lon = lon, # this is numeric
             yday = yday,
             week = week,
             month = month,
-            id = id,
-            #duration = duration
+            id = id
   )
 
-# remove deployments  not useful
-log = log[!(log$id=="2017_noaa_DEP17"),]
-log = log[!(log$id=="2018_noaa_DEP07"),]
-log = log[!(log$id=="2018_noaa_DEP13"),]
-log = log[!(log$id=="2018_noaa_DEP14"),]
-log = log[!(log$id=="2018_noaa_DEP17"),]
-log = log[!(log$id=="2018_noaa_DEP18"),]
-log = log[!(log$id=="2019_noaa_DEP75b"),]
-log = log[!(log$id=="2019_noaa_DEP77"),]
-log = log[!(log$id=="2019_noaa_DEP27"),]
-log = log[!(log$id=="2019_noaa_DEP28"),]
-log = log[!(log$id=="2019_noaa_DEP29"),]
-log = log[!(log$id=="2019_noaa_DEP30"),]
-log = log[!(log$id=="2019_noaa_DEP31"),]
-log = log[!(log$id=="2019_noaa_DEP32"),]
-
 # combine calculated duration to log
-tmpa = merge(x = log, y = tmp, by.x = 'id', by.y = 'id', all.x = TRUE)
-log = tmpa
+log = merge(x = log, y = tmp, by.x = 'id', by.y = 'id', all.x = TRUE)
 
 # save changes to log
 saveRDS(log, ofilec)
 
 # merge log with selection table 
-tmp = merge(x = df, y = log, by.x = 'id', by.y = 'id', all.x = TRUE)
-df = tmp
+df = merge(x = df, y = log, by.x = 'id', by.y = 'id', all.x = TRUE)
 
 # save selections combined with log dataframe (the df file) 
 saveRDS(df, ofileb)
