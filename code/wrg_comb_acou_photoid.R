@@ -8,6 +8,7 @@ library(tidyverse)
 library(dplyr)
 library(stringr)
 
+
 # input -------------------------------------------------------------------
 
 # read in processed acoustic data file
@@ -16,10 +17,12 @@ acou_df = readRDS("data/processed/all_noaa_acoustic.rds")
 # read in processed photo-id data file
 id_df = readRDS("data/processed/all_noaa_photoid.rds")
 
+
 # setup -------------------------------------------------------------------
 
 # output file name
 ofile = 'data/processed/proc_acou_photoid.rds'
+
 
 # process -----------------------------------------------------------------
 
@@ -99,7 +102,7 @@ una = id_df %>%
   filter(age == 'U') %>%
   count(id)
 
-# merging sightings with number of jf, jm, af, am
+# merging sightings with number of jf, jm, af, am, calf, uns, una
 df = merge(x = df, y = jf, by.x = 'id', by.y = 'id', all.x = TRUE)
 df = df %>% rename(juvenile_female = n)
 
@@ -124,17 +127,14 @@ df = df %>% rename(unknown_age = n)
 # adding behaviour data to data frame 
 
 # separate multiple behaviours into rows
-tmp = separate_rows(id_df, behaviour, sep = ",")
+id_dfs = separate_rows(id_df, behaviour, sep = ",")
 
 # trim leading white space from split behaviours
-tmp$behaviour = trimws(tmp$behaviour)
+id_dfs$behaviour = trimws(id_dfs$behaviour)
 
-# replace tmp with df
-id_dfs = tmp
-
-# look to see which behaviour needs to be renamed 
-unique(id_dfs$behaviour)
-table(id_dfs$behaviour)
+# # look to see which behaviour needs to be renamed 
+# unique(id_dfs$behaviour)
+# table(id_dfs$behaviour)
 
 # names on left are now written as names on the right
 id_dfs$behaviour = gsub('CALF W/ MOM', 'CALF W/MOM', id_dfs$behaviour)
@@ -144,29 +144,33 @@ id_dfs$behaviour = gsub('AGG', 'AGG VSL', id_dfs$behaviour)
 id_dfs$behaviour = gsub('AGG VSL VSL', 'AGG VSL', id_dfs$behaviour)
 id_dfs$behaviour <- sub(" ", "_", id_dfs$behaviour)
 
-# double checking all the behaviours
-unique(id_dfs$behaviour)
-table(id_dfs$behaviour)
+# # double checking all the behaviours
+# unique(id_dfs$behaviour)
+# table(id_dfs$behaviour)
 
-# count for each behaviour for each deployment
+# count for each behaviour for each deployment - subset for id and behaviour only
 df_test = subset(id_dfs, select = c("id","behaviour"))
-unique((df_test$behaviour))
+# unique((df_test$behaviour))
 
+# count for each behaviour for each deployment - count
 df_test = count(df_test, vars = id, wt_var = behaviour)
 
+# summarize behaviour counts in a 'mini' data frame - this is so the counts can be merged with the full data frame
 df_test = df_test %>%
   group_by(vars, wt_var) %>% 
   summarise(sum = sum(n)) %>%
   spread(wt_var, sum)
 
+# rename the first column id
 colnames(df_test)[1] = "id"
 
+# merge subset that counts behaviours with the full data frame
 df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
 
 # change all NAs to 0 
 df[is.na(df)] = 0
 
-# recategorizing behviours (lumping)
+# recategorizing behaviours (lumping)
 df$foraging = (df$SUB_FD+
                  df$MCLSG+
                  df$SKM_FD+
@@ -211,42 +215,38 @@ df$other_bhv= (df$MUD+
                  df$FL+
                  df$POST+
                  df$FLIP+
-                 df$WIWO)#+
-# df$UNUSUAL_BEH)
+                 df$WIWO+
+                 df$UNUSUAL)
 
-df$mom_calf = (df$CALF+
-                 df$`CALF_W/MOM`+
-                 df$`CALF_W/OTHERS`+
-                 df$`W/CALF`+
-                 df$NURS)
-
-df$entg_eff = (df$AGG_VSL+
-                 df$DSENTGL_ATT+
-                 df$ENTGL+
-                 df$FRST_ENTGL+
-                 df$LN_GONE+
-                 df$NOT_FL+
-                 df$PRT_DSENTGL+
-                 df$SATTG_GONE)
+# df$mom_calf = (df$CALF+
+#                  df$`CALF_W/MOM`+
+#                  df$`CALF_W/OTHERS`+
+#                  df$`W/CALF`+
+#                  df$NURS)
+# 
+# df$entg_eff = (df$AGG_VSL+
+#                  df$DSENTGL_ATT+
+#                  df$ENTGL+
+#                  df$FRST_ENTGL+
+#                  df$LN_GONE+
+#                  df$NOT_FL+
+#                  df$PRT_DSENTGL+
+#                  df$SATTG_GONE)
 
 drop <- c("AGG_VSL","APPR","AVD","BEL_UP","BEL/BEL","BOD_CNT","BRCH","BUBLS",
           "CALF","CALF_W/MOM","CALF_W/OTHERS","CO_FD","DFCN","DSENTGL_ATT","ENTGL","FCL",
           "FL","FRST_ENTGL","HDLFT","LBTL","LEAD","LN_GONE","MCLSG","MOPN","MUD","NONE",
           "NOT_FL","NURS","POST","PRT_DSENTGL","RACE","ROLL","SAG","SATTG_GONE","SKM_FD",
           "SUB_FD","SUB_FD?","TL_SLSH","UNUSUAL_BEH","UW_EXH","W/CALF","W/CETACEAN","BLK_BEL",
-          "BLK_CHN","FEM","MALE","SUCTG","WH_BEL","WH_CHN","WIWO","FLIP")
-tmp = df[,!(names(df) %in% drop)]
-df= tmp
+          "BLK_CHN","FEM","MALE","SUCTG","WH_BEL","WH_CHN","WIWO","FLIP","UNUSUAL")
+df = df[,!(names(df) %in% drop)]
 
 # change behaviours so that they are rates
-tmp = df$foraging/df$num_sighting
-df$foraging_bhv_whale = tmp
+df$foraging_bhv_whale = df$foraging/df$num_sighting
 
-tmp = df$social/df$num_sighting
-df$social_bhv_whale = tmp
+df$social_bhv_whale = df$social/df$num_sighting
 
-tmp = df$other_bhv/df$num_sighting
-df$other_bhv_bhv_whale = tmp
+df$other_bhv_whale = df$other_bhv/df$num_sighting
 
 # adding other variables of interest (based off of current variables) to data frame
 
@@ -274,8 +274,7 @@ df_test = df_test[!duplicated(df_test), ]
 df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
 
 # call rate (call/hour) - calls per hour for each deployment duration
-tmp = as.numeric(df$duration)
-df$duration = tmp
+df$duration = as.numeric(df$duration)
 df$up_per_hr = df$up/(df$duration/60/60)
 df$mf_per_hr = df$mf/(df$duration/60/60)
 df$gs_per_hr = df$gs/(df$duration/60/60)
@@ -300,6 +299,7 @@ df$sum_calls = (df$up+df$mf+df$gs)
 df$ratio_female_male = (df$adult_male/df$adult_female)
 df$sum_calls_dur = (df$sum_calls/df$duration)
 df$sum_juvenile = (df$juvenile_female+df$juvenile_male)
+df$sum_adult = (df$adult_female+df$adult_male)
 df$sum_female = (df$juvenile_female+df$adult_female)
 df$sum_male = (df$juvenile_male+df$adult_male)
 
