@@ -4,6 +4,13 @@
 # libraries
 library(tidyverse)
 library(ggplot2)
+library(viridis)
+library(grid)
+
+
+
+
+fig_dir = 'figures/'
 
 df1 = readRDS("data/processed/proc_acou_photoid.rds")
 
@@ -39,7 +46,7 @@ pltc = df1 %>%
   theme(axis.text.x = element_text(colour = "black"))
 pltc
 
-pltc = df1 %>%
+pltd = df1 %>%
   select("yday", "year", "up_per_hr_per_whale", "mf_per_hr_per_whale", "gs_per_hr_per_whale") %>%
   gather(key = "call_type" , value = "cval", up_per_hr_per_whale, mf_per_hr_per_whale, gs_per_hr_per_whale) %>%
   filter(call_type %in% c('up_per_hr_per_whale', 'mf_per_hr_per_whale', 'gs_per_hr_per_whale')) %>%
@@ -66,12 +73,12 @@ pltc = df1 %>%
   theme(axis.text.x = element_text(), 
         legend.position="right")+
   #theme(axis.title.x = element_blank(), axis.text.x = element_blank())+
-  theme(text = element_text(size=20))+
+  theme(text = element_text(size=10))+
   theme(axis.text.y = element_text(colour = "black"))+
   theme(axis.text.x = element_text(colour = "black"))
-pltc
+pltd
 
-pltc = df1 %>%
+plte = df1 %>%
   select("yday", "year", "up_per_hr", "mf_per_hr", "gs_per_hr") %>%
   gather(key = "call_type" , value = "cval", up_per_hr, mf_per_hr, gs_per_hr) %>%
   filter(call_type %in% c('up_per_hr', 'mf_per_hr', 'gs_per_hr')) %>%
@@ -98,12 +105,12 @@ pltc = df1 %>%
   theme(axis.text.x = element_text(), 
         legend.position="right")+
   #theme(axis.title.x = element_blank(), axis.text.x = element_blank())+
-  theme(text = element_text(size=20))+
+  theme(text = element_text(size=10))+
   theme(axis.text.y = element_text(colour = "black"))+
   theme(axis.text.x = element_text(colour = "black"))
-pltc
+plte
 
-pltc = df1 %>%
+pltf = df1 %>%
   select("yday", "year", "up", "mf", "gs") %>%
   gather(key = "call_type" , value = "cval", up, mf, gs) %>%
   filter(call_type %in% c('up', 'mf', 'gs')) %>%
@@ -130,7 +137,17 @@ pltc = df1 %>%
   theme(axis.text.x = element_text(), 
         legend.position="right")+
   #theme(axis.title.x = element_blank(), axis.text.x = element_blank())+
-  theme(text = element_text(size=20))+
+  theme(text = element_text(size=10))+
   theme(axis.text.y = element_text(colour = "black"))+
   theme(axis.text.x = element_text(colour = "black"))
-pltc
+pltf
+
+png(paste0(fig_dir, 'calls_by_year.png'), height = 15, width = 7,
+    units = 'in', res = 300)
+
+grid.newpage()
+grid.draw(rbind(ggplotGrob(pltd), 
+                ggplotGrob(plte), 
+                ggplotGrob(pltf), size = "last"))
+
+dev.off()
