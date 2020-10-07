@@ -19,6 +19,7 @@ noa19 = read.csv('data/raw/visual/photo-id/2019NOAAGSL_sightingsUPDATED.csv')
 # read in processed acoustic deployment data
 log_df = readRDS('data/processed/log.rds')
 
+
 # setup -------------------------------------------------------------------
 
 # output file for combining photo-id data
@@ -33,17 +34,19 @@ dmax = 150
 # time added before and after each deployment to filter sightings
 #t_buffer = 60*60*1
 
-# process -----------------------------------------------------------------
 
+# process part I ----------------------------------------------------------
 # combining photo-id data
+# two different sources for photo-id data so making both data frames have the 
+# same number of columns and column names are the same to merge properly 
 
-# check names on files
-names(noa1718)
-names(noa19)
+# # check names on files
+# names(noa1718)
+# names(noa19)
 
-# condensing dataframes and renaming columns
-# for 2017 2018 data from the consortium
-tmp = noa1718 %>%
+# for 2017 2018 data from the NARWC
+# condensing dataframe and renaming columns
+noa1718 = noa1718 %>%
   transmute(
     EGNO = SightingEGNo,
     year = SightingYear,
@@ -57,8 +60,6 @@ tmp = noa1718 %>%
     behaviour = Behaviors
   )
 
-noa1718 = tmp
-
 # adding datetime column
 tmp = paste0(noa1718$year,"-",noa1718$month,"-",noa1718$day," ",noa1718$time)
 noa1718$datetime = as.POSIXct(tmp, format = "%Y-%m-%d %H%M", tz = "Etc/GMT+4")
@@ -67,25 +68,33 @@ noa1718$datetime = as.POSIXct(tmp, format = "%Y-%m-%d %H%M", tz = "Etc/GMT+4")
 # categorized as C (C=0) juvenile is 1 to 9 years old or categorized as J 
 # (1=<J<9) adult is 9 years old or older and categorized as A (9=<A) unknown 
 # ages are categorized as U see email from Leah Crowe Nov 1, 2019 for reference
+
+# change NA ages to 'NA' so data can read NA as a type of age (read as character)
 noa1718$age[is.na(noa1718$age)] = 'NA'
 
+# subset the noaa 2017 2018 data to convert numeric ages to categorical
 noa1718sub = noa1718
 
+# change subset ages to numeric (the numbers are read as characters which is no no)
 noa1718sub$age = as.numeric(noa1718sub$age)
 
+# change subset ages from numeric to age category
+# individuals 9 or under to J for juvenile and individuals older than 9 to A for adult
 noa1718sub$age = ifelse(noa1718sub$age<=9,"J","A")
 
+# since this subset was converted to character, all the properly categorized ages got change to na's so removing na's
 noa1718sub = dplyr::filter(noa1718sub,  !is.na(age))
 
+# make another subset from noaa 2017 2018 data to obtain age categories that were properly categorized
 noa1718sub2 = noa1718 %>%
   filter(age %in% c("A","NA","U"))
 
-tmp = rbind(noa1718sub, noa1718sub2)
+# combine the sightings newly converted to age category with sightings that were already categorized properly
+noa1718 = rbind(noa1718sub, noa1718sub2)
 
-noa1718 = tmp
-
-# for 2019 data from NOAA (Tim ColeLeah Crowe)
-tmp = noa19 %>%
+# for 2019 data from NOAA (Tim Cole/Leah Crowe)
+# condensing dataframe and renaming columns
+noa19 = noa19 %>%
   transmute(
     EGNO = EGNO,
     year = SightingYear,
@@ -100,61 +109,30 @@ tmp = noa19 %>%
     behaviour = Behaviors
   )
 
-noa19 = tmp
-
 # remove bowhead sightings
 noa19 = noa19[!(noa19$EGNO=="BOWH"),]
 
-# change NA ages to 'NA' so data can read NA as a type of age
+# change NA ages to 'NA' so data can read NA as a type of age (read as character)
 noa19$age[is.na(noa19$age)] = 'NA'
 
-# combining the two dataframes
+# combining the two dataframes (noa1718 and noa19)
 id_df = rbind(noa1718, noa19) 
 
 # create a date column
 id_df$date = as.Date(id_df$datetime)
 
-# convert datetime to UTC from EDT
+# convert datetime from EDT to UTC 
 # note to check what time zones r recognizes type 'OlsonNames()' in console
 attributes(id_df$datetime)$tzone = "UTC"
 
 # save id dataframe - just as a precaution
 saveRDS(id_df, ofilea)
 
-# wrangling the data
 
-# covert acoustic data dates to Date objects
-#acou_df$date = as.Date(acou_df$date)
+# process part II ---------------------------------------------------------
+# wrangling the data in TIME and SPACE
 
-# in progress to figure out how to subset the visual data by time WORK IN PROGRESS!!!
-# # identifying unique deployment dates
-# dep_dates = unique(acou_df$date)
-# dep_dates
-# 
-# # subset photo-id df to only consider dates on which sonobuoys were deployed
-# id_dep = id_df %>% filter(date %in% dep_dates)
-# id_dep
-
-# subsetting acoustic data to properly subset photo-id data (have corresponding time 
-# and distance ranges)
-
-# dep_df = acou_df %>% 
-#   filter(call_type == 'START') %>%
-#   transmute(
-#     id = id,
-#     lat= lat,
-#     lon = lon, 
-#     date = date, 
-#     #time = as.POSIXct(datetime_UTC, format = "%H:%M:%S"), #as.POSIXct(strptime(datetime_UTC, format = "%Y-%m-%d %H:%M:%S"), format = "%H:%M:%S"), #as.POSIXct(datetime_UTC, format = '%H:%M:%S'), #format(datetime_UTC, "%H:%M:%S"), #format(strptime(datetime_UTC, "%Y-%m-%d %H:%M:%S"), "%H:%M:%S"), #as.POSIXct(substr(datetime_UTC,12,19), tz = "UTC"),
-#     datetime = as.POSIXct(datetime_UTC, format = "%Y-%m-%d %H:%M:%S"),
-#     duration = (as.numeric(duration)*60*60) ###need to double check this...is it not in seconds already?
-#   )
-# 
-# # remove duplicated rows
-# dep_df = dep_df[!duplicated(dep_df$id),]
-# 
-
-# loop in time and space
+# loop to subset time and space
 DF = vector('list', length = nrow(log_df))
 for(ii in 1:nrow(log_df)){
   
