@@ -13,8 +13,17 @@ library(tidyverse)
 # define input data file
 df = readRDS("data/processed/proc_acou_photoid.rds")
 
+# time in hours
+time = 24
+
+# space in km
+space = 150
+
 # if directory does not exist make sure it does
 if(!dir.exists('figures/time_space_scatplots')){dir.create('figures/time_space_scatplots')}
+
+# figure directory 
+fig_dir = 'figures/time_space_scatplots'
 
 # proccess - call production rate -----------------------------------------
 
@@ -137,11 +146,11 @@ pltb
 
 # saving plots
 # call production rate
-ggsave(pltp, filename = paste0('figures/time_space_scatplots/call_production_24hr_150km.png'), 
+ggsave(pltp, filename = paste0(fig_dir, "/call_production_", time, "hr_", space, "km.png"), 
        height = 5, width = 8, units = 'in', dpi = 300)
 # demographics
-ggsave(pltd, filename = paste0('figures/time_space_scatplots/demogrpahics_24hr_150km.png'), 
+ggsave(pltd, filename = paste0(fig_dir, "/demogrpahics_", time, "hr_", space, "km.png"), 
        height = 5, width = 8, units = 'in', dpi = 300)
 # behaviour rate
-ggsave(pltb, filename = paste0('figures/time_space_scatplots/behaviour_rate_24hr_150km.png'), 
+ggsave(pltb, filename = paste0(fig_dir, "/behaviour_rate_" , time, "hr_", space, "km.png"), 
        height = 5, width = 8, units = 'in', dpi = 300)
