@@ -144,19 +144,20 @@ for(ii in 1:nrow(log_df)){
   idep = log_df$id[ii]
   
   # subset sightings by time
-  # idf = id_df %>% 
-  #   filter(date == idate)
-  # idf = id_df %>%
-  #   filter(datetime > itime-t_buffer & datetime < itime+idur+t_buffer)
   idf = id_df %>%
      filter(datetime >= itime - t_buffer & datetime <= itime + idur + t_buffer)
   
-  # compute distance from sonobuoy to each whale
-  idf$dist = geodDist(longitude2 = ilon, latitude2 = ilat, 
-                      longitude1 = idf$lon, latitude1 = idf$lat, alongPath = FALSE)
-  
-  # only sightings with in our specified range (defined as dmax)
-  idf = idf %>% filter(dist <= dmax)
+  # only calculate distances if there are whales present
+  if(nrow(idf)>0){
+    # compute distance from sonobuoy to each whale
+    idf$dist = geodDist(longitude2 = ilon, latitude2 = ilat, 
+                        longitude1 = idf$lon, latitude1 = idf$lat, alongPath = FALSE)
+    
+    # only sightings with in our specified range (defined as dmax)
+    idf = idf %>% filter(dist <= dmax)
+  } else {
+    idf$dist = NA
+  }
   
   # add deployment id
   idf$id = idep
