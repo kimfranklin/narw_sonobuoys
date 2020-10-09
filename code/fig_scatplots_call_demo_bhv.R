@@ -14,10 +14,10 @@ library(tidyverse)
 df = readRDS("data/processed/proc_acou_photoid.rds") 
 
 # time in hours
-time = 24
+time = 0.5
 
 # space in km
-space = 150
+space = 10
 
 # if directory does not exist make sure it does
 if(!dir.exists('figures/time_space_scatplots')){dir.create('figures/time_space_scatplots')}
