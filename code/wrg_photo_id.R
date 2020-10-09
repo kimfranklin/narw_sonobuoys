@@ -29,11 +29,10 @@ ofilea = 'data/interim/all_noaa_photoid_comb.rds'
 ofileb = 'data/processed/all_noaa_photoid.rds'
 
 # maximum km for filtering sightings
-dmax = 150
+dmax = 10
 
 # time added before and after each deployment to filter sightings
-#t_buffer = 60*60*1
-
+t_buffer = 30*60*1
 
 # process part I ----------------------------------------------------------
 # combining photo-id data
@@ -145,8 +144,12 @@ for(ii in 1:nrow(log_df)){
   idep = log_df$id[ii]
   
   # subset sightings by time
-  idf = id_df %>% 
-    filter(date == idate)
+  # idf = id_df %>% 
+  #   filter(date == idate)
+  # idf = id_df %>%
+  #   filter(datetime > itime-t_buffer & datetime < itime+idur+t_buffer)
+  idf = id_df %>%
+     filter(datetime >= itime - t_buffer & datetime <= itime + idur + t_buffer)
   
   # compute distance from sonobuoy to each whale
   idf$dist = geodDist(longitude2 = ilon, latitude2 = ilat, 
