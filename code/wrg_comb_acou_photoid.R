@@ -170,69 +170,108 @@ df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
 # change all NAs to 0 
 df[is.na(df)] = 0
 
-# recategorizing behaviours (lumping)
-df$foraging = (df$SUB_FD+
-                 df$MCLSG+
-                 df$SKM_FD+
-                 df$CO_FD+
-                 df$LEAD)
+# re-categorizing behaviours (lumping)
+# create foraging column
+df[,"foraging"] <- 0
 
-df$social = (df$SAG+
-               df$BOD_CNT+
-               df$ROLL+
-               df$BEL_UP+
-               # df$APPR+
-               df$`BEL/BEL`+
-               df$LBTL+
-               df$UW_EXH+
-               df$BRCH+
-               # df$BUBLS+
-               df$TL_SLSH+
-               df$RACE+
-               df$FCL)
+# add foraging behaviours to foraging column
+if("SUB_FD" %in% colnames(df)){
+  df$SUB_FD + df$foraging -> df$foraging
+}
+if("MCLSG" %in% colnames(df)){
+  df$MCLSG + df$foraging -> df$foraging
+}
+if("SKM_FD" %in% colnames(df)){
+  df$SKM_FD + df$foraging -> df$foraging
+}
+if("CO_FD" %in% colnames(df)){
+  df$CO_FD + df$foraging -> df$foraging
+}
+if("LEAD" %in% colnames(df)){
+  df$LEAD + df$foraging -> df$foraging
+}
 
-# df$social_notsag = (df$BOD_CNT+
-#                       df$ROLL+
-#                       df$BEL_UP+
-#                       df$`BEL/BEL`+
-#                       df$LBTL+
-#                       df$UW_EXH+
-#                       df$BRCH+
-#                       # df$BUBLS+
-#                       df$TL_SLSH)
+# create social column
+df[,"social"] <- 0
 
-# df$social_sag = (df$SAG+
-#                    df$FCL+
-#                    # df$APPR+
-#                    df$RACE)
+# add social behaviours to social column
+if("SAG" %in% colnames(df)){
+  df$SAG + df$social -> df$social
+}
+if("BOD_CNT" %in% colnames(df)){
+  df$BOD_CNT + df$social -> df$social
+}
+if("ROLL" %in% colnames(df)){
+  df$ROLL + df$social -> df$social
+}
+if("BEL_UP" %in% colnames(df)){
+  df$BEL_UP + df$social -> df$social
+}
+if("APPR" %in% colnames(df)){
+  df$APPR + df$social -> df$social
+}
+if("BEL/BEL" %in% colnames(df)){
+  df$'BEL/BEL' + df$social -> df$social
+}
+if("LBTL" %in% colnames(df)){
+  df$LBTL + df$social -> df$social
+}
+if("UW_EXH" %in% colnames(df)){
+  df$UW_EXH + df$social -> df$social
+}
+if("BRCH" %in% colnames(df)){
+  df$BRCH + df$social -> df$social
+}
+if("BUBLS" %in% colnames(df)){
+  df$BUBLS + df$social -> df$social
+}
+if("TL_SLSH" %in% colnames(df)){
+  df$TL_SLSH + df$social -> df$social
+}
+if("RACE" %in% colnames(df)){
+  df$RACE + df$social -> df$social
+}
+if("FCL" %in% colnames(df)){
+  df$FCL + df$social -> df$social
+}
 
-df$other_bhv= (df$MUD+
-                 df$MOPN+
-                 df$DFCN+
-                 df$HDLFT+
-                 # df$`SUB_FD?`+
-                 df$AVD+
-                 df$FL+
-                 df$POST+
-                 df$FLIP+
-                 df$WIWO+
-                 df$UNUSUAL)
+# add other bheaviour column
+df[,"other_bhv"] <- 0
 
-# df$mom_calf = (df$CALF+
-#                  df$`CALF_W/MOM`+
-#                  df$`CALF_W/OTHERS`+
-#                  df$`W/CALF`+
-#                  df$NURS)
-# 
-# df$entg_eff = (df$AGG_VSL+
-#                  df$DSENTGL_ATT+
-#                  df$ENTGL+
-#                  df$FRST_ENTGL+
-#                  df$LN_GONE+
-#                  df$NOT_FL+
-#                  df$PRT_DSENTGL+
-#                  df$SATTG_GONE)
+# add other bheaviours to other behaviour column
+if("MUD" %in% colnames(df)){
+  df$MUD + df$other_bhv -> df$other_bhv
+}
+if("MOPN" %in% colnames(df)){
+  df$MOPN + df$other_bhv -> df$other_bhv
+}
+if("DFCN" %in% colnames(df)){
+  df$DFCN + df$other_bhv -> df$other_bhv
+}
+if("HDLFT" %in% colnames(df)){
+  df$HDLFT + df$other_bhv -> df$other_bhv
+}
+if("AVD" %in% colnames(df)){
+  df$AVD + df$other_bhv -> df$other_bhv
+}
+if("FL" %in% colnames(df)){
+  df$FL + df$other_bhv -> df$other_bhv
+}
+if("POST" %in% colnames(df)){
+  df$POST + df$other_bhv -> df$other_bhv
+}
+if("FLIP" %in% colnames(df)){
+  df$FLIP + df$other_bhv -> df$other_bhv
+}
+if("WIWO" %in% colnames(df)){
+  df$WIWO + df$other_bhv -> df$other_bhv
+}
+if("UNUSUAL" %in% colnames(df)){
+  df$UNUSUAL + df$other_bhv -> df$other_bhv
+}
 
+# since each behaviour was its own column we do not need them now that they
+# are grouped into the 3 behaviour categories so remove individual behaviours
 drop <- c("AGG_VSL","APPR","AVD","BEL_UP","BEL/BEL","BOD_CNT","BRCH","BUBLS",
           "CALF","CALF_W/MOM","CALF_W/OTHERS","CO_FD","DFCN","DSENTGL_ATT","ENTGL","FCL",
           "FL","FRST_ENTGL","HDLFT","LBTL","LEAD","LN_GONE","MCLSG","MOPN","MUD","NONE",
