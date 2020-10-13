@@ -97,6 +97,9 @@ saveRDS(df, file = ofilea)
 # process part II ---------------------------------------------------------
 # combining log information with all selections
 
+str(df)
+str(dur_calc)
+
 # get duration from selection tables
 # separate start and end call types from call data
 dur_calc = df %>%
@@ -118,6 +121,22 @@ tmp = aggregate(dur_calc$duration, by=list(id = dur_calc$id), FUN=sum)
 # change duration column name
 colnames(tmp)[which(names(tmp) == "x")] <- "duration"
 
+# fix up log data
+log = log %>% 
+  transmute(date = as.Date(date), # this is POSIXct POSIXt
+            datetime = datetime_UTC_correct,
+            lat = lat, # this is numeric
+            lon = lon, # this is numeric
+            yday = yday,
+            week = week,
+            month = month,
+            id = id,
+            deploy_sucess = deploy_sucess
+  )
+
+# combine calculated duration to log
+log = merge(x = log, y = tmp, by.x = 'id', by.y = 'id', all.x = TRUE)
+
 # remove deployments  not useful
 # note: 2017_noaa_DEP17 and 2018_noaa_DEP07 do not have high scoring calls and were not included in thesiS
 log = log[!(log$id=="2018_noaa_DEP18"),] # for some reason I don't have this deployment recordings
@@ -131,20 +150,9 @@ log = log %>%
 log = log %>%
   filter(month %in% c('6', '7', '8'))
 
-# fix up log data
-log = log %>% 
-  transmute(date = as.Date(date), # this is POSIXct POSIXt
-            datetime = datetime_UTC_correct,
-            lat = lat, # this is numeric
-            lon = lon, # this is numeric
-            yday = yday,
-            week = week,
-            month = month,
-            id = id
-  )
-
-# combine calculated duration to log
-log = merge(x = log, y = tmp, by.x = 'id', by.y = 'id', all.x = TRUE)
+# take deployments longer than half an hour
+log = log %>%
+  filter(duration >= 900)
 
 # save changes to log
 saveRDS(log, ofilec)
