@@ -97,9 +97,6 @@ saveRDS(df, file = ofilea)
 # process part II ---------------------------------------------------------
 # combining log information with all selections
 
-str(df)
-str(dur_calc)
-
 # get duration from selection tables
 # separate start and end call types from call data
 dur_calc = df %>%
@@ -138,8 +135,7 @@ log = log %>%
 log = merge(x = log, y = tmp, by.x = 'id', by.y = 'id', all.x = TRUE)
 
 # remove deployments  not useful
-# note: 2017_noaa_DEP17 and 2018_noaa_DEP07 do not have high scoring calls and were not included in thesiS
-log = log[!(log$id=="2018_noaa_DEP18"),] # for some reason I don't have this deployment recordings
+# note: 2017_noaa_DEP17 and 2018_noaa_DEP07 do not have high scoring calls and were not included in thesis
 log = log[!(log$id=="2019_noaa_DEP75b"),] # still recording when went back to same area
 
 # remove deployments not successful
