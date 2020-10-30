@@ -116,8 +116,8 @@ for (i in 1:nrow(log)) {
          y = "Latitude",
          col = "Depth (m)") +
     ggtitle(
-      'Blue dots are whale sightings,
-    black square is sonobuoy location,
+      'green hollow circles are whale sightings,
+    blue hollow square is sonobuoy location,
     dotted line is NOAA plane track line,
     solid line is NOAA plane track
     line for the time the sono was recording'
