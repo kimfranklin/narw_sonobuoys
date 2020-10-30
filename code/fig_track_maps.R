@@ -16,7 +16,7 @@ library(mapproj)
 load('data/processed/map_data.rda')
 
 # read in the data
-trk = read.csv('data/raw/visual/sightings/noaa_sono_tracks_whalemap.csv')
+trk = read.csv('data/raw/acoustic/position/noaa_sono_tracks_whalemap.csv')
 pid = readRDS('data/processed/all_noaa_photoid.rds')
 log = readRDS('data/processed/log.rds')
 
