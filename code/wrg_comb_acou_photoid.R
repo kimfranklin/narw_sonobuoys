@@ -52,7 +52,7 @@ gs = acou_df %>%
 
 duration = acou_df %>%
   filter(call_type == 'START') %>%
-  select(c('id','duration'))
+  select(c('id','rec_duration'))
 duration = duration[!duplicated(duration$id), ]
 
 # merging sightings with number of calls for up, mf and gs
@@ -70,7 +70,7 @@ df = merge(x = df, y = gs, by.x = 'id', by.y = 'id', all.x = TRUE)
 df = df %>% rename(gs = n)
 
 df = merge(x = df, y = duration, by.x = 'id', by.y = 'id', all.x = TRUE)
-df = df %>% rename(duration = duration)
+df = df %>% rename(rec_duration = rec_duration)
 
 # adding demographic data to data frame
 
@@ -313,10 +313,10 @@ df_test = df_test[!duplicated(df_test), ]
 df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
 
 # call rate (call/hour) - calls per hour for each deployment duration
-df$duration = as.numeric(df$duration)
-df$up_per_hr = df$up/(df$duration/60/60)
-df$mf_per_hr = df$mf/(df$duration/60/60)
-df$gs_per_hr = df$gs/(df$duration/60/60)
+df$rec_duration = as.numeric(df$rec_duration)
+df$up_per_hr = df$up/(df$rec_duration/60/60)
+df$mf_per_hr = df$mf/(df$rec_duration/60/60)
+df$gs_per_hr = df$gs/(df$rec_duration/60/60)
 
 # round the sightings per hour to 3 decimal places 
 round(df$up_per_hr, 3)
@@ -324,9 +324,9 @@ round(df$mf_per_hr, 3)
 round(df$gs_per_hr, 3)
 
 # call production rate (call/hour/whale) - calls per hour (deployment duration) per sighted whale
-df$up_per_hr_per_whale = df$up/(df$duration/60/60)/df$num_sighting
-df$mf_per_hr_per_whale = df$mf/(df$duration/60/60)/df$num_sighting
-df$gs_per_hr_per_whale = df$gs/(df$duration/60/60)/df$num_sighting
+df$up_per_hr_per_whale = df$up/(df$rec_duration/60/60)/df$num_sighting
+df$mf_per_hr_per_whale = df$mf/(df$rec_duration/60/60)/df$num_sighting
+df$gs_per_hr_per_whale = df$gs/(df$rec_duration/60/60)/df$num_sighting
 
 # round the sightings per hour to 3 decimal places 
 round(df$up_per_hr_per_whale, 3)
@@ -335,8 +335,8 @@ round(df$gs_per_hr_per_whale, 3)
 
 # other columns of interest added
 df$sum_calls = (df$up+df$mf+df$gs)
-df$ratio_female_male = (df$adult_male/df$adult_female)
-df$sum_calls_dur = (df$sum_calls/df$duration)
+df$ratio_female_male = (df$adult_female/df$adult_male)
+df$sum_calls_rdur = (df$sum_calls/df$rec_duration)
 df$sum_juvenile = (df$juvenile_female+df$juvenile_male)
 df$sum_adult = (df$adult_female+df$adult_male)
 df$sum_female = (df$juvenile_female+df$adult_female)
