@@ -2,15 +2,13 @@
 .Rhistory
 .RData
 .Ruserdata
-
-
 data
 documents
 figures
 work
 old
 sono_for_other_people
-
+weird_calls
 *.pdf
 *.wav
 *.rda
@@ -23,4 +21,3 @@ sono_for_other_people
 *.jpg
 *.html
 *.docx
-
