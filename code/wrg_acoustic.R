@@ -97,7 +97,7 @@ saveRDS(df, file = ofilea)
 # process part II ---------------------------------------------------------
 # combining log information with all selections
 
-# get duration from selection tables
+# get recording duration from selection tables
 # separate start and end call types from call data
 dur_calc = df %>%
   filter(call_type %in% c('START','END'))
@@ -116,7 +116,7 @@ dur_calc$duration[dur_calc$call_type == 'START'] <- 0
 tmp = aggregate(dur_calc$duration, by=list(id = dur_calc$id), FUN=sum)
 
 # change duration column name
-colnames(tmp)[which(names(tmp) == "x")] <- "duration"
+colnames(tmp)[which(names(tmp) == "x")] <- "rec_duration"
 
 # fix up log data
 log = log %>% 
@@ -131,8 +131,22 @@ log = log %>%
             deploy_sucess = deploy_sucess
   )
 
-# combine calculated duration to log
+# combine calculated recording duration to log
 log = merge(x = log, y = tmp, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# get deployment duration 
+# filter start and end times for each deployment and calculate the difference
+dep_dur = df %>%
+  filter(call_type %in% c('START', 'END')) %>%
+  group_by(id) %>%
+  summarize(difference = last(End.Time..s.) - first(Begin.Time..s.))
+
+# rename difference as dep_duration
+dep_dur = dep_dur %>%
+  rename(dep_duration = difference)
+
+# combine calculated deployment duration to log
+log = merge(x = log, y = dep_dur, by.x = 'id', by.y = 'id', all.x = TRUE)
 
 # remove deployments  not useful
 # note: 2017_noaa_DEP17 and 2018_noaa_DEP07 do not have high scoring calls and were not included in thesis
@@ -148,7 +162,7 @@ log = log %>%
 
 # take deployments longer than half an hour
 log = log %>%
-  filter(duration >= 900)
+  filter(rec_duration >= 900)
 
 # save changes to log
 saveRDS(log, ofilec)
