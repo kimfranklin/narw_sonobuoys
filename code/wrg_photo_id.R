@@ -10,6 +10,7 @@ library(stringr)
 library(lubridate)
 library(oce)
 
+
 # input -------------------------------------------------------------------
 
 # read in photo-id files
@@ -33,6 +34,7 @@ dmax = 150
 
 # time added before and after each deployment to filter sightings
 t_buffer = 60*60*1
+
 
 # process part I ----------------------------------------------------------
 # combining photo-id data
@@ -140,7 +142,7 @@ for(ii in 1:nrow(log_df)){
   ilon = log_df$lon[ii]
   idate = log_df$date[ii]
   itime = log_df$datetime[ii]
-  idur = log_df$duration[ii]
+  idur = log_df$dep_duration[ii]
   idep = log_df$id[ii]
   
   # subset sightings by time
