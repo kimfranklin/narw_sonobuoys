@@ -1,6 +1,6 @@
 ## fig_scatplots_call_demo_bhv.R ##
 
-# Scatter plots for call production rate, demogrpahics, and behaviour rate by 
+# Scatter plots for call production rate, demographics, and behaviour rate by 
 # yday categorized by year and grouping. These plots are to compare the time
 # and space restrictions set in wrg_photoid.R.
 
@@ -13,11 +13,11 @@ library(tidyverse)
 # define input data file
 df = readRDS("data/processed/proc_acou_photoid.rds") 
 
-# time in hours
-time = 1
+# time in hours (this is only for naming purposes)
+time = 0
 
 # space in km
-space = 150
+space = 15
 
 # if directory does not exist make sure it does
 if(!dir.exists('figures/time_space_scatplots')){dir.create('figures/time_space_scatplots')}
