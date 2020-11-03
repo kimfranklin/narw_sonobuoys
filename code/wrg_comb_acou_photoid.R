@@ -1,5 +1,5 @@
 ## wrg_comb_acou_photoid ##
-# combining and warngling processed NOAA 2017, 2018, 2019 acoustic and photo-id
+# combining and wangling processed NOAA 2017, 2018, 2019 acoustic and photo-id
 # data into the complete data file for drawing results and conclusions
 
 # libraries ---------------------------------------------------------------
@@ -50,10 +50,15 @@ gs = acou_df %>%
   filter(is.na(score) | score == 1) %>%
   count(id)
 
-duration = acou_df %>%
+dep_duration = acou_df %>%
+  filter(call_type == 'START') %>%
+  select(c('id','dep_duration'))
+dep_duration = dep_duration[!duplicated(dep_duration$id), ]
+
+rec_duration = acou_df %>%
   filter(call_type == 'START') %>%
   select(c('id','rec_duration'))
-duration = duration[!duplicated(duration$id), ]
+rec_duration = rec_duration[!duplicated(rec_duration$id), ]
 
 # merging sightings with number of calls for up, mf and gs
 df = merge(x = vis, y = up, by.x = 'id', by.y = 'id', all.x = TRUE)
@@ -69,7 +74,10 @@ df = df %>% rename(mf = n)
 df = merge(x = df, y = gs, by.x = 'id', by.y = 'id', all.x = TRUE)
 df = df %>% rename(gs = n)
 
-df = merge(x = df, y = duration, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = merge(x = df, y = dep_duration, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(dep_duration = dep_duration)
+
+df = merge(x = df, y = rec_duration, by.x = 'id', by.y = 'id', all.x = TRUE)
 df = df %>% rename(rec_duration = rec_duration)
 
 # adding demographic data to data frame
@@ -281,11 +289,11 @@ drop <- c("AGG_VSL","APPR","AVD","BEL_UP","BEL/BEL","BOD_CNT","BRCH","BUBLS",
 df = df[,!(names(df) %in% drop)]
 
 # change behaviours so that they are rates
-df$foraging_bhv_whale = df$foraging/df$num_sighting
+df$foraging_bhv_whale = round(df$foraging/df$num_sighting, 3)
 
-df$social_bhv_whale = df$social/df$num_sighting
+df$social_bhv_whale = round(df$social/df$num_sighting, 3)
 
-df$other_bhv_whale = df$other_bhv/df$num_sighting
+df$other_bhv_whale = round(df$other_bhv/df$num_sighting, 3)
 
 # adding other variables of interest (based off of current variables) to data frame
 
@@ -314,33 +322,23 @@ df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
 
 # call rate (call/hour) - calls per hour for each deployment duration
 df$rec_duration = as.numeric(df$rec_duration)
-df$up_per_hr = df$up/(df$rec_duration/60/60)
-df$mf_per_hr = df$mf/(df$rec_duration/60/60)
-df$gs_per_hr = df$gs/(df$rec_duration/60/60)
-
-# round the sightings per hour to 3 decimal places 
-round(df$up_per_hr, 3)
-round(df$mf_per_hr, 3)
-round(df$gs_per_hr, 3)
+df$up_per_hr = round(df$up/(df$rec_duration/60/60), 3)
+df$mf_per_hr = round(df$mf/(df$rec_duration/60/60), 3)
+df$gs_per_hr = round(df$gs/(df$rec_duration/60/60), 3)
 
 # call production rate (call/hour/whale) - calls per hour (deployment duration) per sighted whale
-df$up_per_hr_per_whale = df$up/(df$rec_duration/60/60)/df$num_sighting
-df$mf_per_hr_per_whale = df$mf/(df$rec_duration/60/60)/df$num_sighting
-df$gs_per_hr_per_whale = df$gs/(df$rec_duration/60/60)/df$num_sighting
-
-# round the sightings per hour to 3 decimal places 
-round(df$up_per_hr_per_whale, 3)
-round(df$mf_per_hr_per_whale, 3)
-round(df$gs_per_hr_per_whale, 3)
+df$up_per_hr_per_whale = round(df$up/(df$rec_duration/60/60)/df$num_sighting, 3)
+df$mf_per_hr_per_whale = round(df$mf/(df$rec_duration/60/60)/df$num_sighting, 3)
+df$gs_per_hr_per_whale = round(df$gs/(df$rec_duration/60/60)/df$num_sighting, 3)
 
 # other columns of interest added
 df$sum_calls = (df$up+df$mf+df$gs)
-df$ratio_female_male = (df$adult_female/df$adult_male)
 df$sum_calls_rdur = (df$sum_calls/df$rec_duration)
 df$sum_juvenile = (df$juvenile_female+df$juvenile_male)
 df$sum_adult = (df$adult_female+df$adult_male)
 df$sum_female = (df$juvenile_female+df$adult_female)
 df$sum_male = (df$juvenile_male+df$adult_male)
+df$ratio_male_female = round((df$sum_male/df$sum_female), 3)
 
 # save file 
 saveRDS(df, file = ofile)
