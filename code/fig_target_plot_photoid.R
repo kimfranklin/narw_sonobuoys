@@ -2,10 +2,10 @@
 # produce 'target' circle plots for all deployments using photo-id data
 
 # define max radius (km) for associating sightings with a sonobuoy
-r = 20
+r = 15
 
 # define time offset (s) for associating sightings with a sonobuoy
-t = 1*60*60
+t = 0*60*60
 
 # setup -------------------------------------------------------------------
 
@@ -28,7 +28,10 @@ log = readRDS('data/processed/log.rds')
 # process -----------------------------------------------------------------
 
 # if directory does not exist make sure it does
-if(!dir.exists('figures/target_plot_photoid')){dir.create('figures/target_plot_photoid')}
+if(!dir.exists(paste0('figures/target_plot_photoid/', t/60/60, 'h_', r, 'km/')))
+  {dir.create((paste0('figures/target_plot_photoid/', t/60/60, 'h_', r, 'km/')))}
+
+file =(paste0('figures/target_plot_photoid/', t/60/60, 'h_', r, 'km/')) 
 
 # choose a specific deployment
 
@@ -48,7 +51,7 @@ for(i in 1:nrow(log)){
   iobs$y = coords$y
   
   # compute the time/space subset (column indicates if a sighting is included or not) - this creates a vector comprised  if true or false values
-  iobs$include = iobs$datetime >= ilog$datetime - t & iobs$datetime <= ilog$datetime+ilog$duration+t & iobs$dist <=r
+  iobs$include = iobs$datetime >= ilog$datetime - t & iobs$datetime <= ilog$datetime+ilog$dep_duration+t & iobs$dist <=r
   
   # make circle
   cr = make_circle(r=r)
@@ -63,7 +66,7 @@ for(i in 1:nrow(log)){
     coord_equal()+
     theme_bw()
   
-  ggsave(filename = paste0('figures/target_plot_photoid/',ilog$id, '.png'), 
+  ggsave(filename = paste0(file, ilog$id, '.png'), 
          height = 5, width = 8, units = 'in', dpi = 300)
   
 }
