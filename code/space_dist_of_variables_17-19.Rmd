@@ -1,5 +1,5 @@
 ---
-title: "beginning_stats"
+title: "space_dist_of_variables_17-19"
 output:
   html_document:
     code_folding: hide
@@ -12,8 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown for begnning the statistical analysis for sonobuoy honours
 
-Readinging in the data
+Data
 ```{r}
+# Readinging in the data
 ifile = readRDS("data/processed/proc_acou_photoid.rds")
 df1= ifile
 ```
@@ -37,7 +38,8 @@ library(mapproj)
 #source('D:/narw_sonobuoys/functions.R')
 ```
 
-## Maps with calls and behaviour as size {.tabset}
+## Maps with call production rates and behaviour rates as colours {.tabset}
+The thick bathy lines are 100 m, thin bathy lines are 50 m, OT stands for Orpheline Trough
 ### Up calls 
 ```{r,fig.width=10,fig.height=11}
 # read in map data
