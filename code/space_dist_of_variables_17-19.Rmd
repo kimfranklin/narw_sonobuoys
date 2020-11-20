@@ -40,6 +40,7 @@ library(mapproj)
 
 ## Maps with call production rates and behaviour rates as colours {.tabset}
 The thick bathy lines are 100 m, thin bathy lines are 50 m, OT stands for Orpheline Trough
+
 ### Up calls 
 ```{r,fig.width=10,fig.height=11}
 # read in map data
