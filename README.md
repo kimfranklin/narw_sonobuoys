@@ -35,3 +35,6 @@ run the scripts in order staring with #1 to #3
     - it produces 'data/processed/proc_acou_photoid.rds' (saved in processed)
 
 Two data files in interim and four data files in processed should be produced
+
+### make deployment map
+- deployment map has all locations for all years and month that NOAA deployed a sonobuoy
