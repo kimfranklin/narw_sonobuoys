@@ -7,7 +7,8 @@
 library(tidyverse)
 library(dplyr)
 library(stringr)
-
+library(oce)
+library(lubridate)
 
 # input -------------------------------------------------------------------
 
@@ -100,14 +101,41 @@ am = id_df %>%
   filter(age == 'A') %>%
   filter(sex == 'M') %>%
   count(id)
-calf = id_df %>%
-  filter(age == 'C') %>%
-  count(id)
-uns = id_df %>%
+# fcalf = id_df %>%
+#   filter(age == 'C') %>%
+#   filter(sex == 'F') %>%
+#   count(id)
+# mcalf = id_df %>%
+#   filter(age == 'C') %>%
+#   filter(sex == 'M') %>%
+#   count(id)
+# xcalf = id_df %>%
+#   filter(age == 'C') %>%
+#   filter(sex == 'X') %>%
+#   count(id)
+auns = id_df %>%
+  filter(age == 'A') %>%
   filter(sex == 'X') %>%
   count(id)
-una = id_df %>%
+juns = id_df %>%
+  filter(age == 'J') %>%
+  filter(sex == 'X') %>%
+  count(id)
+un = id_df %>%
   filter(age == 'U') %>%
+  filter(sex == 'X') %>%
+  count(id)
+unf = id_df %>%
+  filter(age == 'U') %>%
+  filter(sex == 'F') %>%
+  count(id)
+unm = id_df %>%
+  filter(age == 'U') %>%
+  filter(sex == 'M') %>%
+  count(id)
+nas = id_df %>%
+  filter(age == 'NA') %>%
+  filter(sex == 'NONE') %>%
   count(id)
 
 # merging sightings with number of jf, jm, af, am, calf, uns, una
@@ -123,14 +151,32 @@ df = df %>% rename(adult_female = n)
 df = merge(x = df, y = am, by.x = 'id', by.y = 'id', all.x = TRUE)
 df = df %>% rename(adult_male = n)
 
-df = merge(x = df, y = calf, by.x = 'id', by.y = 'id', all.x = TRUE)
-df = df %>% rename(calf = n)
+# df = merge(x = df, y = fcalf, by.x = 'id', by.y = 'id', all.x = TRUE)
+# df = df %>% rename(calf_female = n)
+# 
+# df = merge(x = df, y = mcalf, by.x = 'id', by.y = 'id', all.x = TRUE)
+# df = df %>% rename(calf_male = n)
+# 
+# df = merge(x = df, y = xcalf, by.x = 'id', by.y = 'id', all.x = TRUE)
+# df = df %>% rename(sex_ukn_calf = n)
 
-df = merge(x = df, y = uns, by.x = 'id', by.y = 'id', all.x = TRUE)
-df = df %>% rename(unknown_sex = n)
+df = merge(x = df, y = auns, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(adult_unknown_sex = n)
 
-df = merge(x = df, y = una, by.x = 'id', by.y = 'id', all.x = TRUE)
-df = df %>% rename(unknown_age = n)
+df = merge(x = df, y = juns, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(juvenile_unknown_sex = n)
+
+df = merge(x = df, y = un, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(unknown_agesex = n)
+
+df = merge(x = df, y = unf, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(unknown_age_female = n)
+
+df = merge(x = df, y = unm, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(unknown_age_male = n)
+
+df = merge(x = df, y = nas, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(na_agesex = n)
 
 # adding behaviour data to data frame 
 
@@ -303,7 +349,7 @@ yr<-yr[,-2] # delete column 2 which is the other half of the id
 df$year = yr
 df$year = as.numeric(df$year) # change the year to numeric instead of character
 
-#adding lat and lon and date and yday 
+#adding lat and lon and date and yday and datetime
 df_test = subset(acou_df, select = c("id","lat"))
 df_test = df_test[!duplicated(df_test), ]
 df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
@@ -317,6 +363,10 @@ df_test = df_test[!duplicated(df_test), ]
 df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
 
 df_test = subset(acou_df, select = c("id","yday"))
+df_test = df_test[!duplicated(df_test), ]
+df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+df_test = subset(acou_df, select = c("id","datetime"))
 df_test = df_test[!duplicated(df_test), ]
 df = merge(x = df , y = df_test, by.x = 'id', by.y = 'id', all.x = TRUE)
 
@@ -334,11 +384,50 @@ df$gs_per_hr_per_whale = round(df$gs/(df$rec_duration/60/60)/df$num_sighting, 3)
 # other columns of interest added
 df$sum_calls = (df$up+df$mf+df$gs)
 df$sum_calls_rdur = (df$sum_calls/df$rec_duration)
+df$rec_duration_h = df$rec_duration/60/60
+df$sum_call_recdurh = df$sum_calls/df$rec_duration_h
 df$sum_juvenile = (df$juvenile_female+df$juvenile_male)
 df$sum_adult = (df$adult_female+df$adult_male)
 df$sum_female = (df$juvenile_female+df$adult_female)
 df$sum_male = (df$juvenile_male+df$adult_male)
+df$unknown = (df$juvenile_unknown_sex+df$adult_unknown_sex+df$unknown_age_female+
+                df$unknown_age_male+df$unknown_agesex+df$na_agesex)
 df$ratio_male_female = round((df$sum_male/df$sum_female), 3)
+df$month = month(as.POSIXct(df$date, format = '%Y-%m-%d'))
+df$hour = hour(df$datetime) 
+
+# calculate distance from orpheline trough
+DF = vector('list', length = nrow(df))
+for (ii in 1:nrow(df)) {
+  # get df lat and lon data
+  ilat = df$lat[ii]
+  ilon = df$lon[ii]
+  
+  # compute distance from sonobuoy to orpheline trough
+  df$dist = geodDist(
+    longitude2 = ilon,
+    latitude2 = ilat,
+    longitude1 = -63.90,
+    latitude1 = 47.90,
+    alongPath = FALSE
+  )
+  
+  # store output
+  DF[[ii]] = df
+  
+  message('Done ', ii)
+}
+
+# output of loop to calculate distance from orpheline trough
+dfs = bind_rows(DF)
+
+# remove dist variable in df that loop stored in df
+drop <- c("dist")
+df = df[,!(names(df) %in% drop)]
+
+# find only the unique distances from loop and add to dataframe
+distance = distinct(dfs, dist)
+df = cbind(df, distance)
 
 # save file 
 saveRDS(df, file = ofile)
