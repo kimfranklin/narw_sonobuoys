@@ -61,7 +61,7 @@ gsl = ggplot() +
   
   # sonobuoy positions
   geom_point(data = df, aes(x = lon, y = lat,
-                            shape = as.character(year)), size = 3)+
+                            shape = as.character(year)), size = 2)+
   #scale_colour_manual(values = c("black","red","blue"))+
   scale_shape_manual(values = c(1,2,0))+
   
@@ -82,7 +82,7 @@ gsl = ggplot() +
   # legend.background = element_rect(fill="white", 
   #                                  size=0.5, 
   #                                  color = 'black'))+
-  theme(text = element_text(size=15, family = "serif"))+
+  theme(text = element_text(size=12, family = "serif"))+
   theme(axis.text.x = element_text(colour = "black"))+
   theme(axis.text.y = element_text(colour = "black"))
 
