@@ -193,6 +193,10 @@ df$sex[is.na(df$sex)] = 'NONE'
 # replace blank sex with NONE so they don't get lost
 df$sex[df$sex == ''] = 'NONE'
 
+# remove calves from dataframe
+df = df %>%
+  filter(age %in% c('J','A','U','NA'))
+
 dfs = df %>%
   filter(dup)
 
