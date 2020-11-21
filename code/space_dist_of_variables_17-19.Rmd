@@ -10,77 +10,71 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown for begnning the statistical analysis for sonobuoy honours
-
-Data
-```{r}
-# Readinging in the data
-ifile = readRDS("data/processed/proc_acou_photoid.rds")
-df1= ifile
-```
-
+## R Markdown for looking at what call p-rates and behaviour rates are happening where
 
 ```{r, include=FALSE}
 #Some useful libraries for plotting
 library(tidyverse)
-library(viridis)
-library(ggplot2)
-library(dplyr)
 library(lubridate)
-library(grid)
-library(plotly)
-library(RColorBrewer)
-library(oce)
-library(xtable)
-library(mapproj)
 
-#library(gganimate)
-#source('D:/narw_sonobuoys/functions.R')
 ```
 
-## Maps with call production rates and behaviour rates as colours {.tabset}
-The thick bathy lines are 100 m, thin bathy lines are 50 m, OT stands for Orpheline Trough
+Data and set up
+```{r}
+# read in the data
+ifile = readRDS("data/processed/proc_acou_photoid.rds")
+df= ifile
 
-### Up calls 
-```{r,fig.width=10,fig.height=11}
 # read in map data
 load('data/processed/map_data.rda')
 
-# up production rate
+# define map limits
+min_lat = 47.2
+min_lon = -65
+max_lat = 48.8
+max_lon = -62.25
+
+# fix month labels
+df$month = month(df$date, label = T, abbr = F)
+
+# fix bathy data
+ggb = bf %>% dplyr::filter(x >= min_lon & x <= max_lon & y >= min_lat & y <= max_lat)
+ggb$z[ggb$z>=0]=0
+ggb$z = abs(ggb$z)
+
 # city positions
 cities = data.frame(
-  name = c("Shippagan", "Percé",'OT'),
-  lat = c(47.7439, 48.5244,47.90),
-  lon = c(-64.7057,-64.2127,-63.90)
+  name = c("Shippagan", "Percé"),
+  lat = c(47.7439, 48.5244),
+  lon = c(-64.7057,-64.2127)
 )
 
+```
+
+## Maps with call production rates and behaviour rates as colours {.tabset}
+"*" represents the Orpheline Trough
+
+### Up calls 
+```{r,fig.width=10,fig.height=11}
+# up production rate
 # gsl map
 gsl = ggplot() +
-  coord_map(xlim = c(-65,-62), ylim = c(47.2, 48.8)) +
   
-  # land and bathymetry
-  geom_polygon(
-    data = nam,
-    aes(x = long, y = lat, group = group),
-    fill = "darkgrey",
-    color = NA
-  ) +
-  geom_contour(
-    data = bf,
-    aes(x = x, y = y, z = z),
-    breaks = c(-50),
-    colour = "grey",
-    size = 0.3
-  ) +
-  geom_contour(
-    data = bf,
-    aes(x = x, y = y, z = z),
-    breaks = c(-100),
-    colour = "grey",
-    size = 1
-  ) +
+  # plot limits
+  coord_quickmap(xlim = c(min_lon,max_lon), ylim = c(min_lat, max_lat), expand = F)+
   
-  # city labels
+  # bathymetry
+  geom_contour_filled(data=ggb, aes(x=x,y=y,z=z), color = NA, 
+                      breaks = c(seq(from = 0,to = 150, by = 25),500))+
+  scale_fill_grey(start = 0.8, end = 0.3)+
+  
+  # land
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),fill = "cornsilk", color = NA)+
+  
+  # orphaline trough position
+  annotate("text", x = -63.90, y = 47.90, label = '*')+
+  
+  # add city points and labels
   geom_point(data = cities,
              aes(x = lon, y = lat),
              color = "darkslategrey",
@@ -95,39 +89,27 @@ gsl = ggplot() +
   ) +
   
   # sonobuoy positions
-  geom_point(data = df1,
-             aes(x = lon,
-                 y = lat,
-                 colour = up_per_hr_per_whale)) + #, colour = yday)) +
-  #scale_colour_continuous(type = "viridis")+
-  # scale_fill_viridis_c(guide = guide_colourbar(barheight = 15,
-  #                                              title.theme = element_text(angle=90),
-  #                                              title.position = 'right', 
-  #                                              title.hjust = 0.5))+
-  #scale_fill_continuous(type = "viridis")+
-  #scale_colour_viridis(guide='colourbar') +
-  scale_colour_viridis() +
-  scale_radius(range = c(3, 8)) +
+  geom_point(data = df, aes(x = lon, y = lat, size = up_per_hr_per_whale), 
+             shape = 21, fill = 'red', alpha = 0.6) + 
   
-  labs(x = "Latitude (W)", 
-       y = "Longitude (N)")+
-  #guides(colour=guide_legend(title="Rate"))+
-  
-  # facet by year
-  #facet_wrap(~myear)+
+  # facet
   facet_grid(year ~ month) +
   
+  # labels
+  labs(x = "Latitude (W)", 
+       y = "Longitude (N)",
+       size = 'Upcall prod. rate\n(call/hr/whale)',
+       fill = 'Depth (m)')+
+  
   # formatting
-  theme_bw() +
+  theme_bw()+
   theme(
-    legend.title = element_blank(),
-    legend.position = 'bottom',
-    legend.direction = "horizontal",
-    panel.spacing = unit(2, "lines")
-  ) +
-  theme(text = element_text(size = 15)) +
-  theme(axis.text.x = element_text(colour = "black")) +
-  theme(axis.text.y = element_text(colour = "black"))
+    text = element_text(size = 15),
+    axis.text.x = element_text(colour = "black"),
+    axis.text.y = element_text(colour = "black"),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
 
 gsl
 
@@ -135,44 +117,25 @@ gsl
 
 ### Gunshots
 ```{r,fig.width=10,fig.height=11}
-# read in map data
-load('data/processed/map_data.rda')
-
 # gs production rate
-# city positions
-cities = data.frame(
-  name = c("Shippagan", "Percé",'OT'),
-  lat = c(47.7439, 48.5244,47.90),
-  lon = c(-64.7057,-64.2127,-63.90)
-)
-
 # gsl map
 gsl = ggplot() +
-  coord_map(xlim = c(-65,-62), ylim = c(47.2, 48.8)) +
   
-  # land and bathymetry
-  geom_polygon(
-    data = nam,
-    aes(x = long, y = lat, group = group),
-    fill = "darkgrey",
-    color = NA
-  ) +
-  geom_contour(
-    data = bf,
-    aes(x = x, y = y, z = z),
-    breaks = c(-50),
-    colour = "grey",
-    size = 0.3
-  ) +
-  geom_contour(
-    data = bf,
-    aes(x = x, y = y, z = z),
-    breaks = c(-100),
-    colour = "grey",
-    size = 1
-  ) +
+  # plot limits
+  coord_quickmap(xlim = c(min_lon,max_lon), ylim = c(min_lat, max_lat), expand = F)+
   
-  # city labels
+  # bathymetry
+  geom_contour_filled(data=ggb, aes(x=x,y=y,z=z), color = NA, 
+                      breaks = c(seq(from = 0,to = 150, by = 25),500))+
+  scale_fill_grey(start = 0.8, end = 0.3)+
+  
+  # land
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),fill = "cornsilk", color = NA)+
+  
+  # orphaline trough position
+  annotate("text", x = -63.90, y = 47.90, label = '*')+
+  
+  # add city points and labels
   geom_point(data = cities,
              aes(x = lon, y = lat),
              color = "darkslategrey",
@@ -187,39 +150,27 @@ gsl = ggplot() +
   ) +
   
   # sonobuoy positions
-  geom_point(data = df1,
-             aes(x = lon,
-                 y = lat,
-                 colour = gs_per_hr_per_whale)) + #, colour = yday)) +
-  #scale_colour_continuous(type = "viridis")+
-  # scale_fill_viridis_c(guide = guide_colourbar(barheight = 15,
-  #                                              title.theme = element_text(angle=90),
-  #                                              title.position = 'right', 
-  #                                              title.hjust = 0.5))+
-  #scale_fill_continuous(type = "viridis")+
-  #scale_colour_viridis(guide='colourbar') +
-  scale_colour_viridis() +
-  scale_radius(range = c(3, 8)) +
+  geom_point(data = df, aes(x = lon, y = lat, size = gs_per_hr_per_whale), 
+             shape = 21, fill = 'red', alpha = 0.6) + 
   
-  labs(x = "Latitude (W)", 
-       y = "Longitude (N)")+
-  #guides(colour=guide_legend(title="Rate"))+
-  
-  # facet by year
-  #facet_wrap(~myear)+
+  # facet
   facet_grid(year ~ month) +
   
+  # labels
+  labs(x = "Latitude (W)", 
+       y = "Longitude (N)",
+       size = 'Gunshot prod. rate\n(call/hr/whale)',
+       fill = 'Depth (m)')+
+  
   # formatting
-  theme_bw() +
+  theme_bw()+
   theme(
-    legend.title = element_blank(),
-    legend.position = 'bottom',
-    legend.direction = "horizontal",
-    panel.spacing = unit(2, "lines")
-  ) +
-  theme(text = element_text(size = 15)) +
-  theme(axis.text.x = element_text(colour = "black")) +
-  theme(axis.text.y = element_text(colour = "black"))
+    text = element_text(size = 15),
+    axis.text.x = element_text(colour = "black"),
+    axis.text.y = element_text(colour = "black"),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
 
 gsl
 
@@ -227,44 +178,25 @@ gsl
 
 ### Mid-frequency
 ```{r,fig.width=10,fig.height=11}
-# read in map data
-load('data/processed/map_data.rda')
-
 # mf production rate
-# city positions
-cities = data.frame(
-  name = c("Shippagan", "Percé",'OT'),
-  lat = c(47.7439, 48.5244,47.90),
-  lon = c(-64.7057,-64.2127,-63.90)
-)
-
 # gsl map
 gsl = ggplot() +
-  coord_map(xlim = c(-65,-62), ylim = c(47.2, 48.8)) +
   
-  # land and bathymetry
-  geom_polygon(
-    data = nam,
-    aes(x = long, y = lat, group = group),
-    fill = "darkgrey",
-    color = NA
-  ) +
-  geom_contour(
-    data = bf,
-    aes(x = x, y = y, z = z),
-    breaks = c(-50),
-    colour = "grey",
-    size = 0.3
-  ) +
-  geom_contour(
-    data = bf,
-    aes(x = x, y = y, z = z),
-    breaks = c(-100),
-    colour = "grey",
-    size = 1
-  ) +
+  # plot limits
+  coord_quickmap(xlim = c(min_lon,max_lon), ylim = c(min_lat, max_lat), expand = F)+
   
-  # city labels
+  # bathymetry
+  geom_contour_filled(data=ggb, aes(x=x,y=y,z=z), color = NA, 
+                      breaks = c(seq(from = 0,to = 150, by = 25),500))+
+  scale_fill_grey(start = 0.8, end = 0.3)+
+  
+  # land
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),fill = "cornsilk", color = NA)+
+  
+  # orphaline trough position
+  annotate("text", x = -63.90, y = 47.90, label = '*')+
+  
+  # add city points and labels
   geom_point(data = cities,
              aes(x = lon, y = lat),
              color = "darkslategrey",
@@ -279,84 +211,53 @@ gsl = ggplot() +
   ) +
   
   # sonobuoy positions
-  geom_point(data = df1,
-             aes(x = lon,
-                 y = lat,
-                 colour = mf_per_hr_per_whale)) + #, colour = yday)) +
-  #scale_colour_continuous(type = "viridis")+
-  # scale_fill_viridis_c(guide = guide_colourbar(barheight = 15,
-  #                                              title.theme = element_text(angle=90),
-  #                                              title.position = 'right', 
-  #                                              title.hjust = 0.5))+
-  #scale_fill_continuous(type = "viridis")+
-  #scale_colour_viridis(guide='colourbar') +
-  scale_colour_viridis() +
-  scale_radius(range = c(3, 8)) +
+  geom_point(data = df, aes(x = lon, y = lat, size = mf_per_hr_per_whale), 
+             shape = 21, fill = 'red', alpha = 0.6) + 
   
-  labs(x = "Latitude (W)", 
-       y = "Longitude (N)")+
-  #guides(colour=guide_legend(title="Rate"))+
-  
-  # facet by year
-  #facet_wrap(~myear)+
+  # facet
   facet_grid(year ~ month) +
   
+  # labels
+  labs(x = "Latitude (W)", 
+       y = "Longitude (N)",
+       size = 'Mid-freq prod. rate\n(call/hr/whale)',
+       fill = 'Depth (m)')+
+  
   # formatting
-  theme_bw() +
+  theme_bw()+
   theme(
-    legend.title = element_blank(),
-    legend.position = 'bottom',
-    legend.direction = "horizontal",
-    panel.spacing = unit(2, "lines")
-  ) +
-  theme(text = element_text(size = 15)) +
-  theme(axis.text.x = element_text(colour = "black")) +
-  theme(axis.text.y = element_text(colour = "black"))
+    text = element_text(size = 15),
+    axis.text.x = element_text(colour = "black"),
+    axis.text.y = element_text(colour = "black"),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
 
 gsl
 
 ```
 
-### Feeding behaviour
+### Foraging behaviour
 ```{r,fig.width=10,fig.height=11}
-# read in map data
-load('data/processed/map_data.rda')
-
 # foraging rate
-# city positions
-cities = data.frame(
-  name = c("Shippagan", "Percé",'OT'),
-  lat = c(47.7439, 48.5244,47.90),
-  lon = c(-64.7057,-64.2127,-63.90)
-)
-
 # gsl map
 gsl = ggplot() +
-  coord_map(xlim = c(-65,-62), ylim = c(47.2, 48.8)) +
   
-  # land and bathymetry
-  geom_polygon(
-    data = nam,
-    aes(x = long, y = lat, group = group),
-    fill = "darkgrey",
-    color = NA
-  ) +
-  geom_contour(
-    data = bf,
-    aes(x = x, y = y, z = z),
-    breaks = c(-50),
-    colour = "grey",
-    size = 0.3
-  ) +
-  geom_contour(
-    data = bf,
-    aes(x = x, y = y, z = z),
-    breaks = c(-100),
-    colour = "grey",
-    size = 1
-  ) +
+  # plot limits
+  coord_quickmap(xlim = c(min_lon,max_lon), ylim = c(min_lat, max_lat), expand = F)+
   
-  # city labels
+  # bathymetry
+  geom_contour_filled(data=ggb, aes(x=x,y=y,z=z), color = NA, 
+                      breaks = c(seq(from = 0,to = 150, by = 25),500))+
+  scale_fill_grey(start = 0.8, end = 0.3)+
+  
+  # land
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),fill = "cornsilk", color = NA)+
+  
+  # orphaline trough position
+  annotate("text", x = -63.90, y = 47.90, label = '*')+
+  
+  # add city points and labels
   geom_point(data = cities,
              aes(x = lon, y = lat),
              color = "darkslategrey",
@@ -371,83 +272,53 @@ gsl = ggplot() +
   ) +
   
   # sonobuoy positions
-  geom_point(data = df1,
-             aes(x = lon,
-                 y = lat,
-                 colour = foraging_bhv_whale)) + #, colour = yday)) +
-  #scale_colour_continuous(type = "viridis")+
-  # scale_fill_viridis_c(guide = guide_colourbar(barheight = 15,
-  #                                              title.theme = element_text(angle=90),
-  #                                              title.position = 'right', 
-  #                                              title.hjust = 0.5))+
-  #scale_fill_continuous(type = "viridis")+
-  #scale_colour_viridis(guide='colourbar') +
-  scale_colour_viridis() +
-  scale_radius(range = c(3, 8)) +
+  geom_point(data = df, aes(x = lon, y = lat, size = foraging_bhv_whale), 
+             shape = 21, fill = 'red', alpha = 0.6) + 
   
-  labs(x = "Latitude (W)", 
-       y = "Longitude (N)")+
-  #guides(colour=guide_legend(title="Rate"))+
-  
-  # facet by year
-  #facet_wrap(~myear)+
+  # facet
   facet_grid(year ~ month) +
   
+  # labels
+  labs(x = "Latitude (W)", 
+       y = "Longitude (N)",
+       size = 'Foraging rate\n(behaviour/whale)',
+       fill = 'Depth (m)')+
+  
   # formatting
-  theme_bw() +
+  theme_bw()+
   theme(
-    legend.title = element_blank(),
-    legend.position = 'bottom',
-    legend.direction = "horizontal",
-    panel.spacing = unit(2, "lines")
-  ) +
-  theme(text = element_text(size = 15)) +
-  theme(axis.text.x = element_text(colour = "black")) +
-  theme(axis.text.y = element_text(colour = "black"))
+    text = element_text(size = 15),
+    axis.text.x = element_text(colour = "black"),
+    axis.text.y = element_text(colour = "black"),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
 
 gsl
+
 ```
 
 ### Social behaviour
 ```{r,fig.width=10,fig.height=11}
-# read in map data
-load('data/processed/map_data.rda')
-
-# socalizing rate
-# city positions
-cities = data.frame(
-  name = c("Shippagan", "Percé",'OT'),
-  lat = c(47.7439, 48.5244,47.90),
-  lon = c(-64.7057,-64.2127,-63.90)
-)
-
+# socializing rate
 # gsl map
 gsl = ggplot() +
-  coord_map(xlim = c(-65,-62), ylim = c(47.2, 48.8)) +
   
-  # land and bathymetry
-  geom_polygon(
-    data = nam,
-    aes(x = long, y = lat, group = group),
-    fill = "darkgrey",
-    color = NA
-  ) +
-  geom_contour(
-    data = bf,
-    aes(x = x, y = y, z = z),
-    breaks = c(-50),
-    colour = "grey",
-    size = 0.3
-  ) +
-  geom_contour(
-    data = bf,
-    aes(x = x, y = y, z = z),
-    breaks = c(-100),
-    colour = "grey",
-    size = 1
-  ) +
+  # plot limits
+  coord_quickmap(xlim = c(min_lon,max_lon), ylim = c(min_lat, max_lat), expand = F)+
   
-  # city labels
+  # bathymetry
+  geom_contour_filled(data=ggb, aes(x=x,y=y,z=z), color = NA, 
+                      breaks = c(seq(from = 0,to = 150, by = 25),500))+
+  scale_fill_grey(start = 0.8, end = 0.3)+
+  
+  # land
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),fill = "cornsilk", color = NA)+
+  
+  # orphaline trough position
+  annotate("text", x = -63.90, y = 47.90, label = '*')+
+  
+  # add city points and labels
   geom_point(data = cities,
              aes(x = lon, y = lat),
              color = "darkslategrey",
@@ -462,39 +333,27 @@ gsl = ggplot() +
   ) +
   
   # sonobuoy positions
-  geom_point(data = df1,
-             aes(x = lon,
-                 y = lat,
-                 colour = social_bhv_whale)) + #, colour = yday)) +
-  #scale_colour_continuous(type = "viridis")+
-  # scale_fill_viridis_c(guide = guide_colourbar(barheight = 15,
-  #                                              title.theme = element_text(angle=90),
-  #                                              title.position = 'right', 
-  #                                              title.hjust = 0.5))+
-  #scale_fill_continuous(type = "viridis")+
-  #scale_colour_viridis(guide='colourbar') +
-  scale_colour_viridis() +
-  scale_radius(range = c(3, 8)) +
+  geom_point(data = df, aes(x = lon, y = lat, size = social_bhv_whale), 
+             shape = 21, fill = 'red', alpha = 0.6) + 
   
-  labs(x = "Latitude (W)", 
-       y = "Longitude (N)")+
-  #guides(colour=guide_legend(title="Rate"))+
-  
-  # facet by year
-  #facet_wrap(~myear)+
+  # facet
   facet_grid(year ~ month) +
   
+  # labels
+  labs(x = "Latitude (W)", 
+       y = "Longitude (N)",
+       size = 'Socializing rate\n(behaviour/whale)',
+       fill = 'Depth (m)')+
+  
   # formatting
-  theme_bw() +
+  theme_bw()+
   theme(
-    legend.title = element_blank(),
-    legend.position = 'bottom',
-    legend.direction = "horizontal",
-    panel.spacing = unit(2, "lines")
-  ) +
-  theme(text = element_text(size = 15)) +
-  theme(axis.text.x = element_text(colour = "black")) +
-  theme(axis.text.y = element_text(colour = "black"))
+    text = element_text(size = 15),
+    axis.text.x = element_text(colour = "black"),
+    axis.text.y = element_text(colour = "black"),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
 
 gsl
 
@@ -502,44 +361,25 @@ gsl
 
 ### Other behaviour
 ```{r,fig.width=10,fig.height=11}
-# read in map data
-load('data/processed/map_data.rda')
-
 # other behaviour rate
-# city positions
-cities = data.frame(
-  name = c("Shippagan", "Percé",'OT'),
-  lat = c(47.7439, 48.5244,47.90),
-  lon = c(-64.7057,-64.2127,-63.90)
-)
-
 # gsl map
 gsl = ggplot() +
-  coord_map(xlim = c(-65,-62), ylim = c(47.2, 48.8)) +
   
-  # land and bathymetry
-  geom_polygon(
-    data = nam,
-    aes(x = long, y = lat, group = group),
-    fill = "darkgrey",
-    color = NA
-  ) +
-  geom_contour(
-    data = bf,
-    aes(x = x, y = y, z = z),
-    breaks = c(-50),
-    colour = "grey",
-    size = 0.3
-  ) +
-  geom_contour(
-    data = bf,
-    aes(x = x, y = y, z = z),
-    breaks = c(-100),
-    colour = "grey",
-    size = 1
-  ) +
+  # plot limits
+  coord_quickmap(xlim = c(min_lon,max_lon), ylim = c(min_lat, max_lat), expand = F)+
   
-  # city labels
+  # bathymetry
+  geom_contour_filled(data=ggb, aes(x=x,y=y,z=z), color = NA, 
+                      breaks = c(seq(from = 0,to = 150, by = 25),500))+
+  scale_fill_grey(start = 0.8, end = 0.3)+
+  
+  # land
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),fill = "cornsilk", color = NA)+
+  
+  # orphaline trough position
+  annotate("text", x = -63.90, y = 47.90, label = '*')+
+  
+  # add city points and labels
   geom_point(data = cities,
              aes(x = lon, y = lat),
              color = "darkslategrey",
@@ -554,39 +394,27 @@ gsl = ggplot() +
   ) +
   
   # sonobuoy positions
-  geom_point(data = df1,
-             aes(x = lon,
-                 y = lat,
-                 colour = other_bhv_whale)) + #, colour = yday)) +
-  #scale_colour_continuous(type = "viridis")+
-  # scale_fill_viridis_c(guide = guide_colourbar(barheight = 15,
-  #                                              title.theme = element_text(angle=90),
-  #                                              title.position = 'right', 
-  #                                              title.hjust = 0.5))+
-  #scale_fill_continuous(type = "viridis")+
-  #scale_colour_viridis(guide='colourbar') +
-  scale_colour_viridis() +
-  scale_radius(range = c(3, 8)) +
+  geom_point(data = df, aes(x = lon, y = lat, size = other_bhv_whale), 
+             shape = 21, fill = 'red', alpha = 0.6) + 
   
-  labs(x = "Latitude (W)", 
-       y = "Longitude (N)")+
-  #guides(colour=guide_legend(title="Rate"))+
-  
-  # facet by year
-  #facet_wrap(~myear)+
+  # facet
   facet_grid(year ~ month) +
   
+  # labels
+  labs(x = "Latitude (W)", 
+       y = "Longitude (N)",
+       size = 'Other behv rate\n(behaviour/whale)',
+       fill = 'Depth (m)')+
+  
   # formatting
-  theme_bw() +
+  theme_bw()+
   theme(
-    legend.title = element_blank(),
-    legend.position = 'bottom',
-    legend.direction = "horizontal",
-    panel.spacing = unit(2, "lines")
-  ) +
-  theme(text = element_text(size = 15)) +
-  theme(axis.text.x = element_text(colour = "black")) +
-  theme(axis.text.y = element_text(colour = "black"))
+    text = element_text(size = 15),
+    axis.text.x = element_text(colour = "black"),
+    axis.text.y = element_text(colour = "black"),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
 
 gsl
 
