@@ -61,9 +61,9 @@ plt
 # demographics bar graph
 dfp = df %>%
   select("id", "juvenile_male", "juvenile_female", 
-         "adult_male", "adult_female") %>%
+         "adult_male", "adult_female", "unknown") %>%
   #mutate(date = as.Date(yday, origin = '2018-01-01')) %>% 
-  gather(key = "age_sex" , value = "cval", juvenile_male, juvenile_female, adult_male, adult_female)
+  gather(key = "age_sex" , value = "cval", juvenile_male, juvenile_female, adult_male, adult_female, unknown)
 
 # plot
 pltd = ggplot(data = dfp, aes(x=id,y=cval,fill=age_sex))+
@@ -77,8 +77,8 @@ pltd = ggplot(data = dfp, aes(x=id,y=cval,fill=age_sex))+
   
   # make pretty
   scale_fill_grey(start = 0.1, end = 0.7,  
-                  breaks=c("juvenile_male", "juvenile_female", "adult_male", "adult_female"),
-                  labels=c("Juvenile, Male", "Juvenile, Female","Adult, Male", "Adult, Female"))+
+                  breaks=c("juvenile_male", "juvenile_female", "adult_male", "adult_female", "unknown"),
+                  labels=c("Juvenile, Male", "Juvenile, Female","Adult, Male", "Adult, Female", "Unknown"))+
   labs(fill = "Age Class, Sex",
        y = 'Sighted Whales',
        x = NULL,
