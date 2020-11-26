@@ -1,0 +1,563 @@
+---
+title: "glm_example"
+output: 
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Setup
+```{r, include=FALSE}
+# libraries
+library(ggplot2)
+library(tidyverse)
+library(lubridate)
+library(MASS)
+library(mgcv)
+library(tree)
+library(Hmisc)
+library(corrplot)
+library(RColorBrewer)
+
+# data
+df = readRDS("data/processed/proc_acou_photoid.rds")
+```
+
+# The data
+
+## Boxplots {.tabset}
+Let see what the data looks like
+
+### upcall calls
+```{r}
+# add column in data frame so that single box plots can be made
+df[,"test"] <- 0
+
+# box plot
+boxplot(up~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### upcall call rate
+```{r}
+# box plot
+boxplot(up_per_hr~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### upcall call production rate
+```{r}
+# box plot
+boxplot(up_per_hr_per_whale~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### gunshot calls
+```{r}
+# box plot
+boxplot(gs~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### gunshot call rate
+```{r}
+# box plot
+boxplot(gs_per_hr~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### gunshot call production rate
+```{r}
+# box plot
+boxplot(gs_per_hr_per_whale~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### mid-freq calls
+```{r}
+# box plot
+boxplot(mf~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### mid-freq call rate
+```{r}
+# box plot
+boxplot(mf_per_hr~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### mid-freq call production rate
+```{r}
+# box plot
+boxplot(mf_per_hr_per_whale~test,data=df)#,
+```      
+
+### foraging behaviour
+```{r}
+# box plot
+boxplot(foraging~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### foraging behaviour rate
+```{r}
+# box plot
+boxplot(foraging_bhv_whale~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### social behaviour
+```{r}
+# box plot
+boxplot(social~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### social behaviour rate
+```{r}
+# box plot
+boxplot(social_bhv_whale~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### other behaviour
+```{r}
+# box plot
+boxplot(other_bhv~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### other behaviour rate
+```{r}
+# box plot
+boxplot(other_bhv_whale~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### adult males
+```{r}
+# box plot
+boxplot(adult_male~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### adult females
+```{r}
+# box plot
+boxplot(adult_female~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### juvenile males
+```{r}
+# box plot
+boxplot(juvenile_male~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### juvenile females
+```{r}
+# box plot
+boxplot(juvenile_female~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### number of whales sighted
+```{r}
+# box plot
+boxplot(num_sighting~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### recording duration
+```{r}
+# box plot
+boxplot(rec_duration~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+### deployment duration
+```{r}
+# box plot
+boxplot(dep_duration~test,data=df)#,
+        #xlab="yday", ylab="upcalls per hour per whale")
+```
+
+## Pairs to see correlations
+Only looking at count data
+```{r, fig.width=14,fig.height=14}
+dfs = subset(df, select = c('up','mf','gs',
+                            'juvenile_female','juvenile_male','adult_female','adult_male','unknown',
+                            'foraging','social','other_bhv','num_sighting',
+                            'dist','hour','yday'))
+pairs(dfs)
+```
+
+## Spearman correlation and p-values of data 
+It is obvious that a non-parametric evaluation is needed to look at possible relationships or patterns between each of the variables.
+
+X in the cell means that the p-value is NOT SIGNIFICANT at alpha = 0.05
+```{r, fig.width=10,fig.height=11}
+# add total call production rate to dataframe
+df$sum_call_hr_whale = df$sum_calls_rdur/df$num_sighting
+
+# put data in dataframe so that it can be convereted to correlation and p-value matrix
+dfs = data.frame(df$up_per_hr,df$mf_per_hr,df$gs_per_hr,
+                  df$up_per_hr_per_whale,df$mf_per_hr_per_whale,df$gs_per_hr_per_whale,
+                  df$sum_call_hr_whale,df$sum_calls_rdur,
+                  df$sum_female,df$sum_male,df$sum_adult,df$sum_juvenile,
+                  df$juvenile_female,df$juvenile_male,df$adult_female,df$adult_male,
+                  df$unknown,df$ratio_male_female,
+                  df$foraging,df$social,df$other_bhv,
+                  df$foraging_bhv_whale,df$social_bhv_whale,df$other_bhv_whale,
+                  df$num_sighting,df$yday,df$month,df$hour,df$dist)
+
+# obtain spearman correlation matrix
+sp = cor(dfs, method = 'spearman')
+
+# spearman p-value matrix
+test <- rcorr(as.matrix(dfs), type="spearman")
+r = round(test$P, 5)
+
+corrplot(sp, tl.col = "black", method = 'color', p.mat = test$P, 
+         sig.level = 0.05, type = "upper", diag = FALSE, 
+         col = brewer.pal(n = 8, name = "RdBu"))
+```
+
+Thus I conclude that the relationships between the variables are complex and am lost for words on even where to begin teasing them apart let alone explaining them. The best I can explain from messing around with various models and tools (that I don't know if I am using them correctly) to show any pattern is that:
+
+1. day and social behaviour have something going on
+
+2. the number of sightings is heavily influenced by adult males and then adult females
+
+3. call types have relationships between them - not idea how or why
+
+4. similarly demographics have relationship between all of them
+
+5. choose either call types or total calls, same for total sighting count and demographics choose one over the other
+
+6. distance is some sort of secondary thing
+
+7. call types and behaviour types have some sort of relationship, not very clear
+
+8. sightings and day have something going on
+
+Henceforth there is not one tool, method, or set of instructions that will tell all the patterns the data shows so it now comes down to having specific questions to ask the data in order to actually get any answers.
+
+# Question: Call the number of sighted whales be predicted/estimated from acoustic data only?
+Use GLMs? 
+
+Rational for a GLM: 
+
+There seem to be patterns within the data (see correlation matrix) but they are not very clear; many variables seem to be intertwined with one another. Most of the significant p-values have not so great correlations (i.e. rho < +/- 0.5). Thus I suspect that adding more variables (creating a multiple regression) can help explain for the significant p-values and improve the not so great correlations. Furthermore I think a model (or many) present the reader with more interesting things from the data rather than just presenting them with the correlation matrix and expect them to follow along with what ever comments I make about it. 
+
+However, some of the variables contain a lot of zero counts or zero rates (aka zero inflated) and some of the variables are over dispersed (when variance is compared to mean, some variances are double the size of the mean). Therefore, I'd expect that a different type of distribution (rather than a normal distribution) is needed to base a multiple regression model from and so I suspect a GLM is more suitable for this data. 
+
+Recall linear regression model assumptions:
+
+* The variance in y is constant (i.e. the variance does not change as y gets bigger).
+
+* The explanatory variable, x, is measured without error.
+
+* The difference between a measured value of y and the value predicted by the model for the same value of is called a residual.
+
+* Residuals are measured on the scale of y (i.e. parallel to the y axis).
+
+* The residuals are normally distributed.
+ 
+These assumptions are taken from https://www.cs.upc.edu/~robert/teaching/estadistica/TheRBook.pdf
+Page 489 and 490 (511 and 512 if viewing from a pdf or html format) perfectly summarize concerns and uncertainties I have for using multiple regression on this data set.
+
+The R Book also points out why a good ol' regular linear regression is not suitable for count data (since linear regression assumes constant variance and normal errors) and suggests using a poisson, quasi-poisson, or negative binomial distribution because:
+
+* The linear model might lead to the prediction of negative counts.
+
+* The variance of the response variable is likely to increase with the mean.
+
+* The errors will not be normally distributed.
+
+* Zeros are difficult to handle in transformations
+
+NOTE: This page focuses on identifying if a pattern exists between the number of whales sighted and acoustic data. The data is not limited to this question and I have an impression that a model can be made from any variable of interest and can be explained by a suite of other variables.
+
+
+## Using trees to explain variance in chosen variable {.tabset}
+Trees were used to provide insight on interactions (or how I see it, which variables greatly influence a variable of interest). Note the trees look at means thus take these with a grain of salt because especially the call data there are some heavy outliers. Outliers were seen by doing box plots of the data.
+
+### Number of sighted whales
+```{r}
+dfs = subset(df, select = c('juvenile_female','juvenile_male','adult_female','adult_male','unknown',
+                            'dist','hour','yday',
+                            'up','mf','gs',
+                            'foraging','social','other_bhv','num_sighting'))
+model <- tree(num_sighting~.,data=dfs)
+par(mfrow=c(1,1))
+plot(model)
+text(model)
+```
+
+### Number of sighted whales no demo info
+```{r}
+dfs = subset(df, select = c('dist','hour','yday',
+                            'up','mf','gs',
+                            'foraging','social','other_bhv','num_sighting'))
+model <- tree(num_sighting~.,data=dfs)
+par(mfrow=c(1,1))
+plot(model)
+text(model)
+```
+
+### adult males
+```{r}
+dfs = subset(df, select = c('juvenile_female','juvenile_male','adult_female','adult_male','unknown',
+                            'dist','hour','yday',
+                            'up','mf','gs',
+                            'foraging','social','other_bhv'))
+model <- tree(adult_male~.,data=dfs)
+par(mfrow=c(1,1))
+plot(model)
+text(model)
+```
+
+### adult females
+```{r}
+dfs = subset(df, select = c('juvenile_female','juvenile_male','adult_female','adult_male','unknown',
+                            'dist','hour','yday',
+                            'up','mf','gs',
+                            'foraging','social','other_bhv'))
+model <- tree(adult_female~.,data=dfs)
+par(mfrow=c(1,1))
+plot(model)
+text(model)
+```
+
+### day
+```{r}
+dfs = subset(df, select = c('juvenile_female','juvenile_male','adult_female','adult_male','unknown',
+                            'dist','hour','yday',
+                            'up','mf','gs',
+                            'foraging','social','other_bhv','num_sighting'))
+model <- tree(yday~.,data=dfs)
+par(mfrow=c(1,1))
+plot(model)
+text(model)
+```
+
+### distance
+```{r}
+dfs = subset(df, select = c('juvenile_female','juvenile_male','adult_female','adult_male','unknown',
+                            'dist','hour','yday',
+                            'up','mf','gs',
+                            'foraging','social','other_bhv','num_sighting'))
+model <- tree(dist~.,data=dfs)
+par(mfrow=c(1,1))
+plot(model)
+text(model)
+```
+
+### upcall call
+```{r}
+dfs = subset(df, select = c('juvenile_female','juvenile_male','adult_female','adult_male','unknown',
+                            'dist','hour','yday',
+                            'up','mf','gs',
+                            'foraging','social','other_bhv','num_sighting'))
+model <- tree(up~.,data=dfs)
+par(mfrow=c(1,1))
+plot(model)
+text(model)
+```
+
+### gunshot call
+```{r}
+dfs = subset(df, select = c('juvenile_female','juvenile_male','adult_female','adult_male','unknown',
+                            'dist','hour','yday',
+                            'up','mf','gs',
+                            'foraging','social','other_bhv','num_sighting'))
+model <- tree(gs~.,data=dfs)
+par(mfrow=c(1,1))
+plot(model)
+text(model)
+```
+
+### mid-frequency call
+```{r}
+dfs = subset(df, select = c('juvenile_female','juvenile_male','adult_female','adult_male','unknown',
+                            'dist','hour','yday',
+                            'up','mf','gs',
+                            'foraging','social','other_bhv','num_sighting'))
+model <- tree(mf~.,data=dfs)
+par(mfrow=c(1,1))
+plot(model)
+text(model)
+```
+
+### foraging behaviour
+```{r}
+dfs = subset(df, select = c('juvenile_female','juvenile_male','adult_female','adult_male','unknown',
+                            'dist','hour','yday',
+                            'up','mf','gs',
+                            'foraging','social','other_bhv','num_sighting'))
+model <- tree(foraging~.,data=dfs)
+par(mfrow=c(1,1))
+plot(model)
+text(model)
+```
+
+### social behaviour
+```{r}
+dfs = subset(df, select = c('juvenile_female','juvenile_male','adult_female','adult_male','unknown',
+                            'dist','hour','yday',
+                            'up','mf','gs',
+                            'foraging','social','other_bhv','num_sighting'))
+model <- tree(social~.,data=dfs)
+par(mfrow=c(1,1))
+plot(model)
+text(model)
+```
+
+### other behaviour
+```{r}
+dfs = subset(df, select = c('juvenile_female','juvenile_male','adult_female','adult_male','unknown',
+                            'dist','hour','yday',
+                            'up','mf','gs',
+                            'foraging','social','other_bhv','num_sighting'))
+model <- tree(other_bhv~.,data=dfs)
+par(mfrow=c(1,1))
+plot(model)
+text(model)
+```
+
+The number of whales sighted variance is described by the demographics 
+
+## GLM model using call data only {.tabset}
+The GLMs use a negative binomial distribution (except for the hindsight model) opposed to a poisson or quassipoisson because: 1. The data has over dispersion and zero inflation, poisson is for zero inflation and quassipoisson attempts over dispersion but negative binomial does a better job at this (from my understanding, I could be very wrong). 2. Del used it in her paper and she had similar issues with over dispersion and zero inflation. 
+
+Each model is shown and then put through a step-wise reduction (this is not the official name) in both directions (top down and bottom up) so after the step-wise reduction we are left with terms/variables that are for the most part significant and necessary for the model to be good enough (good enough in the sense of what R thinks it did a good job).
+
+### basic
+```{r}
+# model
+sightm = glm.nb(num_sighting ~ up+gs+mf+
+               yday+dist+
+               up:yday+gs:yday+mf:yday+
+               yday:dist+
+               dist:up+dist:gs+dist:mf
+             , data = df)
+
+# summary of model
+summary(sightm)
+
+# step model
+step.model <- stepAIC(sightm, direction = "both", 
+                      trace = FALSE)
+
+# summary of step model
+summary(step.model)
+
+# looking to see if model was good or awful
+par(mfrow=c(2,2))
+plot(sightm)
+```
+
+### what if?
+We can see that the demographics heavily influence the total number of whales sighted from the tree diagrams. Thus we would suspect a glm model to represent the number of sighted whales to have the following layout:
+
+number of whales sighted = B1xnumber of adult females + B2xnumber of males + B3x number of juvenile males + B4x number of juvenile females
+
+But with acoustic data we do not have any information on the sightings. So what if we replaced each demographic with a model that the acoustic data can estimate
+
+First I begin with finding out which acoustic data is needed to regress on each demographic category
+
+#### demo models from acoustics {.tabset}
+
+##### adult female
+```{r}
+sightm = glm.nb(adult_female ~ yday+dist+yday:dist+
+                  up+gs+mf+up:yday+gs:yday+mf:yday+
+                  up:dist+gs:dist+mf:dist+gs:mf+gs:up+mf:up
+                , data = df)
+summary(sightm)
+step.model <- stepAIC(sightm, direction = "both", 
+                      trace = FALSE)
+summary(step.model)
+```
+
+##### juvenile female
+```{r}
+sightm = glm.nb(juvenile_female ~ yday+dist+yday:dist+
+                  up+gs+mf+up:yday+gs:yday+mf:yday+
+                  up:dist+gs:dist+mf:dist+gs:mf+gs:up+mf:up
+                , data = df)
+summary(sightm)
+step.model <- stepAIC(sightm, direction = "both", 
+                      trace = FALSE)
+summary(step.model)
+```
+
+##### juvenile male
+```{r}
+sightm = glm.nb(juvenile_male ~ yday+dist+yday:dist+
+                  up+gs+mf+up:yday+gs:yday+mf:yday+
+                  up:dist+gs:dist+mf:dist+gs:mf+gs:up+mf:up
+                , data = df)
+summary(sightm)
+step.model <- stepAIC(sightm, direction = "both", 
+                      trace = FALSE)
+summary(step.model)
+```
+
+##### adult male
+```{r}
+sightm = glm.nb(adult_male ~ yday+dist+yday:dist+
+                  up+gs+mf+up:yday+gs:yday+mf:yday+
+                  up:dist+gs:dist+mf:dist+gs:mf+gs:up+mf:up
+                , data = df)
+summary(sightm)
+step.model <- stepAIC(sightm, direction = "both", 
+                      trace = FALSE)
+summary(step.model)
+```
+
+#### replace demogrpahics with demographic models
+then for each demographic in a generic model I replace it with each of the specified models for each demographic
+```{r}
+# model
+test = glm.nb(num_sighting~ (yday+up+gs+mf+gs:yday+gs:mf+gs:up)+
+                (yday+dist+yday:dist+up+gs+mf+gs:yday+mf:dist+gs:up)+
+                (yday+dist+up+gs+mf+up:yday+gs:dist+mf:dist)+
+                (yday+dist+yday:dist+up+gs+mf+gs:yday+mf:yday+mf:dist+gs:mf+gs:up),
+                  data = df)
+
+# summary of model
+summary(test)
+
+# stemp model
+step.model <- stepAIC(test, direction = "both", 
+                      trace = FALSE)
+
+# summary of step model
+summary(step.model)
+
+# looking to see if model was good or awful
+par(mfrow=c(2,2))
+plot(test)
+```
+
+#### important detail I forgot in my logic
+In hindsight I should have first look to see what the regression model should be for number of whales sighted from demographic information only. I should have also looked to see if interactions need to be considered...oops.
+```{r}
+sightm = lm(num_sighting ~ adult_male+juvenile_male+adult_female+juvenile_female+yday+dist
+                , data = df)
+summary(sightm)
+step.model <- stepAIC(sightm, direction = "both", 
+                      trace = FALSE)
+summary(step.model)
+par(mfrow=c(2,2))
+plot(sightm)
+
+```
