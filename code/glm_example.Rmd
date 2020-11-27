@@ -453,7 +453,7 @@ sightm = glm.nb(num_sighting ~ up+gs+mf+
 summary(sightm)
 
 # step model
-step.model <- stepAIC(sightm, direction = "both", 
+step.model <- stepAIC(sightm, direction = "both",
                       trace = FALSE)
 
 # summary of step model
