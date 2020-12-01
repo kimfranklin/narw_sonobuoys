@@ -29,7 +29,9 @@ df = readRDS("data/processed/proc_acou_photoid.rds")
 ```
 
 # GLM 
-SHOULD USE BOTH STEPWISE, ONLY BACKWARD, ONLY FORWARD, ONLY BASE MODEL(NO INTERACTION TERMS), ETC.
+SHOULD USE BOTH STEPWISE, ONLY BACKWARD, ONLY FORWARD, ONLY BASE MODEL(NO INTERACTION TERMS), ETC.?
+
+-use anovas to do this (compare models)?
 
 ## Estimating number of whales from acoutic data only{.tabset}
 
