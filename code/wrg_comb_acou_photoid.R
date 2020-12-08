@@ -289,7 +289,7 @@ if("FCL" %in% colnames(df)){
   df$FCL + df$social -> df$social
 }
 
-# add other bheaviour column
+# add other behavior column
 df[,"other_bhv"] <- 0
 
 # add other bheaviours to other behaviour column
@@ -429,5 +429,19 @@ df = df[,!(names(df) %in% drop)]
 distance = distinct(dfs, dist)
 df = cbind(df, distance)
 
+# editing data frame so these models can be made
+# foraging
+df[,"foraging_bi"] <- 0
+df$foraging_bi[df$foraging != 0] <- 1
+
+# social
+df[,"social_bi"] <- 0
+df$social_bi[df$social != 0] <- 1
+
+# other bhv
+df[,"other_bhv_bi"] <- 0
+df$other_bhv_bi[df$other_bhv != 0] <- 1
+
 # save file 
 saveRDS(df, file = ofile)
+
