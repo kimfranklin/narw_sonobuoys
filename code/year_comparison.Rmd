@@ -1,0 +1,226 @@
+---
+title: "year_comparison"
+output: 
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown for comparing the years for variables of interest. 
+
+```{r, include = FALSE}
+# libraries
+library(tidyverse)
+library(MASS)
+
+# data
+df = readRDS("data/processed/proc_acou_photoid.rds")
+```
+
+Recall assumptions for anova: normality, equal variance, independent. Kruskal-wallis test (non-parametric anova) is run because some years have very small sample sizes (i.e., 2017) and the data for the most part is not normal.
+
+## Upcall{.tabset}
+
+### count
+```{r}
+kruskal.test(up~year, data = df)
+```
+
+### rate
+```{r}
+kruskal.test(up_per_hr~year, data = df)
+```
+
+### production rate
+```{r}
+kruskal.test(up_per_hr_per_whale~year, data = df)
+```
+
+## Gunshot{.tabset}
+
+### count
+```{r}
+kruskal.test(gs~year, data = df)
+```
+
+### rate
+```{r}
+kruskal.test(gs_per_hr~year, data = df)
+```
+
+### production rate
+```{r}
+kruskal.test(gs_per_hr_per_whale~year, data = df)
+```
+
+## Mid-freq{.tabset}
+
+### count
+```{r}
+kruskal.test(mf~year, data = df)
+```
+
+### rate
+```{r}
+kruskal.test(mf_per_hr~year, data = df)
+```
+
+### production rate
+```{r}
+kruskal.test(mf_per_hr_per_whale~year, data = df)
+```
+
+## Number of whales
+```{r}
+# anova
+sight = aov(num_sighting~year, data = df)
+summary(sight)
+
+# non parametric anova
+kruskal.test(num_sighting~year, data = df)
+```
+
+## Demographics{.tabset}
+
+### adult male
+```{r}
+kruskal.test(adult_male~year, data = df)
+```
+
+### adult female
+```{r}
+kruskal.test(adult_female~year, data = df)
+```
+
+### juvenile male
+```{r}
+kruskal.test(juvenile_male~year, data = df)
+```
+
+### juvenile female
+```{r}
+kruskal.test(juvenile_female~year, data = df)
+```
+
+## Behaviours{.tabset}
+
+### foraging rate
+```{r}
+kruskal.test(foraging_bhv_whale~year, data = df)
+```
+
+### social rate
+```{r}
+kruskal.test(social_bhv_whale~year, data = df)
+```
+
+### other behaviour rate
+```{r}
+kruskal.test(other_bhv_whale~year, data = df)
+```
+
+# Month comparison
+
+## Upcall{.tabset}
+
+### count
+```{r}
+kruskal.test(up~month, data = df)
+```
+
+### rate
+```{r}
+kruskal.test(up_per_hr~month, data = df)
+```
+
+### production rate
+```{r}
+kruskal.test(up_per_hr_per_whale~month, data = df)
+```
+
+## Gunshot{.tabset}
+
+### count
+```{r}
+kruskal.test(gs~month, data = df)
+```
+
+### rate
+```{r}
+kruskal.test(gs_per_hr~month, data = df)
+```
+
+### production rate
+```{r}
+kruskal.test(gs_per_hr_per_whale~month, data = df)
+```
+
+## Mid-freq{.tabset}
+
+### count
+```{r}
+kruskal.test(mf~month, data = df)
+```
+
+### rate
+```{r}
+kruskal.test(mf_per_hr~month, data = df)
+```
+
+### production rate
+```{r}
+kruskal.test(mf_per_hr_per_whale~month, data = df)
+```
+
+## Number of whales
+```{r}
+# anova
+sight = aov(num_sighting~month, data = df)
+summary(sight)
+
+# non parametric anova
+kruskal.test(num_sighting~month, data = df)
+```
+
+## Demographics{.tabset}
+
+### adult male
+```{r}
+kruskal.test(adult_male~month, data = df)
+```
+
+### adult female
+```{r}
+kruskal.test(adult_female~month, data = df)
+```
+
+### juvenile male
+```{r}
+kruskal.test(juvenile_male~month, data = df)
+```
+
+### juvenile female
+```{r}
+kruskal.test(juvenile_female~month, data = df)
+```
+
+## Behaviours{.tabset}
+
+### foraging rate
+```{r}
+kruskal.test(foraging_bhv_whale~month, data = df)
+```
+
+### social rate
+```{r}
+kruskal.test(social_bhv_whale~month, data = df)
+```
+
+### other behaviour rate
+```{r}
+kruskal.test(other_bhv_whale~month, data = df)
+```
