@@ -14,7 +14,7 @@ df = readRDS('data/processed/proc_acou_photoid.rds')
 
 # subset the data - because the dataframe is way to big and all columns are not necessary for this exercise
 dfs = df %>%
-  select(id, lat, lon, num_sighting, up, mf, gs, dep_duration, rec_duration, up_per_hr,
+  dplyr::select(id, lat, lon, num_sighting, up, mf, gs, dep_duration, rec_duration, up_per_hr,
                  mf_per_hr, gs_per_hr, up_per_hr_per_whale, mf_per_hr_per_whale,
                  gs_per_hr_per_whale,
                  juvenile_female, juvenile_male, adult_female, adult_male,
@@ -23,7 +23,7 @@ dfs = df %>%
 
 # get the difference between each datetime in HOURS
 tmp = dfs %>% 
-  select(date)%>%
+  dplyr::select(date)%>%
   mutate(time_diff_h = dfs$datetime - lag(dfs$datetime))
 
 # drop the column not needed
