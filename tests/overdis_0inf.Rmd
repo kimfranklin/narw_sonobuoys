@@ -403,11 +403,12 @@ sightm = glm(mf ~ yday+dist+
 check_zeroinflation(sightm)
 
 # negative binomial
-sightm = glm.nb(mf ~ yday+dist+
+# for some readon model wont run when has yday instead
+sightm = glm.nb(mf ~ month+dist+
                num_sighting+ratio_male_female+
                social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
                offset(log(rec_duration))+
-               yday:dist
+               month:dist
              , data = df, control=glm.control(maxit=100))
 check_zeroinflation(sightm)
 ```
