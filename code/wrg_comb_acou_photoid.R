@@ -53,12 +53,12 @@ gs = acou_df %>%
 
 dep_duration = acou_df %>%
   filter(call_type == 'START') %>%
-  select(c('id','dep_duration'))
+  dplyr::select(c('id','dep_duration'))
 dep_duration = dep_duration[!duplicated(dep_duration$id), ]
 
 rec_duration = acou_df %>%
   filter(call_type == 'START') %>%
-  select(c('id','rec_duration'))
+  dplyr::select(c('id','rec_duration'))
 rec_duration = rec_duration[!duplicated(rec_duration$id), ]
 
 # merging sightings with number of calls for up, mf and gs
@@ -178,8 +178,332 @@ df = df %>% rename(unknown_age_male = n)
 df = merge(x = df, y = nas, by.x = 'id', by.y = 'id', all.x = TRUE)
 df = df %>% rename(na_agesex = n)
 
-# adding behaviour data to data frame 
+# remove duplicate whale sightings UNDER CONSTRUCTION!!!!!!
+# make subset of only dups
+df_dup = id_df %>%
+  filter(dup == 'TRUE') %>%
+  group_by(id) %>%
+  filter(!duplicated(EGNO))
 
+# add column of just 1 call it dummy
+df_dup[,"dummy"] <- 1
+
+# remove duplicates from num_sighting
+# count the duplicates by id
+testing = df_dup %>%
+  group_by(id) %>%
+  summarise(df_dup = sum(dummy))
+
+# filter df for all the id's
+testing2 = df %>%
+  dplyr::select(id)
+
+# after filtering df into testing2 dataframe, add column of 0's into testing2
+testing2[,"dummy"] <- 0
+
+# merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
+testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
+
+# change nas to 0 in testing3
+testing3[is.na(testing3)] = 0
+
+# drop the dummy column in testing3
+drop <- c("dummy")
+testing3 = testing3[,!(names(testing3) %in% drop)]
+
+# add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
+df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# subtract the sum of dups by id from the num_sighting by id
+df[is.na(df)] = 0
+df$num_sighting = df$num_sighting - df$df_dup
+
+# remove the dups column
+drop <- c("df_dup")
+df = df[,!(names(df) %in% drop)]
+
+# remove duplicates from demographic groups
+# adult males
+# count the duplicates by id
+testing = df_dup %>%
+  filter(age == 'A') %>%
+  filter(sex == 'M') %>%
+  group_by(id) %>%
+  summarise(df_dup = sum(dummy))
+
+# merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
+testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
+
+# change nas to 0 in testing3
+testing3[is.na(testing3)] = 0
+
+# drop the dummy column in testing3
+drop <- c("dummy")
+testing3 = testing3[,!(names(testing3) %in% drop)]
+
+# add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
+df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# subtract the sum of dups by id from the num_sighting by id
+df$adult_male = df$adult_male - df$df_dup
+
+# remove the dups column
+drop <- c("df_dup")
+df = df[,!(names(df) %in% drop)]
+
+# adult females
+# count the duplicates by id
+testing = df_dup %>%
+  filter(age == 'A') %>%
+  filter(sex == 'F') %>%
+  group_by(id) %>%
+  summarise(df_dup = sum(dummy))
+
+# merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
+testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
+
+# change nas to 0 in testing3
+testing3[is.na(testing3)] = 0
+
+# drop the dummy column in testing3
+drop <- c("dummy")
+testing3 = testing3[,!(names(testing3) %in% drop)]
+
+# add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
+df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# subtract the sum of dups by id from the num_sighting by id
+df$adult_female = df$adult_female - df$df_dup
+
+# remove the dups column
+drop <- c("df_dup")
+df = df[,!(names(df) %in% drop)]
+
+# juvenile males
+# count the duplicates by id
+testing = df_dup %>%
+  filter(age == 'J') %>%
+  filter(sex == 'M') %>%
+  group_by(id) %>%
+  summarise(df_dup = sum(dummy))
+
+# merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
+testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
+
+# change nas to 0 in testing3
+testing3[is.na(testing3)] = 0
+
+# drop the dummy column in testing3
+drop <- c("dummy")
+testing3 = testing3[,!(names(testing3) %in% drop)]
+
+# add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
+df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# subtract the sum of dups by id from the num_sighting by id
+df$juvenile_male = df$juvenile_male - df$df_dup
+
+# remove the dups column
+drop <- c("df_dup")
+df = df[,!(names(df) %in% drop)]
+
+# juvenile females
+# count the duplicates by id
+testing = df_dup %>%
+  filter(age == 'J') %>%
+  filter(sex == 'F') %>%
+  group_by(id) %>%
+  summarise(df_dup = sum(dummy))
+
+# merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
+testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
+
+# change nas to 0 in testing3
+testing3[is.na(testing3)] = 0
+
+# drop the dummy column in testing3
+drop <- c("dummy")
+testing3 = testing3[,!(names(testing3) %in% drop)]
+
+# add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
+df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# subtract the sum of dups by id from the num_sighting by id
+df$juvenile_female = df$juvenile_female - df$df_dup
+
+# remove the dups column
+drop <- c("df_dup")
+df = df[,!(names(df) %in% drop)]
+
+# adult, unknown sex
+# count the duplicates by id
+testing = df_dup %>%
+  filter(age == 'A') %>%
+  filter(sex == 'X') %>%
+  group_by(id) %>%
+  summarise(df_dup = sum(dummy))
+
+# merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
+testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
+
+# change nas to 0 in testing3
+testing3[is.na(testing3)] = 0
+
+# drop the dummy column in testing3
+drop <- c("dummy")
+testing3 = testing3[,!(names(testing3) %in% drop)]
+
+# add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
+df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# subtract the sum of dups by id from the num_sighting by id
+df$adult_unknown_sex = df$adult_unknown_sex - df$df_dup
+
+# remove the dups column
+drop <- c("df_dup")
+df = df[,!(names(df) %in% drop)]
+
+# juvenile, unknown sex
+# count the duplicates by id
+testing = df_dup %>%
+  filter(age == 'J') %>%
+  filter(sex == 'X') %>%
+  group_by(id) %>%
+  summarise(df_dup = sum(dummy))
+
+# merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
+testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
+
+# change nas to 0 in testing3
+testing3[is.na(testing3)] = 0
+
+# drop the dummy column in testing3
+drop <- c("dummy")
+testing3 = testing3[,!(names(testing3) %in% drop)]
+
+# add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
+df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# subtract the sum of dups by id from the num_sighting by id
+df$juvenile_unknown_sex = df$ juvenile_unknown_sex- df$df_dup
+
+# remove the dups column
+drop <- c("df_dup")
+df = df[,!(names(df) %in% drop)]
+
+# unknown age, unknown sex
+# count the duplicates by id
+testing = df_dup %>%
+  filter(age == 'U') %>%
+  filter(sex == 'X') %>%
+  group_by(id) %>%
+  summarise(df_dup = sum(dummy))
+
+# merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
+testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
+
+# change nas to 0 in testing3
+testing3[is.na(testing3)] = 0
+
+# drop the dummy column in testing3
+drop <- c("dummy")
+testing3 = testing3[,!(names(testing3) %in% drop)]
+
+# add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
+df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# subtract the sum of dups by id from the num_sighting by id
+df$unknown_agesex = df$unknown_agesex - df$df_dup
+
+# remove the dups column
+drop <- c("df_dup")
+df = df[,!(names(df) %in% drop)]
+
+# unknown age, female
+# count the duplicates by id
+testing = df_dup %>%
+  filter(age == 'U') %>%
+  filter(sex == 'F') %>%
+  group_by(id) %>%
+  summarise(df_dup = sum(dummy))
+
+# merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
+testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
+
+# change nas to 0 in testing3
+testing3[is.na(testing3)] = 0
+
+# drop the dummy column in testing3
+drop <- c("dummy")
+testing3 = testing3[,!(names(testing3) %in% drop)]
+
+# add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
+df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# subtract the sum of dups by id from the num_sighting by id
+df$unknown_age_female = df$unknown_age_female - df$df_dup
+
+# remove the dups column
+drop <- c("df_dup")
+df = df[,!(names(df) %in% drop)]
+
+# unknown age, male
+# count the duplicates by id
+testing = df_dup %>%
+  filter(age == 'U') %>%
+  filter(sex == 'M') %>%
+  group_by(id) %>%
+  summarise(df_dup = sum(dummy))
+
+# merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
+testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
+
+# change nas to 0 in testing3
+testing3[is.na(testing3)] = 0
+
+# drop the dummy column in testing3
+drop <- c("dummy")
+testing3 = testing3[,!(names(testing3) %in% drop)]
+
+# add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
+df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# subtract the sum of dups by id from the num_sighting by id
+df$unknown_age_male = df$unknown_age_male - df$df_dup
+
+# remove the dups column
+drop <- c("df_dup")
+df = df[,!(names(df) %in% drop)]
+
+# NA age, NONE sex
+# count the duplicates by id
+testing = df_dup %>%
+  filter(age == 'NA') %>%
+  filter(sex == 'NONE') %>%
+  group_by(id) %>%
+  summarise(df_dup = sum(dummy))
+
+# merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
+testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
+
+# change nas to 0 in testing3
+testing3[is.na(testing3)] = 0
+
+# drop the dummy column in testing3
+drop <- c("dummy")
+testing3 = testing3[,!(names(testing3) %in% drop)]
+
+# add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
+df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
+
+# subtract the sum of dups by id from the num_sighting by id
+df$na_agesex = df$na_agesex - df$df_dup
+
+# remove the dups column
+drop <- c("df_dup")
+df = df[,!(names(df) %in% drop)]
+
+# adding behaviour data to data frame 
 # separate multiple behaviours into rows
 id_dfs = separate_rows(id_df, behaviour, sep = ",")
 
