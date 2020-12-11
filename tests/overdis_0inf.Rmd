@@ -1,0 +1,788 @@
+---
+title: "overdis_0inf"
+output: 
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown for looking to see if the sono data is over dispersed, zero inflated, normal, and multicolinear
+
+```{r, include=FALSE}
+library(MASS)
+library(tidyverse)
+library(tseries)
+library(AER)
+library(performance)
+library(car)
+
+df = readRDS("data/processed/proc_acou_photoid.rds")
+```
+
+## Normal? {.tabset}
+
+Are the variables normal shaped? Only num_sight is and adult males, everything else fails the test suggesting that everything else cannot be modeled by a normal distribution. (Alpha = 0.05)
+
+### number of whales
+```{r}
+shapiro.test(df$num_sighting)
+jarque.bera.test(df$num_sighting)
+```
+
+### call rates
+```{r}
+# up call
+shapiro.test(df$up_per_hr)
+
+# gunshot
+shapiro.test(df$mf_per_hr)
+
+# mid-freq
+shapiro.test(df$gs_per_hr)
+```
+
+### yday
+```{r}
+shapiro.test(df$yday)
+```
+
+### distance
+```{r}
+shapiro.test(df$dist)
+```
+
+### demographics 
+```{r}
+# ratio
+shapiro.test(df$ratio_male_female)
+
+# adult females
+shapiro.test(df$adult_female)
+
+# adult males
+shapiro.test(df$adult_male)
+
+# juvenile females
+shapiro.test(df$juvenile_female)
+
+# juvenile males
+shapiro.test(df$juvenile_male)
+
+# unknown indiivduals
+shapiro.test(df$unknown)
+```
+
+### behaviour rates
+```{r}
+# foraging 
+shapiro.test(df$foraging_bhv_whale)
+
+# social 
+shapiro.test(df$social_bhv_whale)
+
+# other
+shapiro.test(df$other_bhv_whale)
+```
+
+## Over dispersion? {.tabset}
+Over dispersion for all the call types all had dispersion over 0. We can also tell over dispersion by comparing residual deviance to the degrees of freedom, do residual deviance / degrees of freedom and if greater than 1 it is over dispersion. So all are over dispersed. 
+
+### estimating upcall call rate
+```{r}
+sightm = glm(up ~ yday+dist+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))+
+               yday:dist
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### estimating gunshot call rate
+```{r}
+sightm = glm(gs ~ yday+dist+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))+
+               yday:dist
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### estimating mid-freq call rate
+```{r}
+sightm = glm(mf ~ yday+dist+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))+
+               yday:dist
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+## Over dispersion for each variable? {.tabset}
+
+### upcall vs. month
+```{r}
+sightm = glm(up ~ month+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### upcall vs. distance
+```{r}
+sightm = glm(up ~ dist+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### upcall vs. ratio
+```{r}
+sightm = glm(up ~ ratio_male_female+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### upcall vs. number of whales
+```{r}
+sightm = glm(up ~num_sighting+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### upcall vs. foraging rate
+```{r}
+sightm = glm(up ~ foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### upcall vs. social rate
+```{r}
+sightm = glm(up ~ social_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### upcall vs. other bhv rate
+```{r}
+sightm = glm(up ~other_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### gunshot vs. month
+```{r}
+sightm = glm(gs ~ month+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### gunshot vs. distance
+```{r}
+sightm = glm(gs ~ dist+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### gunshot vs. ratio
+```{r}
+sightm = glm(gs ~ ratio_male_female+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### gunshot vs. number of whales
+```{r}
+sightm = glm(gs ~num_sighting+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### gunshot vs. foraging rate
+```{r}
+sightm = glm(gs ~ foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### gunshot vs. social rate
+```{r}
+sightm = glm(gs ~ social_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### gunshot vs. other bhv rate
+```{r}
+sightm = glm(gs ~other_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### mid-freq vs. month
+```{r}
+sightm = glm(mf ~ month+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### mid-freq vs. distance
+```{r}
+sightm = glm(mf ~ dist+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### mid-freq vs. ratio
+```{r}
+sightm = glm(mf ~ ratio_male_female+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### mid-freq vs. number of whales
+```{r}
+sightm = glm(mf ~num_sighting+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### mid-freq vs. foraging rate
+```{r}
+sightm = glm(mf ~ foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### mid-freq vs. social rate
+```{r}
+sightm = glm(mf ~ social_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### mid-freq vs. other bhv rate
+```{r}
+sightm = glm(mf ~other_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+## Zero inflation? {.tabset}
+All are zero inflated for all distributions (poisson, quasi poisson, negative binomial)
+
+### estimating upcall call rate
+```{r}
+# poisson
+sightm = glm(up ~ yday+dist+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))+
+               yday:dist
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+# quasi poisson
+sightm = glm(up ~ yday+dist+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))+
+               yday:dist
+             , data = df, family = 'quasipoisson')
+check_zeroinflation(sightm)
+
+# negative binomial
+sightm = glm.nb(up ~ yday+dist+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))+
+               yday:dist
+             , data = df, control=glm.control(maxit=100))
+check_zeroinflation(sightm)
+```
+
+### estimating gunshot call rate
+```{r}
+# poisson
+sightm = glm(gs ~ yday+dist+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))+
+               yday:dist
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+# quasi poisson
+sightm = glm(gs ~ yday+dist+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))+
+               yday:dist
+             , data = df, family = 'quasipoisson')
+check_zeroinflation(sightm)
+
+# negative binomial
+sightm = glm.nb(gs ~ yday+dist+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))+
+               yday:dist
+             , data = df, control=glm.control(maxit=100))
+check_zeroinflation(sightm)
+```
+
+### estimating mid-freq call rate
+```{r}
+# poisson
+sightm = glm(mf ~ yday+dist+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))+
+               yday:dist
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+# quasi poisson
+sightm = glm(mf ~ yday+dist+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))+
+               yday:dist
+             , data = df, family = 'quasipoisson')
+check_zeroinflation(sightm)
+
+# negative binomial
+sightm = glm.nb(mf ~ yday+dist+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))+
+               yday:dist
+             , data = df, control=glm.control(maxit=100))
+check_zeroinflation(sightm)
+```
+
+## Zero inflation? {.tabset}
+
+### upcall vs. month
+```{r}
+sightm = glm(up ~ month+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(up ~ month+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### upcall vs. distance
+```{r}
+sightm = glm(up ~ dist+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(up ~ dist+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### upcall vs. ratio
+```{r}
+sightm = glm(up ~ ratio_male_female+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(up ~ ratio_male_female+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### upcall vs. number of whales
+```{r}
+sightm = glm(up ~num_sighting+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(up ~num_sighting+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### upcall vs. foraging rate
+```{r}
+sightm = glm(up ~ foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(up ~ foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### upcall vs. social rate
+```{r}
+sightm = glm(up ~ social_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(up ~ social_bhv_whale+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### upcall vs. other bhv rate
+```{r}
+sightm = glm(up ~other_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(up ~other_bhv_whale+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### gunshot vs. month
+```{r}
+sightm = glm(gs ~ month+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(gs ~ month+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### gunshot vs. distance
+```{r}
+sightm = glm(gs ~ dist+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(gs ~ dist+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### gunshot vs. ratio
+```{r}
+sightm = glm(gs ~ ratio_male_female+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(gs ~ ratio_male_female+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### gunshot vs. number of whales
+```{r}
+sightm = glm(gs ~num_sighting+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(gs ~num_sighting+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### gunshot vs. foraging rate
+```{r}
+sightm = glm(gs ~ foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(gs ~ foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### gunshot vs. social rate
+```{r}
+sightm = glm(gs ~ social_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(gs ~ social_bhv_whale+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### gunshot vs. other bhv rate
+```{r}
+sightm = glm(gs ~other_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(gs ~other_bhv_whale+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### mid-freq vs. month
+```{r}
+sightm = glm(mf ~ month+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(mf ~ month+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### mid-freq vs. distance
+```{r}
+sightm = glm(mf ~ dist+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+
+sightm = glm.nb(mf ~ dist+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### mid-freq vs. ratio
+```{r}
+sightm = glm(mf ~ ratio_male_female+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(mf ~ ratio_male_female+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### mid-freq vs. number of whales
+```{r}
+sightm = glm(mf ~num_sighting+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(mf ~num_sighting+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### mid-freq vs. foraging rate
+```{r}
+sightm = glm(mf ~ foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(mf ~ foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### mid-freq vs. social rate
+```{r}
+sightm = glm(mf ~ social_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(mf ~ social_bhv_whale+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+### mid-freq vs. other bhv rate
+```{r}
+sightm = glm(mf ~other_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+sightm = glm.nb(mf ~other_bhv_whale+
+               offset(log(rec_duration))
+             , data = df)
+check_zeroinflation(sightm)
+```
+
+## Multicolinearity {.tabset}
+If the VIF is greater than 5 it suggests there is multicolinearity going on - this is just a general rule of thumb. All are less than 5 but that does not mean they are not still correlated - depends on variables. Also for lm R^2 vs. R^2 adjusted - the adjusted can give indication of over fitting if its much lower than R^2.
+
+### estimating number of whales
+says gs, mf and yday are all really correlated
+
+just modeling number of whales from call info only sucks - the yday is most important but R2 is not very good suggesting that this is variable does not describe all the variance of the y variable
+```{r}
+# model
+sightm = lm(num_sighting ~ up+gs+mf+
+               yday+dist+
+               up:yday+gs:yday+mf:yday+
+               yday:dist+
+               dist:up+dist:gs+dist:mf
+             , data = df)
+
+# summary of model
+summary(sightm)
+
+# VIF
+vif(sightm)
+
+# model
+sightm = lm(num_sighting ~ up_per_hr+gs_per_hr+mf_per_hr+
+               yday+dist
+             , data = df)
+
+# summary of model
+summary(sightm)
+
+# VIF
+vif(sightm)
+
+# model
+sightm = lm(num_sighting ~ yday+dist, data = df)
+
+# summary of model
+summary(sightm)
+
+# model THE BEST MODEL
+sightm = lm(num_sighting ~ adult_male+adult_female+juvenile_male+juvenile_female
+             , data = df)
+
+# summary of model
+summary(sightm)
+
+# VIF
+vif(sightm)
+```
+
+### estimating upcall call rate
+yday, ratio, social all really correlated
+```{r}
+sightm = glm(up ~ yday+dist+
+                  num_sighting+ratio_male_female+
+                  social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, family = 'poisson')
+
+# summary of model
+summary(sightm)
+
+# VIF
+vif(sightm)
+```
+
+### estimating gunshot call rate
+yday, ratio, social all really correlated
+```{r}
+sightm = glm(gs ~ yday+dist+
+                  num_sighting+ratio_male_female+
+                  social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, family = 'poisson')
+
+# summary of model
+summary(sightm)
+
+# VIF
+vif(sightm)
+```
+
+### estimating mid-freq call rate
+yday, ratio, socia, num sighted all really correlated
+```{r}
+sightm = glm(mf ~ yday+dist+
+                  num_sighting+ratio_male_female+
+                  social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, family = 'poisson')
+
+# summary of model
+summary(sightm)
+
+# VIF
+vif(sightm)
+```
+

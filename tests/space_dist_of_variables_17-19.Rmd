@@ -1,0 +1,422 @@
+---
+title: "space_dist_of_variables_17-19"
+output:
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown for looking at what call p-rates and behaviour rates are happening where
+
+```{r, include=FALSE}
+#Some useful libraries for plotting
+library(tidyverse)
+library(lubridate)
+
+```
+
+Data and set up
+```{r}
+# read in the data
+ifile = readRDS("data/processed/proc_acou_photoid.rds")
+df= ifile
+
+# read in map data
+load('data/processed/map_data.rda')
+
+# define map limits
+min_lat = 47.2
+min_lon = -65
+max_lat = 48.8
+max_lon = -62.25
+
+# fix month labels
+df$month = month(df$date, label = T, abbr = F)
+
+# fix bathy data
+ggb = bf %>% dplyr::filter(x >= min_lon & x <= max_lon & y >= min_lat & y <= max_lat)
+ggb$z[ggb$z>=0]=0
+ggb$z = abs(ggb$z)
+
+# city positions
+cities = data.frame(
+  name = c("Shippagan", "Percé"),
+  lat = c(47.7439, 48.5244),
+  lon = c(-64.7057,-64.2127)
+)
+
+```
+
+## Maps with call production rates and behaviour rates as colours {.tabset}
+"*" represents the Orpheline Trough
+
+### Up calls 
+```{r,fig.width=10,fig.height=11}
+# up production rate
+# gsl map
+gsl = ggplot() +
+  
+  # plot limits
+  coord_quickmap(xlim = c(min_lon,max_lon), ylim = c(min_lat, max_lat), expand = F)+
+  
+  # bathymetry
+  geom_contour_filled(data=ggb, aes(x=x,y=y,z=z), color = NA, 
+                      breaks = c(seq(from = 0,to = 150, by = 25),500))+
+  scale_fill_grey(start = 0.8, end = 0.3)+
+  
+  # land
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),fill = "cornsilk", color = NA)+
+  
+  # orphaline trough position
+  annotate("text", x = -63.90, y = 47.90, label = '*')+
+  
+  # add city points and labels
+  geom_point(data = cities,
+             aes(x = lon, y = lat),
+             color = "darkslategrey",
+             size = 1) +
+  geom_text(
+    data = cities,
+    aes(x = lon, y = lat, label = name),
+    color =
+      "darkslategrey",
+    nudge_y = 0.07,
+    size = 3
+  ) +
+  
+  # sonobuoy positions
+  geom_point(data = df, aes(x = lon, y = lat, size = up_per_hr_per_whale), 
+             shape = 21, fill = 'red', alpha = 0.6) + 
+  
+  # facet
+  facet_grid(year ~ month) +
+  
+  # labels
+  labs(x = "Latitude (W)", 
+       y = "Longitude (N)",
+       size = 'Upcall prod. rate\n(call/hr/whale)',
+       fill = 'Depth (m)')+
+  
+  # formatting
+  theme_bw()+
+  theme(
+    text = element_text(size = 15),
+    axis.text.x = element_text(colour = "black"),
+    axis.text.y = element_text(colour = "black"),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
+
+gsl
+
+```
+
+### Gunshots
+```{r,fig.width=10,fig.height=11}
+# gs production rate
+# gsl map
+gsl = ggplot() +
+  
+  # plot limits
+  coord_quickmap(xlim = c(min_lon,max_lon), ylim = c(min_lat, max_lat), expand = F)+
+  
+  # bathymetry
+  geom_contour_filled(data=ggb, aes(x=x,y=y,z=z), color = NA, 
+                      breaks = c(seq(from = 0,to = 150, by = 25),500))+
+  scale_fill_grey(start = 0.8, end = 0.3)+
+  
+  # land
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),fill = "cornsilk", color = NA)+
+  
+  # orphaline trough position
+  annotate("text", x = -63.90, y = 47.90, label = '*')+
+  
+  # add city points and labels
+  geom_point(data = cities,
+             aes(x = lon, y = lat),
+             color = "darkslategrey",
+             size = 1) +
+  geom_text(
+    data = cities,
+    aes(x = lon, y = lat, label = name),
+    color =
+      "darkslategrey",
+    nudge_y = 0.07,
+    size = 3
+  ) +
+  
+  # sonobuoy positions
+  geom_point(data = df, aes(x = lon, y = lat, size = gs_per_hr_per_whale), 
+             shape = 21, fill = 'red', alpha = 0.6) + 
+  
+  # facet
+  facet_grid(year ~ month) +
+  
+  # labels
+  labs(x = "Latitude (W)", 
+       y = "Longitude (N)",
+       size = 'Gunshot prod. rate\n(call/hr/whale)',
+       fill = 'Depth (m)')+
+  
+  # formatting
+  theme_bw()+
+  theme(
+    text = element_text(size = 15),
+    axis.text.x = element_text(colour = "black"),
+    axis.text.y = element_text(colour = "black"),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
+
+gsl
+
+```
+
+### Mid-frequency
+```{r,fig.width=10,fig.height=11}
+# mf production rate
+# gsl map
+gsl = ggplot() +
+  
+  # plot limits
+  coord_quickmap(xlim = c(min_lon,max_lon), ylim = c(min_lat, max_lat), expand = F)+
+  
+  # bathymetry
+  geom_contour_filled(data=ggb, aes(x=x,y=y,z=z), color = NA, 
+                      breaks = c(seq(from = 0,to = 150, by = 25),500))+
+  scale_fill_grey(start = 0.8, end = 0.3)+
+  
+  # land
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),fill = "cornsilk", color = NA)+
+  
+  # orphaline trough position
+  annotate("text", x = -63.90, y = 47.90, label = '*')+
+  
+  # add city points and labels
+  geom_point(data = cities,
+             aes(x = lon, y = lat),
+             color = "darkslategrey",
+             size = 1) +
+  geom_text(
+    data = cities,
+    aes(x = lon, y = lat, label = name),
+    color =
+      "darkslategrey",
+    nudge_y = 0.07,
+    size = 3
+  ) +
+  
+  # sonobuoy positions
+  geom_point(data = df, aes(x = lon, y = lat, size = mf_per_hr_per_whale), 
+             shape = 21, fill = 'red', alpha = 0.6) + 
+  
+  # facet
+  facet_grid(year ~ month) +
+  
+  # labels
+  labs(x = "Latitude (W)", 
+       y = "Longitude (N)",
+       size = 'Mid-freq prod. rate\n(call/hr/whale)',
+       fill = 'Depth (m)')+
+  
+  # formatting
+  theme_bw()+
+  theme(
+    text = element_text(size = 15),
+    axis.text.x = element_text(colour = "black"),
+    axis.text.y = element_text(colour = "black"),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
+
+gsl
+
+```
+
+### Foraging behaviour
+```{r,fig.width=10,fig.height=11}
+# foraging rate
+# gsl map
+gsl = ggplot() +
+  
+  # plot limits
+  coord_quickmap(xlim = c(min_lon,max_lon), ylim = c(min_lat, max_lat), expand = F)+
+  
+  # bathymetry
+  geom_contour_filled(data=ggb, aes(x=x,y=y,z=z), color = NA, 
+                      breaks = c(seq(from = 0,to = 150, by = 25),500))+
+  scale_fill_grey(start = 0.8, end = 0.3)+
+  
+  # land
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),fill = "cornsilk", color = NA)+
+  
+  # orphaline trough position
+  annotate("text", x = -63.90, y = 47.90, label = '*')+
+  
+  # add city points and labels
+  geom_point(data = cities,
+             aes(x = lon, y = lat),
+             color = "darkslategrey",
+             size = 1) +
+  geom_text(
+    data = cities,
+    aes(x = lon, y = lat, label = name),
+    color =
+      "darkslategrey",
+    nudge_y = 0.07,
+    size = 3
+  ) +
+  
+  # sonobuoy positions
+  geom_point(data = df, aes(x = lon, y = lat, size = foraging_bhv_whale), 
+             shape = 21, fill = 'red', alpha = 0.6) + 
+  
+  # facet
+  facet_grid(year ~ month) +
+  
+  # labels
+  labs(x = "Latitude (W)", 
+       y = "Longitude (N)",
+       size = 'Foraging rate\n(behaviour/whale)',
+       fill = 'Depth (m)')+
+  
+  # formatting
+  theme_bw()+
+  theme(
+    text = element_text(size = 15),
+    axis.text.x = element_text(colour = "black"),
+    axis.text.y = element_text(colour = "black"),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
+
+gsl
+
+```
+
+### Social behaviour
+```{r,fig.width=10,fig.height=11}
+# socializing rate
+# gsl map
+gsl = ggplot() +
+  
+  # plot limits
+  coord_quickmap(xlim = c(min_lon,max_lon), ylim = c(min_lat, max_lat), expand = F)+
+  
+  # bathymetry
+  geom_contour_filled(data=ggb, aes(x=x,y=y,z=z), color = NA, 
+                      breaks = c(seq(from = 0,to = 150, by = 25),500))+
+  scale_fill_grey(start = 0.8, end = 0.3)+
+  
+  # land
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),fill = "cornsilk", color = NA)+
+  
+  # orphaline trough position
+  annotate("text", x = -63.90, y = 47.90, label = '*')+
+  
+  # add city points and labels
+  geom_point(data = cities,
+             aes(x = lon, y = lat),
+             color = "darkslategrey",
+             size = 1) +
+  geom_text(
+    data = cities,
+    aes(x = lon, y = lat, label = name),
+    color =
+      "darkslategrey",
+    nudge_y = 0.07,
+    size = 3
+  ) +
+  
+  # sonobuoy positions
+  geom_point(data = df, aes(x = lon, y = lat, size = social_bhv_whale), 
+             shape = 21, fill = 'red', alpha = 0.6) + 
+  
+  # facet
+  facet_grid(year ~ month) +
+  
+  # labels
+  labs(x = "Latitude (W)", 
+       y = "Longitude (N)",
+       size = 'Socializing rate\n(behaviour/whale)',
+       fill = 'Depth (m)')+
+  
+  # formatting
+  theme_bw()+
+  theme(
+    text = element_text(size = 15),
+    axis.text.x = element_text(colour = "black"),
+    axis.text.y = element_text(colour = "black"),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
+
+gsl
+
+```
+
+### Other behaviour
+```{r,fig.width=10,fig.height=11}
+# other behaviour rate
+# gsl map
+gsl = ggplot() +
+  
+  # plot limits
+  coord_quickmap(xlim = c(min_lon,max_lon), ylim = c(min_lat, max_lat), expand = F)+
+  
+  # bathymetry
+  geom_contour_filled(data=ggb, aes(x=x,y=y,z=z), color = NA, 
+                      breaks = c(seq(from = 0,to = 150, by = 25),500))+
+  scale_fill_grey(start = 0.8, end = 0.3)+
+  
+  # land
+  geom_polygon(data = nam, aes(x = long, y = lat, group = group),fill = "cornsilk", color = NA)+
+  
+  # orphaline trough position
+  annotate("text", x = -63.90, y = 47.90, label = '*')+
+  
+  # add city points and labels
+  geom_point(data = cities,
+             aes(x = lon, y = lat),
+             color = "darkslategrey",
+             size = 1) +
+  geom_text(
+    data = cities,
+    aes(x = lon, y = lat, label = name),
+    color =
+      "darkslategrey",
+    nudge_y = 0.07,
+    size = 3
+  ) +
+  
+  # sonobuoy positions
+  geom_point(data = df, aes(x = lon, y = lat, size = other_bhv_whale), 
+             shape = 21, fill = 'red', alpha = 0.6) + 
+  
+  # facet
+  facet_grid(year ~ month) +
+  
+  # labels
+  labs(x = "Latitude (W)", 
+       y = "Longitude (N)",
+       size = 'Other behv rate\n(behaviour/whale)',
+       fill = 'Depth (m)')+
+  
+  # formatting
+  theme_bw()+
+  theme(
+    text = element_text(size = 15),
+    axis.text.x = element_text(colour = "black"),
+    axis.text.y = element_text(colour = "black"),
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank())
+
+gsl
+
+```
+

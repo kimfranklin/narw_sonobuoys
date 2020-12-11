@@ -1,0 +1,373 @@
+---
+title: "est_num_whales_models"
+output: 
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown for all the possible ways we can think of of how we want to show how to estimate the number of whales from acoutic data
+
+```{r, include=FALSE}
+# libraries
+library(tidyverse)
+library(MASS)
+
+# data
+df = readRDS("data/processed/proc_acou_photoid.rds")
+```
+
+## lm vs. glm{.tabset}
+change offset to be deployment duration + 2 hrs (because whales until 1 hour before and after deployment duration)?
+
+### linear
+```{r}
+# model
+sightm = lm(num_sighting ~ up_per_hr+gs_per_hr+mf_per_hr+
+               yday+dist
+             , data = df)
+
+# summary
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+
+# ACF
+#acf(resid(sightm),correlation = TRUE, pl = TRUE)
+```
+
+### glm
+```{r}
+# model
+sightm = glm(num_sighting ~ up_per_hr+gs_per_hr+mf_per_hr+
+               yday+dist
+             , data = df)
+
+# summary
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### glm month
+```{r}
+# model
+sightm = glm(num_sighting ~ up_per_hr+gs_per_hr+mf_per_hr+
+               month+dist
+             , data = df)
+
+# summary
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### glm month no dist
+```{r}
+# model
+sightm = glm(num_sighting ~ up_per_hr+gs_per_hr+mf_per_hr+
+               month
+             , data = df)
+
+# summary
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### glm offset
+```{r}
+# model
+sightm = glm(num_sighting ~ up_per_hr+gs_per_hr+mf_per_hr+
+               yday+dist+offset(identity(dep_duration))
+             , data = df)
+
+# summary
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### glm month offset
+```{r}
+# model
+sightm = glm(num_sighting ~ up_per_hr+gs_per_hr+mf_per_hr+
+               month+dist+offset(identity(dep_duration))
+             , data = df)
+
+# summary
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### glm month offset no dist
+```{r}
+# model
+sightm = glm(num_sighting ~ up_per_hr+gs_per_hr+mf_per_hr+
+               month+offset(identity(dep_duration))
+             , data = df)
+
+# summary
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+## number sighted whales vs call rates{.tabset}
+
+### upcall
+```{r}
+sightm = lm(num_sighting~up_per_hr, data = df)
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### upcall month
+```{r}
+sightm = lm(num_sighting~up_per_hr*month, data = df)
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### gunshot
+```{r}
+sightm = lm(num_sighting~gs_per_hr, data = df)
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### gunshot month
+```{r}
+sightm = lm(num_sighting~gs_per_hr*month, data = df)
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### mid-freq
+```{r}
+sightm = lm(num_sighting~mf_per_hr, data = df)
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### mid-freq month
+```{r}
+sightm = lm(num_sighting~mf_per_hr*month, data = df)
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+## Time{.tabset}
+
+### month
+```{r}
+sightm = lm(num_sighting~month, data = df)
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### yday
+```{r}
+sightm = lm(num_sighting~yday, data = df)
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### month and year
+```{r}
+sightm = lm(num_sighting~month*year, data = df)
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+## Distance
+```{r}
+sightm = lm(num_sighting~dist, data = df)
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
