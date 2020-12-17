@@ -188,12 +188,105 @@ plt = ggplot() +
 plt
 ```
 
-## number sighted whales vs call rates{.tabset}
+### glm log offset
+```{r}
+# model
+sightm = glm(num_sighting ~ up_per_hr+gs_per_hr+mf_per_hr+
+               month+offset(log(dep_duration))
+             , data = df, family = gaussian(link=log))
+
+# summary
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+```
+
+### glm anova
+```{r}
+# model
+sightm = glm(num_sighting ~ month+dist+up_per_hr+gs_per_hr+mf_per_hr
+             , data = df)
+
+# summary
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+
+anova(sightm)
+```
+
+### lm anova
+```{r}
+# model
+sightm = lm(num_sighting ~ month+up_per_hr+dist+gs_per_hr+mf_per_hr
+             , data = df)
+
+# summary
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+
+anova(sightm)
+```
+
+## number sighted whales vs variables{.tabset}
 
 ### upcall
 ```{r}
 sightm = lm(num_sighting~up_per_hr, data = df)
 summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+
+anova(sightm)
+```
+
+### upcall log link log offset
+```{r}
+sightm = glm(num_sighting~up_per_hr+offset(log(dep_duration)), data = df)
+summary(sightm)
+
+#family = gaussian(link=log)
 
 # diagnostic plots
 par(mfrow=c(2,2))
@@ -242,6 +335,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### gunshot month
@@ -278,6 +373,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### mid-freq month
@@ -298,8 +395,6 @@ plt = ggplot() +
 plt
 ```
 
-## Time{.tabset}
-
 ### month
 ```{r}
 sightm = lm(num_sighting~month, data = df)
@@ -316,6 +411,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### yday
@@ -334,6 +431,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### month and year
@@ -354,7 +453,7 @@ plt = ggplot() +
 plt
 ```
 
-## Distance
+### distance
 ```{r}
 sightm = lm(num_sighting~dist, data = df)
 summary(sightm)
@@ -370,4 +469,6 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
