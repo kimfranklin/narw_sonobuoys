@@ -12,36 +12,36 @@ df = readRDS("data/processed/proc_acou_photoid.rds")
 
 # indivdual models
 # upcall call rate
-sighta = glm(num_sighting ~ up_per_hr
-                , data = df, control=glm.control(maxit=100))
+sighta = lm(num_sighting ~ up_per_hr
+                , data = df)
 
 # put model in matrix/array
 sighta <-summary(sighta)$coefficients
 
 # gunshot call rate
-sightb = glm(num_sighting ~ gs_per_hr
-             , data = df, control=glm.control(maxit=100))
+sightb = lm(num_sighting ~ gs_per_hr
+             , data = df)
 
 # put model in matrix/array
 sightb <-summary(sightb)$coefficients
 
 # mid-freq rate
-sightc = glm(num_sighting ~ mf_per_hr
-             , data = df, control=glm.control(maxit=100))
+sightc = lm(num_sighting ~ mf_per_hr
+             , data = df)
 
 # put model in matrix/array
 sightc <-summary(sightc)$coefficients
 
 # month
-sightd = glm(num_sighting ~ month
-             , data = df, control=glm.control(maxit=100))
+sightd = lm(num_sighting ~ month
+             , data = df)
 
 # put model in matrix/array
 sightd <-summary(sightd)$coefficients
 
 # distance
-sighte = glm(num_sighting ~ dist
-             , data = df, control=glm.control(maxit=100))
+sighte = lm(num_sighting ~ dist
+             , data = df)
 
 # put model in matrix/array
 sighte <-summary(sighte)$coefficients
