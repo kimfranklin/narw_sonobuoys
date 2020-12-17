@@ -16,6 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, include=FALSE}
 library(MASS)
 library(tidyverse)
+library(dgof)
+library(lmtest)
 library(tseries)
 library(AER)
 library(performance)
@@ -87,6 +89,43 @@ shapiro.test(df$social_bhv_whale)
 
 # other
 shapiro.test(df$other_bhv_whale)
+```
+
+## ks test{.tabset}
+
+### upcall rate
+```{r}
+sightm = lm(num_sighting~up_per_hr, data = df)
+
+ks.test(df$up_per_hr, df$num_sighting)
+```
+
+## test for homoscedasticity for est whales{.tabset}
+therefore cannot say data fails this test (fails if p-val less than alpha = 0.05)
+
+### upcall rate
+```{r}
+bptest(df$num_sighting~df$up_per_hr)
+```
+
+### gs rate
+```{r}
+bptest(df$num_sighting~df$gs_per_hr)
+```
+
+### mf rate
+```{r}
+bptest(df$num_sighting~df$mf_per_hr)
+```
+
+### month
+```{r}
+bptest(df$num_sighting~df$month)
+```
+
+### distance
+```{r}
+bptest(df$num_sighting~df$dist)
 ```
 
 ## Over dispersion? {.tabset}
