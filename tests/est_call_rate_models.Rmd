@@ -42,6 +42,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### distance
@@ -62,6 +64,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### ratio male to female
@@ -82,6 +86,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### number of whales
@@ -102,6 +108,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### foraging rate
@@ -122,6 +130,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### social rate
@@ -142,6 +152,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### other behaviour rate
@@ -162,6 +174,35 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
+```
+
+### full
+```{r}
+sightm = glm.nb(up ~ month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, control=glm.control(maxit=100))
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+
+# step wise
+stepAIC(sightm, direction = "both", 
+                       trace = TRUE)
+
+# anova (or likelihood ratio test according to mass package)
+anova(sightm)
 ```
 
 ## upcall-2days vs every variable{.tabset}
@@ -347,6 +388,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### distance
@@ -367,6 +410,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### ratio male to female
@@ -387,6 +432,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### number of whales
@@ -407,6 +454,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### foraging rate
@@ -427,6 +476,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### social rate
@@ -447,6 +498,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### other behaviour rate
@@ -467,6 +520,35 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
+```
+
+### full
+```{r}
+sightm = glm.nb(gs ~ month+dist+ratio_male_female+foraging_bhv_whale+social_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, control=glm.control(maxit=100))
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+
+# step wise
+stepAIC(sightm, direction = "both", 
+                       trace = TRUE)
+
+# anova (or likelihood ratio test according to mass package)
+anova(sightm)
 ```
 
 ## mid-freq vs every variable{.tabset}
@@ -489,6 +571,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### distance
@@ -509,6 +593,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### ratio male to female
@@ -529,6 +615,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### number of whales
@@ -549,6 +637,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### foraging rate
@@ -569,6 +659,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### social rate
@@ -589,6 +681,8 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
 ### other behaviour rate
@@ -609,10 +703,39 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+
+anova(sightm)
 ```
 
-## Logistic models (behv vs. call) 
-If these models any good then replace y = call rate models{.tabset}
+### full
+```{r}
+sightm = glm.nb(mf ~ month+dist+ratio_male_female+foraging_bhv_whale+social_bhv_whale+other_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, control=glm.control(maxit=100))
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+
+# step wise
+stepAIC(sightm, direction = "both", 
+                       trace = TRUE)
+
+# anova (or likelihood ratio test according to mass package)
+anova(sightm)
+```
+
+## Logistic models (behv vs. call){.tabset}
+If these models any good then replace y = call rate models
 
 ### foraging{.tabset}
 
