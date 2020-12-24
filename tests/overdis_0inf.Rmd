@@ -91,6 +91,181 @@ shapiro.test(df$social_bhv_whale)
 shapiro.test(df$other_bhv_whale)
 ```
 
+### number of whales and upcall rate
+```{r}
+res = residuals(lm(num_sighting~up_per_hr, data = df))
+
+shapiro.test(res)
+
+model = aov(num_sighting~up_per_hr, data = df)
+
+res = model$residuals
+
+shapiro.test(res)
+```
+
+### number of whales and gunshot rate
+```{r}
+res = residuals(lm(num_sighting~gs_per_hr, data = df))
+
+shapiro.test(res)
+
+model = aov(num_sighting~gs_per_hr, data = df)
+
+res = model$residuals
+
+shapiro.test(res)
+```
+
+### number of whales and mid-freq rate
+```{r}
+res = residuals(lm(num_sighting~mf_per_hr, data = df))
+
+shapiro.test(res)
+
+model = aov(num_sighting~mf_per_hr, data = df)
+
+res = model$residuals
+
+shapiro.test(res)
+```
+
+### number of whales and month
+```{r}
+res = residuals(lm(num_sighting~month, data = df))
+
+shapiro.test(res)
+
+model = aov(num_sighting~month, data = df)
+
+res = model$residuals
+
+shapiro.test(res)
+```
+
+### upcall rate vs month
+```{r}
+res = residuals(lm(up_per_hr~month, data = df))
+
+shapiro.test(res)
+
+model = aov(up_per_hr~month, data = df)
+
+res = model$residuals
+
+shapiro.test(res)
+```
+
+### upcall rate vs ratio
+```{r}
+res = residuals(lm(up_per_hr~ratio_male_female, data = df))
+
+shapiro.test(res)
+
+model = aov(up_per_hr~ratio_male_female, data = df)
+
+res = model$residuals
+
+shapiro.test(res)
+```
+
+### upcall rate vs sighting
+```{r}
+res = residuals(lm(up_per_hr~num_sighting, data = df))
+
+shapiro.test(res)
+
+model = aov(up_per_hr~num_sighting, data = df)
+
+res = model$residuals
+
+shapiro.test(res)
+```
+
+### upcall rate vs foragign rate
+```{r}
+res = residuals(lm(up_per_hr~foraging_bhv_whale, data = df))
+
+shapiro.test(res)
+
+model = aov(up_per_hr~foraging_bhv_whale, data = df)
+
+res = model$residuals
+
+shapiro.test(res)
+```
+
+### upcall rate vs ratio
+```{r}
+res = residuals(lm(up_per_hr~social_bhv_whale, data = df))
+
+shapiro.test(res)
+
+model = aov(up_per_hr~social_bhv_whale, data = df)
+
+res = model$residuals
+
+shapiro.test(res)
+```
+
+<!-- ## equal variance (for anova for est number of whales section){.tabset} -->
+
+<!-- ### number of whales and upcall rate -->
+<!-- ```{r} -->
+<!-- #bartlett.test(num_sighting~up_per_hr, data = df) -->
+<!-- bartlett.test(df$num_sighting,df$month) -->
+<!-- plot(lm(num_sighting~up_per_hr, data = df)) -->
+<!-- ``` -->
+
+<!-- ### number of whales and upcall rate no out -->
+<!-- ```{r} -->
+<!-- dfs <- df[-c(36, 37), ] -->
+<!-- plot(lm(num_sighting~up_per_hr, data = dfs)) -->
+
+<!-- ``` -->
+
+## acutal vs predicted{.tabset}
+
+### num whales vs upcall rate
+```{r}
+dfs <- df[-c(36, 37), ]
+
+sightm = lm(num_sighting~up_per_hr, data = dfs)
+
+ggplot(dfs, aes(x=num_sighting, y=predict(sightm))) +
+  geom_point()
+
+plot(dfs$num_sighting,predict(sightm),
+      xlab="actual",ylab="predicted")
+
+```
+
+### num whales vs gs rate
+```{r}
+sightm = lm(num_sighting~gs_per_hr, data = df)
+
+plot(df$num_sighting,predict(sightm),
+      xlab="actual",ylab="predicted")
+```
+
+### num whales vs mf rate
+```{r}
+sightm = lm(num_sighting~mf_per_hr, data = df)
+
+plot(df$num_sighting,predict(sightm),
+      xlab="actual",ylab="predicted")
+
+```
+
+### num whales vs month
+```{r}
+sightm = lm(num_sighting~month, data = df)
+
+plot(df$num_sighting,predict(sightm),
+      xlab="actual",ylab="predicted")
+
+```
+
 ## ks test{.tabset}
 
 ### upcall rate
@@ -162,6 +337,40 @@ sightm = glm(mf ~ yday+dist+
                social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
                offset(log(rec_duration))+
                yday:dist
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+
+### estimating upcall call rate UPDATED
+```{r}
+sightm = glm(up ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### estimating gunshot call rate UPDATED
+```{r}
+sightm = glm(gs ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+summary(sightm)
+dispersiontest(sightm,trafo=NULL)
+```
+
+### estimating mid-freq call rate UPDATED
+```{r}
+sightm = glm(mf ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
              , data = df, family = 'poisson')
 summary(sightm)
 dispersiontest(sightm,trafo=NULL)
@@ -448,6 +657,88 @@ sightm = glm.nb(mf ~ month+dist+
                social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
                offset(log(rec_duration))+
                month:dist
+             , data = df, control=glm.control(maxit=100))
+check_zeroinflation(sightm)
+```
+
+### estimating upcall call rate UPDATED
+```{r}
+# poisson
+sightm = glm(up ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+# quasi poisson
+sightm = glm(up ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'quasipoisson')
+check_zeroinflation(sightm)
+
+# negative binomial
+sightm = glm.nb(up ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, control=glm.control(maxit=100))
+check_zeroinflation(sightm)
+```
+
+### estimating gunshot call rate UPDATED
+```{r}
+# poisson
+sightm = glm(gs ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+# quasi poisson
+sightm = glm(gs ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'quasipoisson')
+check_zeroinflation(sightm)
+
+# negative binomial
+sightm = glm.nb(gs ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, control=glm.control(maxit=100))
+check_zeroinflation(sightm)
+```
+
+### estimating mid-freq call rate UPDATED
+```{r}
+# poisson
+sightm = glm(mf ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'poisson')
+check_zeroinflation(sightm)
+
+# quasi poisson
+sightm = glm(mf ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, family = 'quasipoisson')
+check_zeroinflation(sightm)
+
+# negative binomial
+# for some readon model wont run when has yday instead
+sightm = glm.nb(mf ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
              , data = df, control=glm.control(maxit=100))
 check_zeroinflation(sightm)
 ```
@@ -816,6 +1107,54 @@ yday, ratio, socia, num sighted all really correlated
 sightm = glm(mf ~ yday+dist+
                   num_sighting+ratio_male_female+
                   social_bhv_whale+foraging_bhv_whale+other_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, family = 'poisson')
+
+# summary of model
+summary(sightm)
+
+# VIF
+vif(sightm)
+```
+
+### estimating upcall call rate UPDATED
+month, ratio, social all really correlated
+```{r}
+sightm = glm(up ~ month+
+                  num_sighting+ratio_male_female+
+                  social_bhv_whale+foraging_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, family = 'poisson')
+
+# summary of model
+summary(sightm)
+
+# VIF
+vif(sightm)
+```
+
+### estimating gunshot call rate UPDATED
+month, ratio, social all really correlated
+```{r}
+sightm = glm(gs ~ month+
+                  num_sighting+ratio_male_female+
+                  social_bhv_whale+foraging_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, family = 'poisson')
+
+# summary of model
+summary(sightm)
+
+# VIF
+vif(sightm)
+```
+
+### estimating mid-freq call rate
+month, ratio, social, num sighted all really correlated
+```{r}
+sightm = glm(mf ~ month+
+                  num_sighting+ratio_male_female+
+                  social_bhv_whale+foraging_bhv_whale+
                   offset(log(rec_duration))
                 , data = df, family = 'poisson')
 
