@@ -279,6 +279,60 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=up_per_hr, y=num_sighting)) + geom_point()
+```
+
+### upcall poisson
+```{r}
+dfs <- df[-c(36, 37), ]
+
+sightm = glm(sqrt(num_sighting)~sqrt(up_per_hr), data = dfs, family ='poisson')
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=dfs$id,y=res))
+plt
+
+anova(sightm)
+
+ggplot(dfs, aes(x=up_per_hr, y=num_sighting)) + geom_point()
+```
+
+### upcall - 2 days log
+```{r}
+# remove two high upcall call count rows
+dfs <- df[-c(36, 37), ]
+
+dfs$up_log = log(dfs$up_per_hr)
+dfs$up_log[dfs$up_log == -Inf] <- -10000000
+
+sightm = glm((num_sighting)~up_log, data = dfs, family = 'poisson')
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=dfs$id,y=res))
+plt
+
+anova(sightm)
+
+ggplot(df, aes(x=log(up_per_hr), y=num_sighting)) + geom_point()
 ```
 
 ### upcall log link log offset
@@ -357,6 +411,30 @@ plt = ggplot() +
 plt
 ```
 
+### gunshot log
+```{r}
+
+df$gs_log = log(df$gs_per_hr)
+df$gs_log[df$gs_log == -Inf] <- -10000000
+
+sightm = lm(num_sighting~gs_log, data = df)
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+
+anova(sightm)
+```
+
 ### mid-freq
 ```{r}
 sightm = lm(num_sighting~mf_per_hr, data = df)
@@ -393,6 +471,30 @@ res = resid(sightm)
 plt = ggplot() +
   geom_point(aes(x=df$id,y=res))
 plt
+```
+
+### mid-freq log
+```{r}
+
+df$mf_log = log(df$mf_per_hr)
+df$mf_log[df$mf_log == -Inf] <- -10000000
+
+sightm = lm(num_sighting~mf_log, data = df)
+summary(sightm)
+
+# diagnostic plots
+par(mfrow=c(2,2))
+plot(sightm)
+
+# residual
+res = resid(sightm)
+
+# plot residual vs. id
+plt = ggplot() +
+  geom_point(aes(x=df$id,y=res))
+plt
+
+anova(sightm)
 ```
 
 ### month
