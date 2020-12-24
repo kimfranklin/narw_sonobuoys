@@ -1,0 +1,140 @@
+---
+title: "negbin_vs_zinb_vs_zip"
+output: 
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown for comparing negative binomial, zero inflated negative binomial (zinb), and zero inflated poisson (zip)
+
+Zero inflated models are typically used when there is a reason to suggest that the 0s in the data are coming from two sources. The source of the zeroes matters is it non-detection (false zeros) or true zeroes? For example 0 inflated data might be from not catching fish when fishing on a lake or not fishing at the lake.
+https://fukamilab.github.io/BIO202/04-C-zero-data.html 
+
+```{r, include=FALSE}
+# libraries
+library(tidyverse)
+library(data.table)
+library(MASS)
+library(pscl)
+library(lmtest)
+
+# data
+df = readRDS("data/processed/proc_acou_photoid.rds")
+```
+
+## comparing models{.tabset}
+
+### negative binomial
+```{r}
+# model
+sightm = glm.nb(up ~ month+
+               num_sighting+ratio_male_female+
+               social_bhv_whale+foraging_bhv_whale+
+               offset(log(rec_duration))
+             , data = df)
+summary(sightm)
+
+# compare actual y with predicted y
+df$up_per_hr
+round(predict(sightm),5)
+
+# compare actual y with predicted y as plot
+plot(df$up_per_hr,predict(sightm),
+     xlab="actual",ylab="predicted")
+
+# residual plot of the model
+res = residuals(sightm)
+plot(predict(sightm),res,
+     xlab="predicted y",ylab="residuals")
+
+# Check for over/underdispersion in the model
+E2 <- resid(sightm, type = "pearson")
+N  <- nrow(df)
+p  <- length(coef(sightm))   
+sum(E2^2) / (N - p)
+```
+
+### zero inflated negative binomial (zinb)
+```{r}
+# model
+sightm = zeroinfl(up ~ month+
+                   num_sighting+ratio_male_female+
+                   social_bhv_whale+foraging_bhv_whale+
+                   offset(log(rec_duration))
+                 , data = df, dist = 'negbin')
+summary(sightm)
+
+# compare actual y with predicted y
+df$up_per_hr
+round(predict(sightm),5)
+
+# compare actual y with predicted y as plot
+plot(df$up_per_hr,predict(sightm),
+     xlab="actual",ylab="predicted")
+
+# residual plot of the model
+res = residuals(sightm)
+plot(predict(sightm),res,
+     xlab="predicted y",ylab="residuals")
+
+# Check for over/underdispersion in the model
+E2 <- resid(sightm, type = "pearson")
+N  <- nrow(df)
+p  <- length(coef(sightm))   
+sum(E2^2) / (N - p)
+```
+
+### zero inflated poisson (zip)
+```{r}
+# model
+sightm = zeroinfl(up ~ month+
+                  num_sighting+ratio_male_female+
+                  social_bhv_whale+foraging_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, dist = 'poisson')
+summary(sightm)
+
+# compare actual y with predicted y
+df$up_per_hr
+round(predict(sightm),5)
+
+# compare actual y with predicted y as plot
+plot(df$up_per_hr,predict(sightm),
+     xlab="actual",ylab="predicted")
+
+# residual plot of the model
+res = residuals(sightm)
+plot(predict(sightm),res,
+     xlab="predicted y",ylab="residuals")
+
+# Check for over/underdispersion in the model
+E2 <- resid(sightm, type = "pearson")
+N  <- nrow(df)
+p  <- length(coef(sightm))   
+sum(E2^2) / (N - p)
+```
+
+## compare zero inflated models in liklihood ratio test
+The zinb model performs much better than the zip model
+```{r}
+# zip model
+sightzip = zeroinfl(up ~ month+
+                  num_sighting+ratio_male_female+
+                  social_bhv_whale+foraging_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, dist = 'poisson')
+
+# zinb model
+sightzinb = zeroinfl(up ~ month+
+                   num_sighting+ratio_male_female+
+                   social_bhv_whale+foraging_bhv_whale+
+                   offset(log(rec_duration))
+                 , data = df, dist = 'negbin')
+lrtest(sightzip, sightzinb)
+
+```
