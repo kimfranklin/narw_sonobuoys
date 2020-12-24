@@ -44,6 +44,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=up, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### distance
@@ -66,6 +69,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=up, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### ratio male to female
@@ -88,6 +94,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=up, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### number of whales
@@ -110,6 +119,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=up, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### foraging rate
@@ -132,6 +144,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=up, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### social rate
@@ -154,6 +169,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=up, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### other behaviour rate
@@ -176,6 +194,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=up, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### full
@@ -203,6 +224,27 @@ stepAIC(sightm, direction = "both",
 
 # anova (or likelihood ratio test according to mass package)
 anova(sightm)
+
+sightm2= glm.nb(up ~ social_bhv_whale + offset(log(rec_duration)), data = df,control=glm.control(maxit=100))
+
+anova(sightm2, sightm)
+
+sightm3 = glm.nb(up ~ month+ratio_male_female+social_bhv_whale+
+               offset(log(rec_duration))
+             , data = df, control=glm.control(maxit=100))
+
+anova(sightm3, sightm)
+
+anova(sightm2, sightm3)
+anova(sightm3, sightm2, sightm)
+# ggplot(df, aes(x=up, y=predict(sightm))) +
+#   geom_point()
+
+# haha negative binomial is better
+# sightm4 = glm(up ~ month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+#                offset(log(rec_duration))
+#              , data = df, family = "poisson")
+# pchisq(2 * (logLik(sightm) - logLik(sightm4)), df = 1, lower.tail = FALSE)
 ```
 
 ## upcall-2days vs every variable{.tabset}
@@ -390,6 +432,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=gs, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### distance
@@ -412,6 +457,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=gs, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### ratio male to female
@@ -434,6 +482,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=gs, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### number of whales
@@ -456,6 +507,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=gs, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### foraging rate
@@ -478,6 +532,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=gs, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### social rate
@@ -500,6 +557,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=gs, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### other behaviour rate
@@ -522,6 +582,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=gs, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### full
@@ -549,6 +612,9 @@ stepAIC(sightm, direction = "both",
 
 # anova (or likelihood ratio test according to mass package)
 anova(sightm)
+
+ggplot(df, aes(x=gs, y=predict(sightm))) +
+  geom_point()
 ```
 
 ## mid-freq vs every variable{.tabset}
@@ -573,6 +639,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=mf, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### distance
@@ -595,6 +664,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=mf, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### ratio male to female
@@ -617,6 +689,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=mf, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### number of whales
@@ -639,6 +714,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=mf, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### foraging rate
@@ -661,6 +739,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=mf, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### social rate
@@ -683,6 +764,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=mf, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### other behaviour rate
@@ -705,6 +789,9 @@ plt = ggplot() +
 plt
 
 anova(sightm)
+
+ggplot(df, aes(x=mf, y=predict(sightm))) +
+  geom_point()
 ```
 
 ### full
@@ -732,6 +819,9 @@ stepAIC(sightm, direction = "both",
 
 # anova (or likelihood ratio test according to mass package)
 anova(sightm)
+
+ggplot(df, aes(x=mf, y=predict(sightm))) +
+  geom_point()
 ```
 
 ## Logistic models (behv vs. call){.tabset}
