@@ -14,7 +14,7 @@ df = readRDS("data/processed/proc_acou_photoid.rds")
 # forso_bi
 df$forso = df$social_bhv_whale/df$foraging_bhv_whale
 df[,"forso_bi"] <- 0
-df$forso_bi[df$forso!= 0] <- 1
+df$forso_bi[df$forso > 1] <- 1
 
 # plots
 # foraging upcall
@@ -134,3 +134,4 @@ figure
 
 ggsave(figure, filename = paste0('figures/logistic_plots.png'), 
        units = 'in', dpi = 300)
+
