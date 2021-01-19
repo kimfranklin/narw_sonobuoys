@@ -4,6 +4,7 @@
 
 # libraries
 library(tidyverse)
+library(ggpubr)
 
 # data
 df = readRDS("data/processed/proc_acou_photoid.rds")
@@ -20,67 +21,67 @@ df$forso_bi[df$forso!= 0] <- 1
 sightm = glm(foraging_bi ~ up_per_hr, data = df, family = 'binomial')
 summary(sightm)
 
-plt = ggplot(df, aes(x=up_per_hr, y=foraging_bi)) +
+aplt = ggplot(df, aes(x=up_per_hr, y=foraging_bi)) +
   geom_point() +
   geom_smooth(method = "glm", 
               method.args = list(family = "binomial"), 
               se = FALSE)
-plt
+aplt
 
 # foraging gunshot
 sightm = glm(foraging_bi ~ gs_per_hr, data = df, family = 'binomial')
 summary(sightm)
 
-plt = ggplot(df, aes(x=gs_per_hr, y=foraging_bi)) +
+bplt = ggplot(df, aes(x=gs_per_hr, y=foraging_bi)) +
   geom_point() +
   geom_smooth(method = "glm", 
               method.args = list(family = "binomial"), 
               se = FALSE)
-plt
+bplt
 
 # foraging midfreq
 sightm = glm(foraging_bi ~ mf_per_hr, data = df, family = 'binomial')
 summary(sightm)
 
-plt = ggplot(df, aes(x=mf_per_hr, y=foraging_bi)) +
+cplt = ggplot(df, aes(x=mf_per_hr, y=foraging_bi)) +
   geom_point() +
   geom_smooth(method = "glm", 
               method.args = list(family = "binomial"), 
               se = FALSE)
-plt
+cplt
 
 # social upcall
 sightm = glm(social_bi ~ up_per_hr, data = df, family = 'binomial')
 summary(sightm)
 
-plt = ggplot(df, aes(x=up_per_hr, y=social_bi)) +
+dplt = ggplot(df, aes(x=up_per_hr, y=social_bi)) +
   geom_point() +
   geom_smooth(method = "glm", 
               method.args = list(family = "binomial"), 
               se = FALSE)
-plt
+dplt
 
 # social gunshot
 sightm = glm(social_bi ~ gs_per_hr, data = df, family = 'binomial')
 summary(sightm)
 
-plt = ggplot(df, aes(x=gs_per_hr, y=social_bi)) +
+eplt = ggplot(df, aes(x=gs_per_hr, y=social_bi)) +
   geom_point() +
   geom_smooth(method = "glm", 
               method.args = list(family = "binomial"), 
               se = FALSE)
-plt
+eplt
 
 # social midfreq
 sightm = glm(social_bi ~ mf_per_hr, data = df, family = 'binomial')
 summary(sightm)
 
-plt = ggplot(df, aes(x=mf_per_hr, y=social_bi)) +
+fplt = ggplot(df, aes(x=mf_per_hr, y=social_bi)) +
   geom_point() +
   geom_smooth(method = "glm", 
               method.args = list(family = "binomial"), 
               se = FALSE)
-plt
+fplt
 
 # foraging social proabilty is social rate/foraging rate thus in binary if 0 
 # then more foraging was occuring in that deployment, if 1 then more social 
@@ -90,31 +91,46 @@ plt
 sightm = glm(forso_bi ~ up_per_hr, data = df, family = 'binomial')
 summary(sightm)
 
-plt = ggplot(df, aes(x=up_per_hr, y=forso_bi)) +
+gplt = ggplot(df, aes(x=up_per_hr, y=forso_bi)) +
   geom_point() +
   geom_smooth(method = "glm", 
               method.args = list(family = "binomial"), 
               se = FALSE)
-plt
+gplt
 
 # foraging social probabilty gunshot
 sightm = glm(forso_bi ~ gs_per_hr, data = df, family = 'binomial')
 summary(sightm)
 
-plt = ggplot(df, aes(x=gs_per_hr, y=forso_bi)) +
+hplt = ggplot(df, aes(x=gs_per_hr, y=forso_bi)) +
   geom_point() +
   geom_smooth(method = "glm", 
               method.args = list(family = "binomial"), 
               se = FALSE)
-plt
+hplt
 
 # foraging social probabilty midfreq
 sightm = glm(forso_bi ~ mf_per_hr, data = df, family = 'binomial')
 summary(sightm)
 
-plt = ggplot(df, aes(x=mf_per_hr, y=forso_bi)) +
+iplt = ggplot(df, aes(x=mf_per_hr, y=forso_bi)) +
   geom_point() +
   geom_smooth(method = "glm", 
               method.args = list(family = "binomial"), 
               se = FALSE)
-plt
+iplt
+
+figure <- ggarrange(aplt,
+                    bplt,
+                    cplt,
+                    dplt,
+                    eplt,
+                    fplt,
+                    gplt,
+                    hplt,
+                    iplt,
+                    ncol = 3, nrow = 3)
+figure
+
+ggsave(figure, filename = paste0('figures/logistic_plots.png'), 
+       units = 'in', dpi = 300)
