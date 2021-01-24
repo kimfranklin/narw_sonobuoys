@@ -12,8 +12,8 @@ library(plyr)
 df = readRDS("data/processed/proc_acou_photoid.rds")
 
 # Upcall ------------------------------------------------------------------
-# month
-sighta = glm.nb(up ~ month+
+# yday
+sighta = glm.nb(up ~ yday+
                   offset(log(rec_duration))
                 , data = df, control=glm.control(maxit=100))
 #summary(sighta)
@@ -67,8 +67,8 @@ cru_df <- rbind(sighta,sightb,sightc,sightd,sighte)
 
 
 # Gunshot -----------------------------------------------------------------
-# month
-sighta = glm.nb(gs ~ month+
+# yday
+sighta = glm.nb(gs ~ yday+
                   offset(log(rec_duration))
                 , data = df, control=glm.control(maxit=100))
 
@@ -112,8 +112,8 @@ crg_df <- rbind(sighta,sightb,sightc,sightd,sighte)
 
 
 # Mid-freq ----------------------------------------------------------------
-# month
-sighta = glm.nb(mf ~ month+
+# yday
+sighta = glm.nb(mf ~ yday+
                   offset(log(rec_duration))
                 , data = df, control=glm.control(maxit=100))
 
