@@ -36,12 +36,12 @@ sightc = anova(lm(num_sighting ~ mf_per_hr
 # sightf = anova(lm(num_sighting ~ social_bhv_whale
 #                   , data = df))
 
-# month
-sightg = anova(lm(num_sighting ~ month
+# yday (not doing month)
+sightg = anova(lm(num_sighting ~ yday
             , data = df))
 
 # combine each model into one big table
-ns_df <- rbind(sighta,sightb,sightc,sightd,sighte,sightf,sightg)
+ns_df <- rbind(sighta,sightb,sightc,sightg)
 
 # save data table 
 write.csv(ns_df,"data/processed/num_sighting_anova_table.csv")
