@@ -3,6 +3,7 @@
 # Stepwise regression of full call rate models are compared to null call rate 
 # models and full call rate models (respectively).
 # Full models have month, ration male to female, foraging rate and social rate.
+# not comparing to full anymore - kind of pointless
 
 # libraries
 library(tidyverse)
@@ -20,7 +21,7 @@ sightfnull = glm.nb(up ~ offset(log(rec_duration))
                 , data = df, control=glm.control(maxit=100))
 
 # full model
-sightf = glm.nb(up ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+sightf = glm.nb(up ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
                    offset(log(rec_duration))
                  , data = df, control=glm.control(maxit=100))
 
@@ -36,7 +37,7 @@ sightgnull = glm.nb(gs ~ offset(log(rec_duration))
                     , data = df, control=glm.control(maxit=100))
 
 # full model
-sightg = glm.nb(gs ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+sightg = glm.nb(gs ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
                   offset(log(rec_duration))
                 , data = df, control=glm.control(maxit=100))
 
@@ -52,7 +53,7 @@ sighthnull = glm.nb(mf ~ offset(log(rec_duration))
                     , data = df, control=glm.control(maxit=100))
 
 # full model
-sighth = glm.nb(mf ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+sighth = glm.nb(mf ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
                   offset(log(rec_duration))
                 , data = df, control=glm.control(maxit=100))
 
@@ -69,46 +70,46 @@ null_anova_bind = rbind(null_up_anova,null_gs_anova,null_mf_anova)
 write.csv(null_anova_bind,"data/processed/call_rate_stepwise_vs_null_table.csv")
 
 
-# anovas comparing full and stepwise results ------------------------------
-
-# upcall
-# model
-sightf = glm.nb(up ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
-                  offset(log(rec_duration))
-                , data = df, control=glm.control(maxit=100))
-
-# step model of the previous model
-step.modelf <- stepAIC(sightf, direction = "both",
-                       trace = TRUE)
-
-full_up_anova = anova(sightf,step.modelf)
-
-# gunshot
-# model
-sightg = glm.nb(gs ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
-                  offset(log(rec_duration))
-                , data = df, control=glm.control(maxit=100))
-
-# step model of the previous model
-step.modelg <- stepAIC(sightg, direction = "both",
-                       trace = TRUE)
-
-full_gs_anova = anova(sightg,step.modelg)
-
-# mid-freq
-# model
-sighth = glm.nb(mf ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
-                  offset(log(rec_duration))
-                , data = df, control=glm.control(maxit=100))
-
-# step model of the previous model
-step.modelh <- stepAIC(sighth, direction = "both",
-                       trace = TRUE)
-
-full_mf_anova = anova(sighth,step.modelh)
-
-# combine all models into one large dataframe/table
-full_anova_bind = rbind(full_up_anova,full_gs_anova,full_mf_anova)
-
-# save data table
-write.csv(full_anova_bind,"data/processed/call_rate_stepwise_vs_full_table.csv")
+# # anovas comparing full and stepwise results ------------------------------
+# 
+# # upcall
+# # model
+# sightf = glm.nb(up ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+#                   offset(log(rec_duration))
+#                 , data = df, control=glm.control(maxit=100))
+# 
+# # step model of the previous model
+# step.modelf <- stepAIC(sightf, direction = "both",
+#                        trace = TRUE)
+# 
+# full_up_anova = anova(sightf,step.modelf)
+# 
+# # gunshot
+# # model
+# sightg = glm.nb(gs ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+#                   offset(log(rec_duration))
+#                 , data = df, control=glm.control(maxit=100))
+# 
+# # step model of the previous model
+# step.modelg <- stepAIC(sightg, direction = "both",
+#                        trace = TRUE)
+# 
+# full_gs_anova = anova(sightg,step.modelg)
+# 
+# # mid-freq
+# # model
+# sighth = glm.nb(mf ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+#                   offset(log(rec_duration))
+#                 , data = df, control=glm.control(maxit=100))
+# 
+# # step model of the previous model
+# step.modelh <- stepAIC(sighth, direction = "both",
+#                        trace = TRUE)
+# 
+# full_mf_anova = anova(sighth,step.modelh)
+# 
+# # combine all models into one large dataframe/table
+# full_anova_bind = rbind(full_up_anova,full_gs_anova,full_mf_anova)
+# 
+# # save data table
+# write.csv(full_anova_bind,"data/processed/call_rate_stepwise_vs_full_table.csv")
