@@ -1,0 +1,223 @@
+---
+title: "est_call_rate_stepwise"
+output: 
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+# libraries
+library(tidyverse)
+library(MASS)
+library(plyr)
+library(broom)
+
+# read in data
+df = readRDS("data/processed/proc_acou_photoid.rds")
+
+```
+
+## Upcall{.tabset}
+Ok so the 'both' tab is the same as backwards and the 'forward' tab isthe same as the full model. Use tabs labeled 'another approach' or the backwards tab
+
+### full model
+```{r}
+# upcall
+# model
+sightf1 = glm.nb(up ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+sightf1
+```
+
+### stepwise model 'both'
+```{r}
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(sightf1, direction = "both", 
+                       trace = TRUE)
+
+step.modelf1
+```
+
+### stepwise model 'backward'
+```{r}
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(sightf1, direction = "backward", 
+                       trace = TRUE)
+
+step.modelf1
+```
+
+### stepwise model 'forward'
+```{r}
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(sightf1, direction = "forward", 
+                       trace = TRUE)
+
+step.modelf1
+```
+
+### stepwise model 'forward' another approach
+```{r}
+# min model
+min_sight = glm.nb(up ~
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# max model
+max_sight = glm.nb(up ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(min_sight, direction = "forward", scope = formula(max_sight),
+                       trace = TRUE)
+
+step.modelf1
+```
+
+### stepwise model 'both' another approach
+```{r}
+# min model
+min_sight = glm.nb(up ~
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# max model
+max_sight = glm.nb(up ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(min_sight, direction = "both", scope = formula(max_sight),
+                       trace = TRUE)
+
+step.modelf1
+```
+
+## Gunshot{.tabset}
+
+### full model
+```{r}
+# upcall
+# model
+sightf1 = glm.nb(gs ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+sightf1
+```
+
+
+### stepwise model 'backward'
+```{r}
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(sightf1, direction = "backward", 
+                       trace = TRUE)
+
+step.modelf1
+```
+
+
+### stepwise model 'forward' another approach
+```{r}
+# min model
+min_sight = glm.nb(gs ~
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# max model
+max_sight = glm.nb(gs ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(min_sight, direction = "forward", scope = formula(max_sight),
+                       trace = TRUE)
+
+step.modelf1
+```
+
+### stepwise model 'both' another approach
+```{r}
+# min model
+min_sight = glm.nb(gs ~
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# max model
+max_sight = glm.nb(gs ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(min_sight, direction = "both", scope = formula(max_sight),
+                       trace = TRUE)
+
+step.modelf1
+```
+
+## Mid-feq{.tabset}
+
+### full model
+```{r}
+# upcall
+# model
+sightf1 = glm.nb(mf ~yday+foraging_bhv_whale+social_bhv_whale+ratio_male_female+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+sightf1
+```
+
+
+### stepwise model 'backward'
+```{r}
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(sightf1, direction = "backward", 
+                       trace = TRUE)
+
+step.modelf1
+```
+
+
+### stepwise model 'forward' another approach
+```{r}
+# min model
+min_sight = glm.nb(mf ~
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# max model
+max_sight = glm.nb(mf ~yday+foraging_bhv_whale+social_bhv_whale+ratio_male_female+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(min_sight, direction = "forward", scope = formula(max_sight),
+                       trace = TRUE)
+
+step.modelf1
+```
+
+### stepwise model 'both' another approach
+```{r}
+# min model
+min_sight = glm.nb(mf ~
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# max model
+max_sight = glm.nb(mf ~yday+foraging_bhv_whale+social_bhv_whale+ratio_male_female+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(min_sight, direction = "both", scope = formula(max_sight),
+                       trace = TRUE)
+
+step.modelf1
+```
