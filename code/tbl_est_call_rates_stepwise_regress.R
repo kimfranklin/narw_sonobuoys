@@ -16,7 +16,7 @@ df = readRDS("data/processed/proc_acou_photoid.rds")
 
 # upcall
 # model
-sightf1 = glm.nb(up ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+sightf1 = glm.nb(up ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
                   offset(log(rec_duration))
                 , data = df, control=glm.control(maxit=100))
 
@@ -25,16 +25,16 @@ step.modelf1 <- stepAIC(sightf1, direction = "both",
                        trace = TRUE)
 
 # model - foraging
-sightf2 = glm.nb(up ~month+ratio_male_female+social_bhv_whale+
+sightf2 = glm.nb(up ~yday+ratio_male_female+social_bhv_whale+
                  offset(log(rec_duration))
                , data = df, control=glm.control(maxit=100))
 
 # model - foraging and ratio
-sightf3 = glm.nb(up ~month+social_bhv_whale+
+sightf3 = glm.nb(up ~yday+social_bhv_whale+
                    offset(log(rec_duration))
                  , data = df, control=glm.control(maxit=100))
 
-# model - foraging and ratio and month
+# model - foraging and ratio and yday
 sightf4 = glm.nb(up ~social_bhv_whale+
                    offset(log(rec_duration))
                  , data = df, control=glm.control(maxit=100))
@@ -47,14 +47,14 @@ sumf4 = glance(sightf4)
 # combine all models into one large dataframe/table
 smf = rbind(sumf1,sumf2,sumf3,sumf4)
 
-smf$model = c('up=month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+offset(log(rec_duration))',
-'up=month+ratio_male_female+social_bhv_whale+offset(log(rec_duration))',
-'up=month+social_bhv_whale+offset(log(rec_duration))',
+smf$model = c('up=yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+offset(log(rec_duration))',
+'up=yday+ratio_male_female+social_bhv_whale+offset(log(rec_duration))',
+'up=yday+social_bhv_whale+offset(log(rec_duration))',
 'up=social_bhv_whale+offset(log(rec_duration))')
 
 # gunshot
 # model
-sightg1 = glm.nb(gs ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+sightg1 = glm.nb(gs ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
                   offset(log(rec_duration))
                 , data = df, control=glm.control(maxit=10000))
 
@@ -62,31 +62,38 @@ sightg1 = glm.nb(gs ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale
 step.modelg1 <- stepAIC(sightg1, direction = "both", 
                        trace = TRUE)
 
-# model - social
-sightg2 = glm.nb(gs ~month+ratio_male_female+foraging_bhv_whale+
+# model - ratio
+sightg2 = glm.nb(gs ~yday++foraging_bhv_whale+social_bhv_whale+
                    offset(log(rec_duration))
                  , data = df, control=glm.control(maxit=10000))
 
-# model - social and ratio
-sightg3 = glm.nb(gs ~month+foraging_bhv_whale+
+# model - ratio and social 
+sightg3 = glm.nb(gs ~yday+foraging_bhv_whale+
+                   offset(log(rec_duration))
+                 , data = df, control=glm.control(maxit=10000))
+
+# model - ratio and social and foraging
+sightg4 = glm.nb(gs ~yday+
                    offset(log(rec_duration))
                  , data = df, control=glm.control(maxit=10000))
 
 sumg1 = glance(sightg1)
 sumg2 = glance(sightg2)
 sumg3 = glance(sightg3)
+sumg4 = glance(sightg4)
 
 # combine all models into one large dataframe/table
-smg = rbind(sumg1,sumg2,sumg3)
+smg = rbind(sumg1,sumg2,sumg3,sumg4)
 
-smg$model = c('gs=month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+offset(log(rec_duration))',
-              'gs=month+ratio_male_female+foraging_bhv_whale+offset(log(rec_duration))',
-              'gs=month+foraging_bhv_whale+offset(log(rec_duration))')
+smg$model = c('gs=yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+offset(log(rec_duration))',
+              'gs=yday+ratio_male_female+foraging_bhv_whale+offset(log(rec_duration))',
+              'gs=yday+foraging_bhv_whale+offset(log(rec_duration))',
+              'gs=yday+offset(log(rec_duration))')
 
 
 # mid-freq
 # model
-sighth1 = glm.nb(mf ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+sighth1 = glm.nb(mf ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
                   offset(log(rec_duration))
                 , data = df, control=glm.control(maxit=100))
 
@@ -94,13 +101,13 @@ sighth1 = glm.nb(mf ~month+ratio_male_female+foraging_bhv_whale+social_bhv_whale
 step.modelh1 <- stepAIC(sighth1, direction = "both", 
                        trace = TRUE)
 
-# model - social
-sighth2 = glm.nb(mf ~month+ratio_male_female+foraging_bhv_whale+
+# model - foraging
+sighth2 = glm.nb(mf ~yday+ratio_male_female+social_bhv_whale+
                   offset(log(rec_duration))
                 , data = df, control=glm.control(maxit=100))
 
-# model - social and foraging
-sighth3 = glm.nb(mf ~month+ratio_male_female+
+# model - foraging and social
+sighth3 = glm.nb(mf ~yday+ratio_male_female+
                   offset(log(rec_duration))
                 , data = df, control=glm.control(maxit=100))
 summary(sighth3)
@@ -112,9 +119,9 @@ sumh3 = glance(sighth3)
 # combine all models into one large dataframe/table
 smh = rbind(sumh1,sumh2,sumh3)
 
-smh$model = c('mf=month+ratio_male_female+foraging_bhv_whale+social_bhv_whale+offset(log(rec_duration))',
-              'mf=month+ratio_male_female+foraging_bhv_whale+offset(log(rec_duration))',
-              'mf=month+ratio_male_female+offset(log(rec_duration))')
+smh$model = c('mf=yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+offset(log(rec_duration))',
+              'mf=yday+ratio_male_female+foraging_bhv_whale+offset(log(rec_duration))',
+              'mf=yday+ratio_male_female+offset(log(rec_duration))')
 
 
 # combine all models into one large dataframe/table
