@@ -29,10 +29,10 @@ dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
 # rename columns/rows to make it pretty
 colnames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate", 
                     "Whale abundance", 
-                    "Male to female ratio", "Foraging rate", "Socalizing rate", "Day of the Year")
+                    "Male to female ratio", "Foraging rate", "Socalizing rate", "Yday")
 rownames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate", 
                     "Whale abundance", 
-                    "Male to female ratio", "Foraging rate", "Socalizing rate", "Day of the Year")
+                    "Male to female ratio", "Foraging rate", "Socalizing rate", "Yday")
 
 # obtain spearman correlation matrix
 sp2 = cor(dfs2, method = 'spearman')
@@ -74,7 +74,7 @@ dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
                   df$ratio_male_female,
                   df$adult_male,df$adult_female,df$juvenile_male,df$juvenile_male,df$unknown,
                   df$foraging_bhv_whale,df$social_bhv_whale,df$other_bhv_whale,
-                  df$month)
+                  df$yday)
 
 # rename columns/rows to make it pretty
 colnames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate", 
@@ -82,13 +82,13 @@ colnames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate",
                     "Male to female ratio", 
                     "Adult male","Adult female","Juvenile male","Juvenile female","Unknown demographic",
                     "Foraging rate", "Socalizing rate", "Other behaviour rate",
-                    "Month")
+                    "Yday")
 rownames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate", 
                     "Whale abundance", 
                     "Male to female ratio", 
                     "Adult male","Adult female","Juvenile male","Juvenile female","Unknown demographic",
                     "Foraging rate", "Socalizing rate", "Other behaviour rate",
-                    "Month")
+                    "Yday")
 
 # obtain spearman correlation matrix
 sp2 = cor(dfs2, method = 'spearman')
