@@ -11,6 +11,39 @@ library(data.table)
 # read in data
 df = readRDS("data/processed/proc_acou_photoid.rds")
 
+# summary output of each indiivdual regression
+# upcall call rate
+sighta = lm(num_sighting ~ up_per_hr
+                  , data = df)
+# put model in matrix/array
+sighta <-summary(sighta)$coefficients
+
+# gunshot call rate
+sightb = lm(num_sighting ~ gs_per_hr
+                  , data = df)
+# put model in matrix/array
+sightb <-summary(sightb)$coefficients
+
+# mid-freq rate
+sightc = lm(num_sighting ~ mf_per_hr
+                  , data = df)
+# put model in matrix/array
+sightc <-summary(sightc)$coefficients
+
+# yday (not doing month)
+sightd = lm(num_sighting ~ yday
+                  , data = df)
+# put model in matrix/array
+sightd <-summary(sightd)$coefficients
+
+# combine all gs rows into a dataframe
+ns_df <- rbind(sighta,sightb,sightc,sightd)
+
+# save data table 
+write.csv(ns_df,"data/processed/num_sighting_regression_table.csv")
+
+
+
 # individual anovas
 # upcall call rate
 sighta = anova(lm(num_sighting ~ up_per_hr
