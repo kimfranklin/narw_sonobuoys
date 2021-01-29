@@ -41,6 +41,9 @@ sp2 = cor(dfs2, method = 'spearman')
 test2 <- rcorr(as.matrix(dfs2), type="spearman")
 r = round(test2$P, 5)
 
+# change font type
+par(family="Times New Roman")
+
 # correlation matrix figure
 # corrplot(sp2, method = "color", col = brewer.pal(n = 8, name = "RdBu"),
 #          type = "upper", number.cex = .7, 
@@ -96,6 +99,9 @@ sp2 = cor(dfs2, method = 'spearman')
 # spearman p-value matrix
 test2 <- rcorr(as.matrix(dfs2), type="spearman")
 r = round(test2$P, 5)
+
+# change font type
+par(family="Times New Roman") 
 
 # correlation matrix figure
 fig = corrplot(sp2, tl.col = "black", method = 'color', p.mat = test2$P,
