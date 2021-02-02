@@ -2,17 +2,24 @@
 
 # correlation matrix figure for manuscript
 
-# libraries
+# libraries ---------------------------------------------------------------
+
 library(lubridate)
 library(Hmisc)
 library(corrplot)
 library(RColorBrewer)
+
+# input -------------------------------------------------------------------
 
 # read in data 
 df= readRDS("data/processed/proc_acou_photoid.rds")
 
 # figure directory
 fig_dir = 'figures/' 
+
+# process -----------------------------------------------------------------
+
+# manuscript figure -------------------------------------------------------
 
 # select variables correlation matrix plot (spearman)
 # figure set up
@@ -65,6 +72,8 @@ fig = corrplot(sp2, tl.col = "black", method = 'color', p.mat = test2$P,
 # end figure
 dev.off()
 
+
+# appendix figure - all var -----------------------------------------------
 
 # all variables correlation matirx plot (spearman)
 # figure set up
