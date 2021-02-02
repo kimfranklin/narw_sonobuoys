@@ -2,14 +2,19 @@
 
 # tables for manuscript that estimate the number of whales
 
-# libraries
+# libraries ---------------------------------------------------------------
+
 library(tidyverse)
 library(MASS)
 # library(plyr)
 library(data.table)
 
+# input -------------------------------------------------------------------
+
 # read in data
 df = readRDS("data/processed/proc_acou_photoid.rds")
+
+# process -----------------------------------------------------------------
 
 # summary output of each indiivdual regression
 # upcall call rate
