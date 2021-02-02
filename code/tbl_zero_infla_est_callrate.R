@@ -1,20 +1,24 @@
 # tbl_zero_infla_est_callrate.R #
 
+# Zero inflation test for full call rate models (for all call types) with 
+# poisson, quasi-poisson and negative binomial distributions 
 
+# libraries ---------------------------------------------------------------
 
 library(tidyverse)
 library(data.table)
 library(MASS)
 library(performance)
 
+# input -------------------------------------------------------------------
 
 df = readRDS("data/processed/proc_acou_photoid.rds")
 
-
+# process -----------------------------------------------------------------
 
 # estimating upcall call rate
 # poisson
-sightm = glm(up ~ month+
+sightm = glm(up ~ yday+
                num_sighting+ratio_male_female+
                social_bhv_whale+foraging_bhv_whale+
                offset(log(rec_duration))
@@ -25,7 +29,7 @@ uppo = do.call(rbind.data.frame, uppo)
 uppo=data.table::transpose(uppo)
 
 # quasi poisson
-sightm = glm(up ~ month+
+sightm = glm(up ~ yday+
                num_sighting+ratio_male_female+
                social_bhv_whale+foraging_bhv_whale+
                offset(log(rec_duration))
@@ -36,7 +40,7 @@ upqp = do.call(rbind.data.frame, upqp)
 upqp=data.table::transpose(upqp)
 
 # negative binomial
-sightm = glm.nb(up ~ month+
+sightm = glm.nb(up ~ yday+
                   num_sighting+ratio_male_female+
                   social_bhv_whale+foraging_bhv_whale+
                   offset(log(rec_duration))
@@ -48,7 +52,7 @@ upnb=data.table::transpose(upnb)
 
 # estimating gunshot call rate
 # poisson
-sightm = glm(gs ~ month+
+sightm = glm(gs ~ yday+
                num_sighting+ratio_male_female+
                social_bhv_whale+foraging_bhv_whale+
                offset(log(rec_duration))
@@ -59,7 +63,7 @@ gspo = do.call(rbind.data.frame, gspo)
 gspo=data.table::transpose(gspo)
 
 # quasi poisson
-sightm = glm(gs ~ month+
+sightm = glm(gs ~ yday+
                num_sighting+ratio_male_female+
                social_bhv_whale+foraging_bhv_whale+
                offset(log(rec_duration))
@@ -70,7 +74,7 @@ gsqp = do.call(rbind.data.frame, gsqp)
 gsqp=data.table::transpose(gsqp)
 
 # negative binomial
-sightm = glm.nb(gs ~ month+
+sightm = glm.nb(gs ~ yday+
                   num_sighting+ratio_male_female+
                   social_bhv_whale+foraging_bhv_whale+
                   offset(log(rec_duration))
@@ -82,7 +86,7 @@ gsnb=data.table::transpose(gsnb)
 
 # estimating mid-freq call rate 
 # poisson
-sightm = glm(mf ~ month+
+sightm = glm(mf ~ yday+
                num_sighting+ratio_male_female+
                social_bhv_whale+foraging_bhv_whale+
                offset(log(rec_duration))
@@ -93,7 +97,7 @@ mfpo = do.call(rbind.data.frame, mfpo)
 mfpo=data.table::transpose(mfpo)
 
 # quasi poisson
-sightm = glm(mf ~ month+
+sightm = glm(mf ~ yday+
                num_sighting+ratio_male_female+
                social_bhv_whale+foraging_bhv_whale+
                offset(log(rec_duration))
@@ -104,7 +108,7 @@ mfqp = do.call(rbind.data.frame, mfqp)
 mfqp=data.table::transpose(mfqp)
 
 # negative binomial
-sightm = glm.nb(mf ~ month+
+sightm = glm.nb(mf ~ yday+
                   num_sighting+ratio_male_female+
                   social_bhv_whale+foraging_bhv_whale+
                   offset(log(rec_duration))
@@ -127,15 +131,15 @@ tmp_df = tmp_df %>%
     alpha = V4
   )
 
-tmp_df$model = c('poisson up ~ month+ num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'quasi poisson up ~ month+ num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'neg bin up ~ month+ num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'poisson gs ~ month+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'quasi poisson gs ~ month+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'neg bin gs ~ month+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'poisson mf ~ month+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'quasi poissonmf ~ month+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'neg bin mf ~ month+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))')
+tmp_df$model = c('poisson up ~ yday+ num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
+                 'quasi poisson up ~ yday+ num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
+                 'neg bin up ~ yday+ num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
+                 'poisson gs ~ ydayh+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
+                 'quasi poisson gs ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
+                 'neg bin gs ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
+                 'poisson mf ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
+                 'quasi poissonmf ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
+                 'neg bin mf ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))')
 
 
 # set dataframe to be a table 
@@ -143,4 +147,3 @@ setDT(tmp_df)
 
 # save data table 
 write.csv(tmp_df,"data/processed/zero_infla_est_callrate.csv")
- 
