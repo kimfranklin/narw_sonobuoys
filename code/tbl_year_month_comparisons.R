@@ -2,12 +2,17 @@
 
 # making year and month comparison table for manuscript
 
-# libraries
+# libraries ---------------------------------------------------------------
+
 library(data.table)
 library(tidyverse)
 
+# input -------------------------------------------------------------------
+
 # read in data 
 df= readRDS("data/processed/proc_acou_photoid.rds")
+
+# process -----------------------------------------------------------------
 
 # year comparisons
 # Upcall
