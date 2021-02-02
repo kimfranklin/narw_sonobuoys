@@ -5,14 +5,18 @@
 # Full models have month, ration male to female, foraging rate and social rate.
 # not comparing to full anymore - kind of pointless
 
-# libraries
+# libraries ---------------------------------------------------------------
+
 library(tidyverse)
 library(MASS)
 library(plyr)
 
+# input -------------------------------------------------------------------
+
 # read in data
 df = readRDS("data/processed/proc_acou_photoid.rds")
 
+# process -----------------------------------------------------------------
 # anovas comparing null and stepwise results ------------------------------
 
 # upcall
