@@ -1,12 +1,18 @@
 # tbl_homoscedasticity_est_num_whales.R #
 
+# Studentized Breusch-Pagan test for homoscedasticity 
+
+# libraries ---------------------------------------------------------------
 
 library(tidyverse)
 library(data.table)
 library(lmtest)
 
+# input -------------------------------------------------------------------
 
 df = readRDS("data/processed/proc_acou_photoid.rds")
+
+# process -----------------------------------------------------------------
 
 # upcall rate
 up = bptest(df$num_sighting~df$up_per_hr)
@@ -23,8 +29,8 @@ mf = bptest(df$num_sighting~df$mf_per_hr)
 mf = do.call(rbind.data.frame, mf)
 mf=data.table::transpose(mf)
 
-# month
-mo = bptest(df$num_sighting~df$month)
+# yday
+mo = bptest(df$num_sighting~df$yday)
 mo = do.call(rbind.data.frame, mo)
 mo=data.table::transpose(mo)
 
