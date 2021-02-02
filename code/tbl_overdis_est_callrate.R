@@ -1,19 +1,22 @@
 # tbl_overdis_est_callrate.R #
 
+# Overdispersion test results for full poisson GLM call rate models
 
+# libraries ---------------------------------------------------------------
 
 library(tidyverse)
 library(data.table)
 library(AER)
 
-
-
+# input -------------------------------------------------------------------
 
 df = readRDS("data/processed/proc_acou_photoid.rds")
 
 
+# process -----------------------------------------------------------------
+
 # estimating upcall call rate UPDATED
-sightm = glm(up ~ month+
+sightm = glm(up ~ yday+
                num_sighting+ratio_male_female+
                social_bhv_whale+foraging_bhv_whale+
                offset(log(rec_duration))
@@ -25,7 +28,7 @@ up = do.call(rbind.data.frame, up)
 up=data.table::transpose(up)
 
 # estimating gunshot call rate UPDATED
-sightm = glm(gs ~ month+
+sightm = glm(gs ~ yday+
                num_sighting+ratio_male_female+
                social_bhv_whale+foraging_bhv_whale+
                offset(log(rec_duration))
@@ -37,7 +40,7 @@ gs = do.call(rbind.data.frame, gs)
 gs=data.table::transpose(gs)
 
 # estimating mid-freq call rate UPDATED
-sightm = glm(mf ~ month+
+sightm = glm(mf ~ yday+
                num_sighting+ratio_male_female+
                social_bhv_whale+foraging_bhv_whale+
                offset(log(rec_duration))
@@ -64,9 +67,9 @@ tmp_df = tmp_df %>%
     
   )
 
-tmp_df$model = c('up ~ month+ num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-              'gs ~ month+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-              'mf ~ month+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))')
+tmp_df$model = c('up ~ ydady+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
+              'gs ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
+              'mf ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))')
 
 
 # set dataframe to be a table 
