@@ -3,14 +3,18 @@
 # rather than reporting p-values from summary table (see tbl_est_call_rates.R)
 # MASS fxn anova is used to get p-values
 
-# libraries
+# libraries ---------------------------------------------------------------
+
 library(tidyverse)
 library(MASS)
 library(plyr)
 
+# input -------------------------------------------------------------------
+
 # read in data
 df = readRDS("data/processed/proc_acou_photoid.rds")
 
+# process -----------------------------------------------------------------
 # Upcall ------------------------------------------------------------------
 # null model
 sightunull = glm.nb(up ~ offset(log(rec_duration))
