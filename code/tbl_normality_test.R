@@ -1,5 +1,9 @@
 # tbl_normality_test.R #
 
+# shapiro-wilk normality test for varaibles, est num sight models and all call 
+# rate models 
+
+# libraries ---------------------------------------------------------------
 
 library(MASS)
 library(tidyverse)
@@ -11,10 +15,13 @@ library(data.table)
 # library(performance)
 # library(car)
 
+# input -------------------------------------------------------------------
+
 df = readRDS("data/processed/proc_acou_photoid.rds")
 
 
-
+# process -----------------------------------------------------------------
+# individual --------------------------------------------------------------
 
 # Are the variables normal shaped? Only num_sight is and adult males, everything else fails the test suggesting that everything else cannot be modeled by a normal distribution. (Alpha = 0.05)
 
@@ -39,8 +46,8 @@ mf = shapiro.test(df$mf_per_hr)
 mf = do.call(rbind.data.frame, mf)
 mf=data.table::transpose(mf)
 
-# month
-mo = shapiro.test(df$month)
+# yday
+mo = shapiro.test(df$yday)
 mo = do.call(rbind.data.frame, mo)
 mo=data.table::transpose(mo)
 
@@ -111,7 +118,8 @@ setDT(shap_df)
 write.csv(shap_df,"data/processed/shap_normality_test_ind.csv")
 
 
-# models!
+# models ------------------------------------------------------------------
+
 # number of whales and upcall rate
 res = residuals(lm(num_sighting~up_per_hr, data = df))
 
@@ -137,8 +145,8 @@ nwmf = shapiro.test(res)
 nwmf = do.call(rbind.data.frame, nwmf)
 nwmf=data.table::transpose(nwmf)
 
-# number of whales and month
-res = residuals(lm(num_sighting~month, data = df))
+# number of whales and yday
+res = residuals(lm(num_sighting~yday, data = df))
 
 nwmo = shapiro.test(res)
 
@@ -146,8 +154,8 @@ nwmo = do.call(rbind.data.frame, nwmo)
 nwmo=data.table::transpose(nwmo)
 
 
-# upcall rate vs month
-res = residuals(lm(up_per_hr~month, data = df))
+# upcall rate vs yday
+res = residuals(lm(up_per_hr~yday, data = df))
 
 upmo = shapiro.test(res)
 
@@ -187,9 +195,94 @@ upsr = do.call(rbind.data.frame, upsr)
 upsr=data.table::transpose(upsr)
 
 
+# gunshot rate vs yday
+res = residuals(lm(gs_per_hr~yday, data = df))
+
+gsmo = shapiro.test(res)
+
+gsmo = do.call(rbind.data.frame, gsmo)
+gsmo=data.table::transpose(gsmo)
+
+# gunshot rate vs ratio
+res = residuals(lm(gs_per_hr~ratio_male_female, data = df))
+
+gsra = shapiro.test(res)
+
+gsra = do.call(rbind.data.frame, gsra)
+gsra=data.table::transpose(gsra)
+
+# gunshot rate vs sighting
+res = residuals(lm(gs_per_hr~num_sighting, data = df))
+
+gsnw = shapiro.test(res)
+
+gsnw = do.call(rbind.data.frame, gsnw)
+gsnw=data.table::transpose(gsnw)
+
+# gunshot rate vs foragign rate
+res = residuals(lm(gs_per_hr~foraging_bhv_whale, data = df))
+
+gsfr = shapiro.test(res)
+
+gsfr = do.call(rbind.data.frame, gsfr)
+gsfr=data.table::transpose(gsfr)
+
+# gunshot rate vs social
+res = residuals(lm(gs_per_hr~social_bhv_whale, data = df))
+
+gssr = shapiro.test(res)
+
+gssr = do.call(rbind.data.frame, gssr)
+gssr=data.table::transpose(gssr)
+
+
+# mf rate vs yday
+res = residuals(lm(mf_per_hr~yday, data = df))
+
+mfmo = shapiro.test(res)
+
+mfmo = do.call(rbind.data.frame, mfmo)
+mfmo=data.table::transpose(mfmo)
+
+# mf rate vs ratio
+res = residuals(lm(mf_per_hr~ratio_male_female, data = df))
+
+mfra = shapiro.test(res)
+
+mfra = do.call(rbind.data.frame, mfra)
+mfra=data.table::transpose(mfra)
+
+# mf rate vs sighting
+res = residuals(lm(mf_per_hr~num_sighting, data = df))
+
+mfnw = shapiro.test(res)
+
+mfnw = do.call(rbind.data.frame, mfnw)
+mfnw=data.table::transpose(mfnw)
+
+# mf rate vs foragign rate
+res = residuals(lm(mf_per_hr~foraging_bhv_whale, data = df))
+
+mffr = shapiro.test(res)
+
+mffr = do.call(rbind.data.frame, mffr)
+mffr=data.table::transpose(mffr)
+
+# mf rate vs social
+res = residuals(lm(mf_per_hr~social_bhv_whale, data = df))
+
+mfsr = shapiro.test(res)
+
+mfsr = do.call(rbind.data.frame, mfsr)
+mfsr=data.table::transpose(mfsr)
+
+
+
 # combine all rows into a dataframe
 shap_df <- rbind(nwup, nwgs, nwmf, nwmo,
-               upmo, upra, upnw, upfr, upsr)
+               upmo, upra, upnw, upfr, upsr,
+               gsmo, gsra, gsnw, gsfr, gssr,
+               mfmo, mfra, mfnw, mffr, mfsr)
 
 # rename column names
 shap_df = shap_df %>% 
@@ -203,12 +296,22 @@ shap_df = shap_df %>%
 shap_df$model = c('num_sighting~up_per_hr',
                  'num_sighting~gs_per_hr',
                  'num_sighting~mf_per_hr',
-                 'num_sighting~month',
-                 'up_per_hr~month',
+                 'num_sighting~yday',
+                 'up_per_hr~yday',
                  'up_per_hr~ratio_male_female',
                  'up_per_hr~num_sighting',
                  'up_per_hr~foraging_bhv_whale',
-                 'up_per_hr~social_bhv_whale')
+                 'up_per_hr~social_bhv_whale',
+                 'gs_per_hr~yday',
+                 'gs_per_hr~ratio_male_female',
+                 'gs_per_hr~num_sighting',
+                 'gs_per_hr~foraging_bhv_whale',
+                 'gs_per_hr~social_bhv_whale',
+                 'mf_per_hr~yday',
+                 'mf_per_hr~ratio_male_female',
+                 'mf_per_hr~num_sighting',
+                 'mf_per_hr~foraging_bhv_whale',
+                 'mf_per_hr~social_bhv_whale')
 
 
 # set dataframe to be a table 
@@ -216,6 +319,3 @@ setDT(shap_df)
 
 # save data table 
 write.csv(shap_df,"data/processed/shap_normality_test_model.csv")
-
-
-
