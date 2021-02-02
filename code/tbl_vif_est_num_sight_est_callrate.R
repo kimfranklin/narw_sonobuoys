@@ -3,7 +3,6 @@
 # VIF tables for appendix for both types of models, the estimating number of 
 # whales sighted and estimating the call rates for each call type (up, gs, mf)
 
-
 # setup -------------------------------------------------------------------
 
 # libraries 
@@ -13,9 +12,10 @@ library(car)
 library(data.table)
 library(dplyr)
 
+# input -------------------------------------------------------------------
+
 # data
 df = readRDS("data/processed/proc_acou_photoid.rds")
-
 
 # process - est num sighting ----------------------------------------------
 
