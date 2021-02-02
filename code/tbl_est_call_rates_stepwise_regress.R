@@ -1,8 +1,9 @@
 # tbl_est_call_rates_stepwise_regress.R #
 
-# tables for manuscript that estimate the call rates
+# tables for manuscript that estimate the call rates stepwise regression
 
-# libraries
+# libraries ---------------------------------------------------------------
+
 library(tidyverse)
 library(MASS)
 library(plyr)
@@ -11,8 +12,12 @@ library(plyr)
 # library(AICcmodavg)
 library(broom)
 
+# input -------------------------------------------------------------------
+
 # read in data
 df = readRDS("data/processed/proc_acou_photoid.rds")
+
+# process -----------------------------------------------------------------
 
 # upcall
 # model
