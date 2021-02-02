@@ -2,15 +2,19 @@
 
 # tables for manuscript that estimate the call rates
 
-# libraries
+# libraries ---------------------------------------------------------------
+
 library(tidyverse)
 library(MASS)
 library(plyr)
 #library(sjPlot)
 
+# input -------------------------------------------------------------------
+
 # read in data
 df = readRDS("data/processed/proc_acou_photoid.rds")
 
+# process -----------------------------------------------------------------
 # Upcall ------------------------------------------------------------------
 # yday
 sighta = glm.nb(up ~ yday+
