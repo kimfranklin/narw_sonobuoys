@@ -124,7 +124,7 @@ tmp_df <- rbind(uppo, upqp, upnb, gspo, gsqp, gsnb, mfpo, mfqp, mfnb)
 
 # rename column names
 tmp_df = tmp_df %>% 
-  rename(
+  dplyr::rename(
     zeros_model_est = V1,
     zeros_data_has = V2,
     ratio = V3,
