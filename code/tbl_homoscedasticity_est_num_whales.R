@@ -40,7 +40,7 @@ tmp_df <- rbind(up, gs, mf, mo)
 
 # rename column names
 tmp_df = tmp_df %>% 
-  rename(
+  dplyr::rename(
     test_stat_bp = V1,
     deg_freedom = V2,
     test_type = V3,
