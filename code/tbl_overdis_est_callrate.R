@@ -5,6 +5,7 @@
 # libraries ---------------------------------------------------------------
 
 library(tidyverse)
+library(dplyr)
 library(data.table)
 library(AER)
 
@@ -56,7 +57,7 @@ tmp_df <- rbind(up, gs, mf)
 
 # rename column names
 tmp_df = tmp_df %>% 
-  rename(
+  dplyr::rename(
     test_stat_z = V1,
     p_val = V2,
     dispersion = V3,
