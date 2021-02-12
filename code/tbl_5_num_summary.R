@@ -12,7 +12,7 @@ df= readRDS("data/processed/proc_acou_photoid.rds")
 
 # subset data so only variables of interest are shown
 tmp = df %>%
-   select(up,up_per_hr,up_per_hr_per_whale,
+   dplyr::select(up,up_per_hr,up_per_hr_per_whale,
           gs,gs_per_hr,gs_per_hr_per_whale,
           mf,mf_per_hr,mf_per_hr_per_whale,
           num_sighting, ratio_male_female,
