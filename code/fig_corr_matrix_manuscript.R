@@ -36,10 +36,10 @@ dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
 # rename columns/rows to make it pretty
 colnames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate", 
                     "Whale abundance", 
-                    "Male to female ratio", "Foraging rate", "Socalizing rate", "Yday")
+                    "Male/female ratio", "Foraging rate", "Socalizing rate", "Day of year")
 rownames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate", 
                     "Whale abundance", 
-                    "Male to female ratio", "Foraging rate", "Socalizing rate", "Yday")
+                    "Male/female ratio", "Foraging rate", "Socalizing rate", "Day of year")
 
 # obtain spearman correlation matrix
 sp2 = cor(dfs2, method = 'spearman')
@@ -83,7 +83,7 @@ jpeg (filename = paste0(fig_dir,'fig_corrplot_full_manu?.jpeg'),
 # put data in dataframe so that it can be convereted to correlation and p-value matrix
 dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
                   df$num_sighting,
-                  df$ratio_male_female,
+                  df$ratio_male_female,df$ratio_juvenile_adult,
                   df$adult_male,df$adult_female,df$juvenile_male,df$juvenile_male,df$unknown,
                   df$foraging_bhv_whale,df$social_bhv_whale,df$other_bhv_whale,
                   df$yday)
@@ -91,16 +91,16 @@ dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
 # rename columns/rows to make it pretty
 colnames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate", 
                     "Whale abundance", 
-                    "Male to female ratio", 
+                    "Male/female ratio", "Juvenile/adult ratio",
                     "Adult male","Adult female","Juvenile male","Juvenile female","Unknown demographic",
                     "Foraging rate", "Socalizing rate", "Other behaviour rate",
-                    "Yday")
+                    "Day of year")
 rownames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate", 
                     "Whale abundance", 
-                    "Male to female ratio", 
+                    "Male/female ratio", "Juvenile/adult ratio",
                     "Adult male","Adult female","Juvenile male","Juvenile female","Unknown demographic",
                     "Foraging rate", "Socalizing rate", "Other behaviour rate",
-                    "Yday")
+                    "Day of year")
 
 # obtain spearman correlation matrix
 sp2 = cor(dfs2, method = 'spearman')
