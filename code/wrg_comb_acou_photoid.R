@@ -27,6 +27,10 @@ ofile = 'data/processed/proc_acou_photoid.rds'
 
 # process -----------------------------------------------------------------
 
+# # remove unphotographed whales from dataset
+id_df = id_df %>%
+  drop_na(EGNO)
+
 # count the sightings per deployment
 vis = count(id_df, id)
 
@@ -101,18 +105,18 @@ am = id_df %>%
   filter(age == 'A') %>%
   filter(sex == 'M') %>%
   count(id)
-# fcalf = id_df %>%
-#   filter(age == 'C') %>%
-#   filter(sex == 'F') %>%
-#   count(id)
-# mcalf = id_df %>%
-#   filter(age == 'C') %>%
-#   filter(sex == 'M') %>%
-#   count(id)
-# xcalf = id_df %>%
-#   filter(age == 'C') %>%
-#   filter(sex == 'X') %>%
-#   count(id)
+fcalf = id_df %>%
+  filter(age == 'C') %>%
+  filter(sex == 'F') %>%
+  count(id)
+mcalf = id_df %>%
+  filter(age == 'C') %>%
+  filter(sex == 'M') %>%
+  count(id)
+xcalf = id_df %>%
+  filter(age == 'C') %>%
+  filter(sex == 'X') %>%
+  count(id)
 auns = id_df %>%
   filter(age == 'A') %>%
   filter(sex == 'X') %>%
@@ -133,10 +137,10 @@ unm = id_df %>%
   filter(age == 'U') %>%
   filter(sex == 'M') %>%
   count(id)
-nas = id_df %>%
-  filter(age == 'NA') %>%
-  filter(sex == 'NONE') %>%
-  count(id)
+# nas = id_df %>%
+#   filter(age == 'NA') %>%
+#   filter(sex == 'NONE') %>%
+#   count(id)
 
 # merging sightings with number of jf, jm, af, am, calf, uns, una
 df = merge(x = df, y = jf, by.x = 'id', by.y = 'id', all.x = TRUE)
@@ -151,14 +155,14 @@ df = df %>% rename(adult_female = n)
 df = merge(x = df, y = am, by.x = 'id', by.y = 'id', all.x = TRUE)
 df = df %>% rename(adult_male = n)
 
-# df = merge(x = df, y = fcalf, by.x = 'id', by.y = 'id', all.x = TRUE)
-# df = df %>% rename(calf_female = n)
-# 
-# df = merge(x = df, y = mcalf, by.x = 'id', by.y = 'id', all.x = TRUE)
-# df = df %>% rename(calf_male = n)
-# 
-# df = merge(x = df, y = xcalf, by.x = 'id', by.y = 'id', all.x = TRUE)
-# df = df %>% rename(sex_ukn_calf = n)
+df = merge(x = df, y = fcalf, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(calf_female = n)
+
+df = merge(x = df, y = mcalf, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(calf_male = n)
+
+df = merge(x = df, y = xcalf, by.x = 'id', by.y = 'id', all.x = TRUE)
+df = df %>% rename(sex_ukn_calf = n)
 
 df = merge(x = df, y = auns, by.x = 'id', by.y = 'id', all.x = TRUE)
 df = df %>% rename(adult_unknown_sex = n)
@@ -175,10 +179,10 @@ df = df %>% rename(unknown_age_female = n)
 df = merge(x = df, y = unm, by.x = 'id', by.y = 'id', all.x = TRUE)
 df = df %>% rename(unknown_age_male = n)
 
-df = merge(x = df, y = nas, by.x = 'id', by.y = 'id', all.x = TRUE)
-df = df %>% rename(na_agesex = n)
+# df = merge(x = df, y = nas, by.x = 'id', by.y = 'id', all.x = TRUE)
+# df = df %>% rename(na_agesex = n)
 
-# remove duplicate whale sightings UNDER CONSTRUCTION!!!!!!
+# remove duplicate whale sightings
 # make subset of only dups
 df_dup = id_df %>%
   filter(dup == 'TRUE') %>%
@@ -475,33 +479,33 @@ df$unknown_age_male = df$unknown_age_male - df$df_dup
 drop <- c("df_dup")
 df = df[,!(names(df) %in% drop)]
 
-# NA age, NONE sex
-# count the duplicates by id
-testing = df_dup %>%
-  filter(age == 'NA') %>%
-  filter(sex == 'NONE') %>%
-  group_by(id) %>%
-  summarise(df_dup = sum(dummy))
-
-# merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
-testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
-
-# change nas to 0 in testing3
-testing3[is.na(testing3)] = 0
-
-# drop the dummy column in testing3
-drop <- c("dummy")
-testing3 = testing3[,!(names(testing3) %in% drop)]
-
-# add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
-df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
-
-# subtract the sum of dups by id from the num_sighting by id
-df$na_agesex = df$na_agesex - df$df_dup
-
-# remove the dups column
-drop <- c("df_dup")
-df = df[,!(names(df) %in% drop)]
+# # NA age, NONE sex
+# # count the duplicates by id
+# testing = df_dup %>%
+#   filter(age == 'NA') %>%
+#   filter(sex == 'NONE') %>%
+#   group_by(id) %>%
+#   summarise(df_dup = sum(dummy))
+# 
+# # merge the dup counts dataframe testing) with dataframe that has all the deployment ids (testing2) to get testing3 dataframe
+# testing3 <- merge (testing, testing2 , all.x=T, all.y=T)
+# 
+# # change nas to 0 in testing3
+# testing3[is.na(testing3)] = 0
+# 
+# # drop the dummy column in testing3
+# drop <- c("dummy")
+# testing3 = testing3[,!(names(testing3) %in% drop)]
+# 
+# # add the dup counts dataframe (testing3) to the original dataframe in column called num_s_dups
+# df = merge(x = df, y = testing3, by.x = 'id', by.y = 'id', all.x = TRUE)
+# 
+# # subtract the sum of dups by id from the num_sighting by id
+# df$na_agesex = df$na_agesex - df$df_dup
+# 
+# # remove the dups column
+# drop <- c("df_dup")
+# df = df[,!(names(df) %in% drop)]
 
 # adding behaviour data to data frame 
 # separate multiple behaviours into rows
@@ -710,13 +714,15 @@ df$sum_calls = (df$up+df$mf+df$gs)
 df$sum_calls_rdur = (df$sum_calls/df$rec_duration)
 df$rec_duration_h = df$rec_duration/60/60
 df$sum_call_recdurh = df$sum_calls/df$rec_duration_h
-df$sum_juvenile = (df$juvenile_female+df$juvenile_male)
-df$sum_adult = (df$adult_female+df$adult_male)
-df$sum_female = (df$juvenile_female+df$adult_female)
-df$sum_male = (df$juvenile_male+df$adult_male)
+df$sum_juvenile = (df$juvenile_female+df$juvenile_male+df$juvenile_unknown_sex)
+df$sum_adult = (df$adult_female+df$adult_male+df$adult_unknown_sex)
+df$sum_female = (df$juvenile_female+df$adult_female+df$unknown_age_female+df$calf_female)
+df$sum_male = (df$juvenile_male+df$adult_male+df$unknown_age_male+df$calf_male)
 df$unknown = (df$juvenile_unknown_sex+df$adult_unknown_sex+df$unknown_age_female+
-                df$unknown_age_male+df$unknown_agesex+df$na_agesex)
+                df$unknown_age_male+df$unknown_agesex+#df$na_agesex
+                +df$sex_ukn_calf)
 df$ratio_male_female = round((df$sum_male/df$sum_female), 3)
+df$ratio_juvenile_adult = round((df$sum_juvenile/df$sum_adult), 3)
 df$month = month(as.POSIXct(df$date, format = '%Y-%m-%d'))
 df$hour = hour(df$datetime) 
 
@@ -768,4 +774,3 @@ df$other_bhv_bi[df$other_bhv != 0] <- 1
 
 # save file 
 saveRDS(df, file = ofile)
-
