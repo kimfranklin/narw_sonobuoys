@@ -104,7 +104,7 @@ shap_df <- rbind(nw, up, gs, mf, mo, ra, af, am, jf, jm, uk, fr, sr, or)
 
 # rename column names
 shap_df = shap_df %>% 
-  rename(
+  dplyr::rename(
     test_stat_W = V1,
     p_val = V2,
     test_type = V3,
@@ -286,7 +286,7 @@ shap_df <- rbind(nwup, nwgs, nwmf, nwmo,
 
 # rename column names
 shap_df = shap_df %>% 
-  rename(
+  dplyr::rename(
     test_stat_W = V1,
     p_val = V2,
     test_type = V3,
