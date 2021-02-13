@@ -221,3 +221,112 @@ step.modelf1 <- stepAIC(min_sight, direction = "both", scope = formula(max_sight
 
 step.modelf1
 ```
+
+## including whale abundance and age ratio {.tabset}
+### upcall backwards
+```{r}
+# model
+sightf1 = glm.nb(up ~yday+foraging_bhv_whale+social_bhv_whale+ratio_male_female+
+                   num_sighting+ratio_juvenile_adult+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+sightf1
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(sightf1, direction = "backward", 
+                       trace = TRUE)
+
+step.modelf1
+```
+
+### stepwise model 'both' 
+```{r}
+# min model
+min_sight = glm.nb(up ~
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# max model
+max_sight = glm.nb(up ~yday+foraging_bhv_whale+social_bhv_whale+ratio_male_female+
+                   num_sighting+ratio_juvenile_adult+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(min_sight, direction = "both", scope = formula(max_sight),
+                       trace = TRUE)
+
+step.modelf1
+```
+
+### gunshot backwards
+```{r}
+# model
+sightf1 = glm.nb(gs ~yday+foraging_bhv_whale+social_bhv_whale+ratio_male_female+
+                   num_sighting+ratio_juvenile_adult+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+sightf1
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(sightf1, direction = "backward", 
+                       trace = TRUE)
+
+step.modelf1
+```
+
+### stepwise model 'both' 
+```{r}
+# min model
+min_sight = glm.nb(gs ~
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# max model
+max_sight = glm.nb(gs ~yday+foraging_bhv_whale+social_bhv_whale+ratio_male_female+
+                   num_sighting+ratio_juvenile_adult+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(min_sight, direction = "both", scope = formula(max_sight),
+                       trace = TRUE)
+
+step.modelf1
+```
+
+### mid-freq
+```{r}
+# model
+sightf1 = glm.nb(mf ~yday+foraging_bhv_whale+social_bhv_whale+ratio_male_female+
+                   num_sighting+ratio_juvenile_adult+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+sightf1
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(sightf1, direction = "backward", 
+                       trace = TRUE)
+
+step.modelf1
+```
+
+### stepwise model 'both' 
+```{r}
+# min model
+min_sight = glm.nb(mf ~
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# max model
+max_sight = glm.nb(mf ~yday+foraging_bhv_whale+social_bhv_whale+ratio_male_female+
+                   num_sighting+ratio_juvenile_adult+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(min_sight, direction = "both", scope = formula(max_sight),
+                       trace = TRUE)
+
+step.modelf1
+```
