@@ -135,9 +135,13 @@ s=data.table::transpose(s)
 # combine all rows into a dataframe
 kw_df <- rbind(a,b,c,d,e,f,g,h,i,j,k,jk,l,m,n,mno,o,p,q,r,s)
 
+# round to 3 decimal places
+kw_df$V1 = round(as.numeric(kw_df$V1), 3)
+kw_df$V3 = round(as.numeric(kw_df$V3), 3)
+
 # rename column names
 kw_df = kw_df %>% 
-  rename(
+  dplyr::rename(
     test_stat = V1,
     degrees_freedom = V2,
     p_val = V3,
@@ -259,9 +263,13 @@ s=data.table::transpose(s)
 # combine all rows into a dataframe
 kw_df2 <- rbind(a,b,c,d,e,f,g,h,i,j,k,jk,l,m,n,mno,o,p,q,r,s)
 
+# round
+kw_df2$V1 = round(as.numeric(kw_df2$V1), 3)
+kw_df2$V3 = round(as.numeric(kw_df2$V3), 3)
+
 # rename column names
 kw_df2 = kw_df2 %>% 
-  rename(
+  dplyr::rename(
     test_stat = V1,
     degrees_freedom = V2,
     p_val = V3,
@@ -277,4 +285,3 @@ setDT(kw_df)
 
 # save data table 
 write.csv(kw_df,"data/processed/year_month_comparisons.csv")
-
