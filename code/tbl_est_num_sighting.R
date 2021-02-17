@@ -44,6 +44,12 @@ sightd <-summary(sightd)$coefficients
 # combine all gs rows into a dataframe
 ns_df <- rbind(sighta,sightb,sightc,sightd)
 
+# round
+ns_df = round(ns_df,3)
+
+# add y variable column
+ns_df <- cbind(ns_df, "whale abundance")
+
 # save data table 
 write.csv(ns_df,"data/processed/num_sighting_regression_table.csv")
 
@@ -80,6 +86,12 @@ sightg = anova(lm(num_sighting ~ yday
 
 # combine each model into one big table
 ns_df <- rbind(sighta,sightb,sightc,sightg)
+
+# round
+ns_df = round(ns_df,3)
+
+# add y variable column
+ns_df <- cbind(ns_df, "whale abundance")
 
 # save data table 
 write.csv(ns_df,"data/processed/num_sighting_anova_table.csv")
