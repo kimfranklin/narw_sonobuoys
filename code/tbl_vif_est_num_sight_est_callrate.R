@@ -54,7 +54,7 @@ write.csv(tmp_df,"data/processed/tbl_est_num_sight_vif.csv")
 # upcall call rate VIF table 
 # model
 sightf1 = glm.nb(up ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
-                   offset(log(rec_duration))
+                   num_sighting+offset(log(rec_duration))
                  , data = df, control=glm.control(maxit=100))
 
 # VIF
@@ -67,7 +67,7 @@ a = data.table::transpose(a)
 # gunshot call rate VIF table 
 # model
 sightf2 = glm.nb(gs ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
-                   offset(log(rec_duration))
+                   num_sighting+offset(log(rec_duration))
                  , data = df, control=glm.control(maxit=100))
 
 # VIF
@@ -80,7 +80,7 @@ b = data.table::transpose(b)
 # mid frq call rate VIF table 
 # model
 sightf3 = glm.nb(mf ~yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
-                   offset(log(rec_duration))
+                   num_sighting+offset(log(rec_duration))
                  , data = df, control=glm.control(maxit=100))
 
 # VIF
@@ -98,12 +98,13 @@ tmp_df = tmp_df %>%
     yday = V1,
     ratio_male_female = V2,
     foraging_bhv_whale = V3,
-    social_bhv_whale = V4)
+    social_bhv_whale = V4,
+    whale_abundance = V5)
 
 # add column for which model it is
-tmp_df$model = c('up ~ yday + ratio_male_female + social_bhv_whale + foraging_bhv_whale + offset(log(rec_duration))',
-                 'gs ~ yday + ratio_male_female + social_bhv_whale + foraging_bhv_whale + offset(log(rec_duration))',
-                 'mf ~ yday + ratio_male_female + social_bhv_whale + foraging_bhv_whale + offset(log(rec_duration))')
+tmp_df$model = c('up ~ yday + ratio_male_female + social_bhv_whale + foraging_bhv_whale + num_sighting + offset(log(rec_duration))',
+                 'gs ~ yday + ratio_male_female + social_bhv_whale + foraging_bhv_whale + num_sighting + offset(log(rec_duration))',
+                 'mf ~ yday + ratio_male_female + social_bhv_whale + foraging_bhv_whale + num_sighting + offset(log(rec_duration))')
 
 
 # set dataframe to be a table 
