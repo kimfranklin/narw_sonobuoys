@@ -143,7 +143,7 @@ dep_dur = df %>%
 
 # rename difference as dep_duration
 dep_dur = dep_dur %>%
-  rename(dep_duration = difference)
+  dplyr::rename(dep_duration = difference)
 
 # combine calculated deployment duration to log
 log = merge(x = log, y = dep_dur, by.x = 'id', by.y = 'id', all.x = TRUE)
