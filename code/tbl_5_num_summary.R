@@ -26,5 +26,8 @@ tmps = do.call(cbind, lapply(tmp, summary))
 # transpose that matrix/array
 tmpss = t(tmps)
 
+# round
+tmpss = round(tmpss,3)
+
 # save the matrix/array
 write.csv(tmpss,"data/processed/5_num_summary.csv")
