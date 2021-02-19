@@ -43,10 +43,11 @@ rownames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate",
 
 # obtain spearman correlation matrix
 sp2 = cor(dfs2, method = 'spearman')
+sp2 = round(sp2, 3)
 
 # spearman p-value matrix
 test2 <- rcorr(as.matrix(dfs2), type="spearman")
-r = round(test2$P, 5)
+test2$P = round(test2$P, 3)
 
 # change font type
 par(family="Times New Roman")
@@ -104,10 +105,11 @@ rownames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate",
 
 # obtain spearman correlation matrix
 sp2 = cor(dfs2, method = 'spearman')
+sp2 = round(sp2, 3)
 
 # spearman p-value matrix
 test2 <- rcorr(as.matrix(dfs2), type="spearman")
-r = round(test2$P, 5)
+test2$P = round(test2$P, 3)
 
 # change font type
 par(family="Times New Roman") 
