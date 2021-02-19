@@ -27,7 +27,7 @@ plta = df %>%
   #             se = TRUE, fullrange = TRUE, show.legend = FALSE)+
   scale_colour_manual(values = c("red", "blue","black"),
                       breaks=c("up_per_hr", "gs_per_hr", "mf_per_hr"),
-                      labels=c("Upcall rat", "Gunshoet rate","Tonal rate"))+
+                      labels=c("Upcall", "Gunshot","Tonal"))+
   labs(colour = "Call Type",
        x = NULL,
        y = NULL)+
@@ -84,13 +84,23 @@ pltb = df %>%
        title = (expression(paste('b) Behavior rates'))))
 pltb
 
+png(paste0(fig_dir, 'manuscript_scatterplots.png'), height = 8, width = 8,
+    units = 'in', res = 300)
+
+grid.newpage()
+grid.draw(rbind(ggplotGrob(plta), 
+                ggplotGrob(pltb), size = "last"))
+
+dev.off()
+
 # whale abundance scatterplot
 pltc = df %>%
   select("yday", 'year', "num_sighting") %>%
-  gather(key = "dem" , value = "cval", num_sighting) %>%
-  filter(dem %in% c("num_sighting")) %>%
-  ggplot(aes(x = as.Date(yday,'1970-01-01'), y = cval))+
-  geom_point(aes(colour = dem), alpha = 0.5, size = 3)+
+  # gather(key = "dem" , value = "cval", num_sighting) %>%
+  # filter(dem %in% c("num_sighting")) %>%
+  ggplot(aes(x = as.Date(yday,'1970-01-01'), y = num_sighting))+
+  geom_point(#aes(colour = 'red'), 
+    color = 'red', alpha = 0.5, size = 3)+
   # geom_smooth(aes(color = sex, fill = sex), method = "lm",
   #             se = TRUE, fullrange = TRUE, show.legend = FALSE)+
   scale_colour_manual(values = c("red"),
@@ -118,16 +128,8 @@ pltc = df %>%
        title = (expression(paste('c) Whale Abundance'))))
 pltc
 
-
-png(paste0(fig_dir, 'manuscript_scatterplots.png'), height = 10, width = 8,
-    units = 'in', res = 300)
-
-grid.newpage()
-grid.draw(rbind(ggplotGrob(plta), 
-                ggplotGrob(pltb), 
-                ggplotGrob(pltc), size = "last"))
-
-dev.off()
+ggsave(pltc, filename = paste0('figures/manuscript_abundance.png'), 
+        height = 5, width = 7, units = 'in', dpi = 300)
 
 # demographics bar graph
 df$date_discrete = c('2017-06-27', '2017-06-29', '2017-07-05', '2017-07-08', '2017-07-20', 
