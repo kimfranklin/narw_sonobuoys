@@ -197,19 +197,7 @@ df$sex[df$sex == ''] = 'NONE'
 # df = df %>%
 #   filter(age %in% c('J','A','U','NA'))
 
-dfs = df %>%
-  filter(dup)
-
-# for now leaving in all duplicates!!!!! WORK IN PROGRESS
-# do via aggregate? https://stackoverflow.com/questions/16596515/aggregating-by-unique-identifier-and-concatenating-related-values-into-a-string
-# remove duplictes that do not have any behaviours
-#tmp = df[!(df$dup == "TRUE" & df$behaviour == 'NONE'),]
-#df = tmp
-
-#dupe = df[,c('id','EGNO')] # select columns to check duplicates
-#test = df[duplicated(dupe) | duplicated(dupe, fromLast=TRUE),]
-#tmp = test[!(test$behaviour == 'NONE'),]
-#test = tmp
+# NOTE duplicate sightings are delt with in the next script, "wrg_combine_acou_photoid.R"
 
 # save file
 saveRDS(df, ofileb)
