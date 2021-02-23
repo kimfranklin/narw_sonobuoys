@@ -5,6 +5,8 @@ library(tidyverse)
 library(lubridate)
 library(RColorBrewer)
 library(metR)
+library(rnaturalearth)
+library(ggspatial)
 
 # Data and set up
 # read in the data
@@ -124,6 +126,8 @@ coord_sf(expand = FALSE, clip = 'off')+
   theme(legend.position = "right",
         legend.key = element_rect(color = 'black', fill = NA),
         text = element_text(size = 15, family = "serif"),
+        axis.text.x = element_text(colour = "black"),
+        axis.text.y = element_text(colour = "black"),
         panel.grid = element_blank())
 gsl
 
@@ -134,4 +138,4 @@ ofile = 'sono_map_more_detailbathy2.png'
 fig_dir = 'figures/'
 
 ggsave(gsl, filename = paste0(fig_dir, ofile),
-       height = 10, width = 15, dpi = 300)
+       height = 7, width = 10, dpi = 300)
