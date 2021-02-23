@@ -37,6 +37,10 @@ source('code/tbl_est_call_rates')
 # characterize calling rates using stepwise multivariate neg. binomial regression
 source('code/tbl_est_call_rates_stepwise.R')
 
+# all models produced above in a single table (note this table is half formatted, 
+# rest of formatting done in excel)
+source('code/tbl_all_manuscript_models_combined.R')
+
 # appendix/supplementary --------------------------------------------------
 
 # stepwise process for each call type
