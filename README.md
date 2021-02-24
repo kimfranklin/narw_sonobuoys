@@ -10,6 +10,12 @@ able to associate behaviours with call types with hopes that collecting acoustic
 data will be sufficient in the future to derive right whale behaviours with out 
 visual aid. 
 
+NOTE: 
+- wrg = wrangling scripts, these produce data and saved as csv
+- fig = figure producing scripts, these produce figures and the figures are saved
+as either png or jpeg
+- tbl = table producing scripts, these produce tables and saved as csv
+
 ## wrangling scripts order
 run the scripts in order staring with #1 to #3 
 1. wrg_acoustic.R
@@ -36,5 +42,53 @@ run the scripts in order staring with #1 to #3
 
 Two data files in interim and four data files in processed should be produced
 
-### make deployment map
-- deployment map has all locations for all years and month that NOAA deployed a sonobuoy
+## maps
+- generic deployment map has all locations for all years and month that NOAA deployed a sonobuoy (used in MS)
+- time and space range maps
+- sightings data maps with track lines
+- faceted map by year and month
+- faceted map by year and month for each behaviour and call rate
+
+## working data/the markdown files
+The R markdown files were created to help see patterns and decide what statistical analyses we wanted to do on the data. The are a stepping stone before creating the tbl and fig scripts
+
+## make figures to visualize the data
+1. fig_corr_matrix_manuscript.R
+  - this produces two spearman correlation matrices, a short one and full one
+  (the short one has only few variables where as the full one has nearly all the 
+  variables in the dataset)
+2. fig_scatterplots.R
+  - this produces two scatter plots in one image (call rates in one plot and 
+  behaviour rates in the other plot) and another image of a bargraph that is 
+  grouped by demographic class with each total bar being the whale abundance
+
+## statistical analysis
+1. tbl_5_num_summary.R
+- this script produces a table of all variables' 1st and 3rd quartile, mean, 
+median, max and min to give idea of variables' distribution
+2. tbl_est_num_sighting.R
+- this script produces all the models where num_sighting (or whale abundance)
+is the y variable, the estimates are produced and saved in one csv file and the 
+anova tables are saved as another (separate) csv file
+3. tbl_est_call_rates.R
+- this script produces all the models where call rates (upcall, gunshot, tonal)
+are the y variable, the estimates are produced and saved in one csv file and the 
+negative binomial likelihood ratio test tables are saved as another (separate) csv file
+(the negative binomial likelihood ratio test compare the model to a null which is just the 
+intercept and offset)
+4. tbl_est_call_rates_stepwise.R
+- this script produces all the call rate stepwise models where the call rates
+(upcall, gunshot, tonal) are the y variable, the estimates are produced and 
+saved in one csv file and the negative binomial likelihood ratio test tables are
+saved as another (separate) csv file (the negative binomial likelihood ratio test 
+compare the model to a null which is just the intercept and offset)
+
+## extra stat analyses/justification for stat anaylses
+1. tbl_est_call_rates_stepwise_process.R
+2. tbl_year_month_comparisons.R
+3. tbl_normality_test.R
+4. tbl_homoscedasticity_est_num_whales.R
+5. tbl_overdis_est_callrate.R
+6. tbl_vif_est_num_sight_est_callrate.R
+
+
