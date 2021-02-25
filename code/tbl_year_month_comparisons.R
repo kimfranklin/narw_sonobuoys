@@ -136,8 +136,8 @@ s=data.table::transpose(s)
 kw_df <- rbind(a,b,c,d,e,f,g,h,i,j,k,jk,l,m,n,mno,o,p,q,r,s)
 
 # round to 3 decimal places
-kw_df$V1 = round(as.numeric(kw_df$V1), 3)
-kw_df$V3 = round(as.numeric(kw_df$V3), 3)
+kw_df$V1 = round(as.numeric(kw_df$V1), 2)
+kw_df$V3 = round(as.numeric(kw_df$V3), 2)
 
 # rename column names
 kw_df = kw_df %>% 
@@ -264,8 +264,8 @@ s=data.table::transpose(s)
 kw_df2 <- rbind(a,b,c,d,e,f,g,h,i,j,k,jk,l,m,n,mno,o,p,q,r,s)
 
 # round
-kw_df2$V1 = round(as.numeric(kw_df2$V1), 3)
-kw_df2$V3 = round(as.numeric(kw_df2$V3), 3)
+kw_df2$V1 = round(as.numeric(kw_df2$V1), 2)
+kw_df2$V3 = round(as.numeric(kw_df2$V3), 2)
 
 # rename column names
 kw_df2 = kw_df2 %>% 
