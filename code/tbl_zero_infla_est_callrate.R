@@ -131,19 +131,22 @@ tmp_df = tmp_df %>%
     alpha = V4
   )
 
-tmp_df$model = c('poisson up ~ yday+ num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'quasi poisson up ~ yday+ num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'neg bin up ~ yday+ num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'poisson gs ~ ydayh+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'quasi poisson gs ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'neg bin gs ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'poisson mf ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'quasi poissonmf ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-                 'neg bin mf ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))')
+tmp_df$model = c('poisson upcall ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'quasi poisson upcall ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'neg bin upcall ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'poisson gunshot ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'quasi poisson gunshot ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'neg bin gunshot ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'poisson tonal ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'quasi poisson tonal ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'neg bin tonal ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))')
 
 
 # set dataframe to be a table 
 setDT(tmp_df)
+
+# round
+tmp_df$ratio = round(as.numeric(tmp_df$ratio), 2)
 
 # save data table 
 write.csv(tmp_df,"data/processed/zero_infla_est_callrate.csv")
