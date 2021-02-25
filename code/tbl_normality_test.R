@@ -114,6 +114,10 @@ shap_df = shap_df %>%
 # set dataframe to be a table 
 setDT(shap_df)
 
+# round
+shap_df$test_stat_W = round(as.numeric(shap_df$test_stat_W), 2)
+shap_df$p_val = round(as.numeric(shap_df$p_val), 2)
+
 # save data table 
 write.csv(shap_df,"data/processed/shap_normality_test_ind.csv")
 
@@ -316,6 +320,10 @@ shap_df$model = c('num_sighting~up_per_hr',
 
 # set dataframe to be a table 
 setDT(shap_df)
+
+# round
+shap_df$test_stat_W = round(as.numeric(shap_df$test_stat_W), 2)
+shap_df$p_val = round(as.numeric(shap_df$p_val), 2)
 
 # save data table 
 write.csv(shap_df,"data/processed/shap_normality_test_model.csv")
