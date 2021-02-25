@@ -32,7 +32,7 @@ step.modelf1 <- stepAIC(sightf1, direction = "both",
 sighta <-summary(step.modelf1)$coefficients
 
 # round
-sighta = round(sighta, 3)
+sighta = round(sighta, 2)
 
 # add call type column
 sighta <- cbind(sighta, "upcall") 
@@ -51,7 +51,7 @@ step.modelf2 <- stepAIC(sightf2, direction = "both",
 sightb <-summary(step.modelf2)$coefficients
 
 # round
-sightb = round(sightb, 3)
+sightb = round(sightb, 2)
 
 # add call type column
 sightb <- cbind(sightb, "gunshot") 
@@ -70,7 +70,7 @@ step.modelf3 <- stepAIC(sightf3, direction = "both",
 sightc <-summary(step.modelf3)$coefficients
 
 # round
-sightc = round(sightc, 3)
+sightc = round(sightc, 2)
 
 # add call type column
 sightc <- cbind(sightc, "tonal") 
@@ -103,10 +103,10 @@ step.modelf <- stepAIC(sightf, direction = "both",
 null_up_anova = anova(sightfnull,step.modelf)
 
 # round
-null_up_anova$theta = round(as.numeric(null_up_anova$theta), 3)
-null_up_anova$`LR stat.` = round(as.numeric(null_up_anova$`LR stat.`), 3)
-null_up_anova$`Pr(Chi)` = round(as.numeric(null_up_anova$`Pr(Chi)`), 3)
-null_up_anova$`   2 x log-lik.` = round(as.numeric(null_up_anova$`   2 x log-lik.`), 3)
+null_up_anova$theta = round(as.numeric(null_up_anova$theta), 2)
+null_up_anova$`LR stat.` = round(as.numeric(null_up_anova$`LR stat.`), 2)
+null_up_anova$`Pr(Chi)` = round(as.numeric(null_up_anova$`Pr(Chi)`), 2)
+null_up_anova$`   2 x log-lik.` = round(as.numeric(null_up_anova$`   2 x log-lik.`), 2)
 
 # add call type column
 null_up_anova <- cbind(null_up_anova, 'upcall')
@@ -134,10 +134,10 @@ step.modelg <- stepAIC(sightg, direction = "both",
 null_gs_anova = anova(sightgnull,step.modelg)
 
 # round
-null_gs_anova$theta = round(as.numeric(null_gs_anova$theta), 3)
-null_gs_anova$`LR stat.` = round(as.numeric(null_gs_anova$`LR stat.`), 3)
-null_gs_anova$`Pr(Chi)` = round(as.numeric(null_gs_anova$`Pr(Chi)`), 3)
-null_gs_anova$`   2 x log-lik.` = round(as.numeric(null_gs_anova$`   2 x log-lik.`), 3)
+null_gs_anova$theta = round(as.numeric(null_gs_anova$theta), 2)
+null_gs_anova$`LR stat.` = round(as.numeric(null_gs_anova$`LR stat.`), 2)
+null_gs_anova$`Pr(Chi)` = round(as.numeric(null_gs_anova$`Pr(Chi)`), 2)
+null_gs_anova$`   2 x log-lik.` = round(as.numeric(null_gs_anova$`   2 x log-lik.`), 2)
 
 # add call type column
 null_gs_anova <- cbind(null_gs_anova, 'gunshot')
@@ -165,10 +165,10 @@ step.modelh <- stepAIC(sighth, direction = "both",
 null_mf_anova = anova(sighthnull,step.modelh)
 
 # round
-null_mf_anova$theta = round(as.numeric(null_mf_anova$theta), 3)
-null_mf_anova$`LR stat.` = round(as.numeric(null_mf_anova$`LR stat.`), 3)
-null_mf_anova$`Pr(Chi)` = round(as.numeric(null_mf_anova$`Pr(Chi)`), 3)
-null_mf_anova$`   2 x log-lik.` = round(as.numeric(null_mf_anova$`   2 x log-lik.`), 3)
+null_mf_anova$theta = round(as.numeric(null_mf_anova$theta), 2)
+null_mf_anova$`LR stat.` = round(as.numeric(null_mf_anova$`LR stat.`), 2)
+null_mf_anova$`Pr(Chi)` = round(as.numeric(null_mf_anova$`Pr(Chi)`), 2)
+null_mf_anova$`   2 x log-lik.` = round(as.numeric(null_mf_anova$`   2 x log-lik.`), 2)
 
 # add call type column
 null_mf_anova <- cbind(null_mf_anova, 'tonal')
