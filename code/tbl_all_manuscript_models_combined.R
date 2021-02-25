@@ -174,3 +174,38 @@ mods = rbind(sight_mods,cr_mods,cr_reg_mods)
 
 # save
 write.csv(mods,"data/processed/manuscript_table_of_models.csv")
+
+
+# attempting formatting 
+mods$model = paste0(mods$X.1.x,' = (',mods$Estimate.y,' ± ',mods$Std..Error.y,')* ',mods$X.y,
+                     ' + (',mods$Estimate,' ± ',mods$Std..Error,')* ',mods$X,
+                     ' + (',mods$Estimate.x,' ± ',mods$Std..Error.x,') + offset(log(duration))')
+
+# rearrange columns
+mods = mods[c('X.1.x',
+              'Estimate.y','Std..Error.y','X.y',
+              'Estimate.x','Std..Error.x','X.x',
+              'Estimate','Std..Error','X',
+              'model','Pr..F.','Pr.Chi.')]
+
+# if p-values less than 0.05 then change to other format
+mods$Pr..F.[mods$Pr..F. <= 0.05] <- "≤ 0.05 **"
+mods$Pr.Chi.[mods$Pr.Chi. <= 0.05] <- "≤ 0.05 **"
+
+# remove columns not needed
+mods = mods[,!(names(mods) %in% c('X.1.x',
+                                  'Estimate.y','Std..Error.y','X.y',
+                                  'Estimate.x','Std..Error.x','X.x',
+                                  'Estimate','Std..Error','X'))]
+
+# combine p-value columns together to make one column
+mods2 = mods %>% 
+  mutate(pvalue = coalesce(Pr..F.,Pr.Chi.)) 
+
+# remove columns not needed
+mods2 = mods2[,!(names(mods2) %in% c('Pr..F.','Pr.Chi.'))]
+
+# save
+write.csv(mods2,"data/processed/manuscript_table_of_models_official.csv")
+
+# note in excel will need to do find and replace for space and less than sign
