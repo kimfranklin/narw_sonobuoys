@@ -52,10 +52,10 @@ sumf4 = glance(sightf4)
 # combine all models into one large dataframe/table
 smf = rbind(sumf1,sumf2,sumf3,sumf4)
 
-smf$model = c('up=yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+num_sighting+offset(log(rec_duration))',
-              'up=ratio_male_female+foraging_bhv_whale+social_bhv_whale+num_sighting+offset(log(rec_duration))',
-              'up=foraging_bhv_whale+social_bhv_whale+num_sighting+offset(log(rec_duration))',
-              'up=social_bhv_whale+num_sighting+offset(log(rec_duration))')
+smf$model = c('upcall = day of year + male/female ratio + foraging rate + socializing rate + whale abundance + offset(log(duration))',
+              'upcall = male/female ratio + foraging rate + socializing rate + whale abundance + offset(log(duration))',
+              'upcall = foraging rate + socializing rate + whale abundance + offset(log(duration))',
+              'upcall = socializing rate + whale abundance + offset(log(duration))')
 
 # gunshot
 # model
@@ -96,11 +96,11 @@ sumg5 = glance(sightg5)
 # combine all models into one large dataframe/table
 smg = rbind(sumg1,sumg2,sumg3,sumg4,sumg5)
 
-smg$model = c('gs=yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+num_sighting+offset(log(rec_duration))',
-              'gs=yday+foraging_bhv_whale+social_bhv_whale+num_sighting+offset(log(rec_duration))',
-              'gs=yday+foraging_bhv_whale+social_bhv_whale+offset(log(rec_duration))',
-              'gs=yday+foraging_bhv_whale+offset(log(rec_duration))',
-              'gs=yday+offset(log(rec_duration))')
+smg$model = c('gunshot = day of year + male/female ratio + foraging rate + socializing rate + whale abundance + offset(log(duration))',
+              'gunshot = day of year + foraging rate + socializing rate + whale abundance + offset(log(duration))',
+              'gunshot = day of year + foraging rate + socializing rate + offset(log(duration))',
+              'gunshot = day of year + foraging rate + offset(log(duration))',
+              'gunshot = day of year + offset(log(duration))')
 
 
 # mid-freq
@@ -137,14 +137,21 @@ sumh4 = glance(sighth4)
 # combine all models into one large dataframe/table
 smh = rbind(sumh1,sumh2,sumh3,sumh4)
 
-smh$model = c('mf=yday+ratio_male_female+foraging_bhv_whale+social_bhv_whale+num_sighting+offset(log(rec_duration))',
-              'mf=yday+ratio_male_female+social_bhv_whale+num_sighting+offset(log(rec_duration))',
-              'mf=yday+ratio_male_female+num_sighting+offset(log(rec_duration))',
-              'mf=yday+ratio_male_female+offset(log(rec_duration))')
+smh$model = c('tonal = day of year + male/female ratio + foraging rate + socializing rate + whale abundance + offset(log(duration))',
+              'tonal = day of year + male/female ratio + socializing rate + whale abundance + offset(log(duration))',
+              'tonal = day of year + male/female ratio + whale abundance + offset(log(duration))',
+              'tonal = day of year + male/female ratio + offset(log(duration))')
 
 
 # combine all models into one large dataframe/table
 tmp_df = rbind(smf,smg,smh)
+
+# round
+tmp_df$null.deviance = round(as.numeric(tmp_df$null.deviance), 2)
+tmp_df$logLik = round(as.numeric(tmp_df$logLik), 2)
+tmp_df$AIC = round(as.numeric(tmp_df$AIC), 2)
+tmp_df$BIC = round(as.numeric(tmp_df$BIC), 2)
+tmp_df$deviance = round(as.numeric(tmp_df$deviance), 2)
 
 # save data table 
 write.csv(tmp_df,"data/processed/call_rate_stepwise_regression_table.csv")
