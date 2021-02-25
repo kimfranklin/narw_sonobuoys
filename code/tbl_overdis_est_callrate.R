@@ -68,13 +68,19 @@ tmp_df = tmp_df %>%
     
   )
 
-tmp_df$model = c('up ~ ydady+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-              'gs ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))',
-              'mf ~ yday+num_sighting+ratio_male_female+social_bhv_whale+foraging_bhv_whale+offset(log(rec_duration))')
+tmp_df$model = c('upcall ~ day of year + whale abundance + male/female ratio + socializing rate + foraging rate + offset(log(duration))',
+              'gunshot ~ day of year + whale abundance + male/female ratio + socializing rate + foraging rate + offset(log(duration))',
+              'tonal ~ day of year + whale abundance + male/female ratio + socializing rate + foraging rate + offset(log(duration))')
 
 
 # set dataframe to be a table 
 setDT(tmp_df)
+
+# round
+tmp_df$test_stat_z = round(as.numeric(tmp_df$test_stat_z), 2)
+tmp_df$p_val = round(as.numeric(tmp_df$p_val), 2)
+tmp_df$dispersion = round(as.numeric(tmp_df$dispersion), 2)
+
 
 # save data table 
 write.csv(tmp_df,"data/processed/overdis_test_callrate.csv")
