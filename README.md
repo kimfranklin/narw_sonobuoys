@@ -10,6 +10,8 @@ able to associate behaviours with call types with hopes that collecting acoustic
 data will be sufficient in the future to derive right whale behaviours with out 
 visual aid. 
 
+For the current (2021) manuscript being made only aerial surveys from 2017-2019 are being used, the vessel data is not!
+
 NOTE: 
 - wrg = wrangling scripts, these produce data and saved as csv
 - fig = figure producing scripts, these produce figures and the figures are saved
