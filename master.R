@@ -28,10 +28,12 @@ source('tests/overdis_0inf.Rmd')
 source('tests/year_comparison.Rmd')
 source('tests/est_num_whales_models.Rmd')
 source('tests/est_call_rate_models.Rmd')
+source('tests/negbin_vs_zinb_vs_zip.Rmd')
 
-# these scripts are sanity checks/double checking what we are doing is valid
+# these scripts are sanity checks/double checking what we are doing is valid or can be done
 source('tests/pca.R')
 source('tests/check_call_rate.R')
+source('tests/logistic_models_plots.R')
 
 # these are testing the time and space distributions
 source('tests/fig_target_plot_photoid.R')
@@ -41,6 +43,7 @@ source('tests/fig_track_maps.R') # this might not work because it uses processed
 
 # these maps are faceted by year and month to see in depth trends
 source('tests/fig_sono_map_facet_month_yr.R')
+source('tests/space_dist_of_variables_17-19.Rmd')
 source('tests/space_map_variables.R')
 
 # basic info from data set ------------------------------------------------
