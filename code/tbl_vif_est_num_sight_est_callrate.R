@@ -40,10 +40,16 @@ tmp_df = a %>%
     yday = V4)
 
 # add column for which model it is
-tmp_df$model = c('num_sight ~ up_per_hr + gs_per_hr + mf_per_hr + yday')
+tmp_df$model = c('whale abundance ~ upcall rate + gunshot rate + tonal rate + day of year')
 
 # set dataframe to be a table 
 setDT(tmp_df)
+
+# round
+tmp_df$up_per_hr = round(as.numeric(tmp_df$up_per_hr), 2)
+tmp_df$gs_per_hr = round(as.numeric(tmp_df$gs_per_hr), 2)
+tmp_df$mf_per_hr = round(as.numeric(tmp_df$mf_per_hr), 2)
+tmp_df$yday = round(as.numeric(tmp_df$yday), 2)
 
 # save data table 
 write.csv(tmp_df,"data/processed/tbl_est_num_sight_vif.csv")
@@ -102,13 +108,20 @@ tmp_df = tmp_df %>%
     whale_abundance = V5)
 
 # add column for which model it is
-tmp_df$model = c('up ~ yday + ratio_male_female + social_bhv_whale + foraging_bhv_whale + num_sighting + offset(log(rec_duration))',
-                 'gs ~ yday + ratio_male_female + social_bhv_whale + foraging_bhv_whale + num_sighting + offset(log(rec_duration))',
-                 'mf ~ yday + ratio_male_female + social_bhv_whale + foraging_bhv_whale + num_sighting + offset(log(rec_duration))')
+tmp_df$model = c('upcall ~ day of year + male/female ratio + socializing rate + foraging rate + whale abundance + offset(log(duration))',
+                 'gunshot ~ day of year + male/female ratio + socializing rate + foraging rate + whale abundance + offset(log(duration))',
+                 'tonal ~ day of year + male/female ratio + socializing rate + foraging rate + whale abundance + offset(log(duration))')
 
 
 # set dataframe to be a table 
 setDT(tmp_df)
+
+# round
+tmp_df$ratio_male_female = round(as.numeric(tmp_df$ratio_male_female), 2)
+tmp_df$foraging_bhv_whale = round(as.numeric(tmp_df$foraging_bhv_whale), 2)
+tmp_df$social_bhv_whale = round(as.numeric(tmp_df$social_bhv_whale), 2)
+tmp_df$whale_abundance = round(as.numeric(tmp_df$whale_abundance), 2)
+tmp_df$yday = round(as.numeric(tmp_df$yday), 2)
 
 # save data table 
 write.csv(tmp_df,"data/processed/tbl_est_call_rate_vif.csv")
