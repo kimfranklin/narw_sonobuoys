@@ -51,5 +51,9 @@ tmp_df = tmp_df %>%
 # set dataframe to be a table 
 setDT(tmp_df)
 
+# round
+tmp_df$test_stat_bp = round(as.numeric(tmp_df$test_stat_bp), 2)
+tmp_df$p_val = round(as.numeric(tmp_df$p_val), 2)
+
 # save data table 
 write.csv(tmp_df,"data/processed/homoscedasticity_test_num_whales.csv")
