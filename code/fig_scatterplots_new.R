@@ -9,14 +9,19 @@ df = readRDS("data/processed/proc_acou_photoid.rds")
 
 # whale abundance
 p1 = df %>%
-  ggplot(aes(x = as.Date(yday,'1970-01-01'), y = num_sighting, fill = ratio_male_female))+
-  geom_point(size = 3, shape = 21)+
-  scale_fill_gradient2(low = 'blue', high = 'red', mid = 'white', midpoint = 1)+
+  ggplot(aes(x = as.Date(yday,'1970-01-01'), 
+             y = num_sighting, 
+             #fill = ratio_male_female
+             fill = cut(ratio_male_female,c(0, 1, 2, 3, 4))))+
+  geom_point(size = 3, alpha = 0.7, shape = 21)+
+  #scale_fill_gradient2(low = 'blue', high = 'red', mid = 'white', midpoint = 1)+
+  scale_fill_brewer(palette = "Reds")+
   scale_x_date(date_breaks="weeks", date_labels="%b-%d")+
   scale_y_continuous(limits = c(0,NA))+
   labs(x = NULL,
        y = 'Number of Whales',
-       fill = "Male/Female")+
+       #fill = "Male/Female",
+       fill = "Male/Female Ratio")+
   coord_cartesian(clip = 'off', expand = FALSE)+
   theme_classic() +
   theme(axis.text.x = element_blank())+
