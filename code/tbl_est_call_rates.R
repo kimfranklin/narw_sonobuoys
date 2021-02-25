@@ -72,7 +72,7 @@ sighte <-summary(sighte)$coefficients
 cru_df <- rbind(sighta,sightb,sightc,sightd,sighte)
 
 # round 
-cru_df = round(cru_df,3)
+cru_df = round(cru_df,2)
 
 # add call type column
 cru_df <- cbind(cru_df, "upcall") 
@@ -122,7 +122,7 @@ sighte <-summary(sighte)$coefficients
 crg_df <- rbind(sighta,sightb,sightc,sightd,sighte)
 
 # round 
-crg_df = round(crg_df,3)
+crg_df = round(crg_df,2)
 
 # add call type column
 crg_df <- cbind(crg_df, "gunshot") 
@@ -172,7 +172,7 @@ sighte <-summary(sighte)$coefficients
 crm_df <- rbind(sighta,sightb,sightc,sightd,sighte)
 
 # round 
-crm_df = round(crm_df,3)
+crm_df = round(crm_df,2)
 
 # add call type column
 crm_df <- cbind(crm_df, "tonal") 
@@ -239,10 +239,10 @@ sighte_anova = anova(sightunull,sighte)
 cru_df <- rbind(sighta_anova,sightb_anova,sightc_anova,sightd_anova,sighte_anova)
 
 # round
-cru_df$theta = round(as.numeric(cru_df$theta), 3)
-cru_df$`LR stat.` = round(as.numeric(cru_df$`LR stat.`), 3)
-cru_df$`Pr(Chi)` = round(as.numeric(cru_df$`Pr(Chi)`), 3)
-cru_df$`   2 x log-lik.` = round(as.numeric(cru_df$`   2 x log-lik.`), 3)
+cru_df$theta = round(as.numeric(cru_df$theta), 2)
+cru_df$`LR stat.` = round(as.numeric(cru_df$`LR stat.`), 2)
+cru_df$`Pr(Chi)` = round(as.numeric(cru_df$`Pr(Chi)`), 2)
+cru_df$`   2 x log-lik.` = round(as.numeric(cru_df$`   2 x log-lik.`), 2)
 
 # add call type column
 cru_df <- cbind(cru_df, as.character('upcall'))
@@ -302,10 +302,10 @@ sighte_anova = anova(sightgnull,sighte)
 crg_df <- rbind(sighta_anova,sightb_anova,sightc_anova,sightd_anova,sighte_anova)
 
 # round
-crg_df$theta = round(as.numeric(crg_df$theta), 3)
-crg_df$`LR stat.` = round(as.numeric(crg_df$`LR stat.`), 3)
-crg_df$`Pr(Chi)` = round(as.numeric(crg_df$`Pr(Chi)`), 3)
-crg_df$`   2 x log-lik.` = round(as.numeric(crg_df$`   2 x log-lik.`), 3)
+crg_df$theta = round(as.numeric(crg_df$theta), 2)
+crg_df$`LR stat.` = round(as.numeric(crg_df$`LR stat.`), 2)
+crg_df$`Pr(Chi)` = round(as.numeric(crg_df$`Pr(Chi)`), 2)
+crg_df$`   2 x log-lik.` = round(as.numeric(crg_df$`   2 x log-lik.`), 2)
 
 # add call type column
 crg_df <- cbind(crg_df, "gunshot") 
@@ -365,10 +365,10 @@ sighte_anova = anova(sightmnull,sighte)
 crm_df <- rbind(sighta_anova,sightb_anova,sightc_anova,sightd_anova,sighte_anova)
 
 # round
-crm_df$theta = round(as.numeric(crm_df$theta), 3)
-crm_df$`LR stat.` = round(as.numeric(crm_df$`LR stat.`), 3)
-crm_df$`Pr(Chi)` = round(as.numeric(crm_df$`Pr(Chi)`), 3)
-crm_df$`   2 x log-lik.` = round(as.numeric(crm_df$`   2 x log-lik.`), 3)
+crm_df$theta = round(as.numeric(crm_df$theta), 2)
+crm_df$`LR stat.` = round(as.numeric(crm_df$`LR stat.`), 2)
+crm_df$`Pr(Chi)` = round(as.numeric(crm_df$`Pr(Chi)`), 2)
+crm_df$`   2 x log-lik.` = round(as.numeric(crm_df$`   2 x log-lik.`), 2)
 
 # add call type column
 crm_df <- cbind(crm_df, "tonal") 
