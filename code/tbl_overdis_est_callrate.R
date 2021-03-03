@@ -78,7 +78,7 @@ setDT(tmp_df)
 
 # round
 tmp_df$test_stat_z = round(as.numeric(tmp_df$test_stat_z), 2)
-tmp_df$p_val = round(as.numeric(tmp_df$p_val), 2)
+tmp_df$p_val = round(as.numeric(tmp_df$p_val), 3)
 tmp_df$dispersion = round(as.numeric(tmp_df$dispersion), 2)
 
 
