@@ -189,8 +189,8 @@ mods = mods[c('X.1.x',
               'model','Pr..F.','Pr.Chi.')]
 
 # if p-values less than 0.05 then change to other format
-mods$Pr..F.[mods$Pr..F. <= 0.05] <- "≤ 0.05 **"
-mods$Pr.Chi.[mods$Pr.Chi. <= 0.05] <- "≤ 0.05 **"
+mods$Pr..F.[mods$Pr..F. <= 0.00] <- "≤ 0.05 **"
+mods$Pr.Chi.[mods$Pr.Chi. <= 0.00] <- "≤ 0.05 **"
 
 # remove columns not needed
 mods = mods[,!(names(mods) %in% c('X.1.x',
