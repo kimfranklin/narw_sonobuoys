@@ -105,7 +105,7 @@ null_up_anova = anova(sightfnull,step.modelf)
 # round
 null_up_anova$theta = round(as.numeric(null_up_anova$theta), 2)
 null_up_anova$`LR stat.` = round(as.numeric(null_up_anova$`LR stat.`), 2)
-null_up_anova$`Pr(Chi)` = round(as.numeric(null_up_anova$`Pr(Chi)`), 2)
+null_up_anova$`Pr(Chi)` = round(as.numeric(null_up_anova$`Pr(Chi)`), 3)
 null_up_anova$`   2 x log-lik.` = round(as.numeric(null_up_anova$`   2 x log-lik.`), 2)
 
 # add call type column
@@ -136,7 +136,7 @@ null_gs_anova = anova(sightgnull,step.modelg)
 # round
 null_gs_anova$theta = round(as.numeric(null_gs_anova$theta), 2)
 null_gs_anova$`LR stat.` = round(as.numeric(null_gs_anova$`LR stat.`), 2)
-null_gs_anova$`Pr(Chi)` = round(as.numeric(null_gs_anova$`Pr(Chi)`), 2)
+null_gs_anova$`Pr(Chi)` = round(as.numeric(null_gs_anova$`Pr(Chi)`), 3)
 null_gs_anova$`   2 x log-lik.` = round(as.numeric(null_gs_anova$`   2 x log-lik.`), 2)
 
 # add call type column
@@ -167,7 +167,7 @@ null_mf_anova = anova(sighthnull,step.modelh)
 # round
 null_mf_anova$theta = round(as.numeric(null_mf_anova$theta), 2)
 null_mf_anova$`LR stat.` = round(as.numeric(null_mf_anova$`LR stat.`), 2)
-null_mf_anova$`Pr(Chi)` = round(as.numeric(null_mf_anova$`Pr(Chi)`), 2)
+null_mf_anova$`Pr(Chi)` = round(as.numeric(null_mf_anova$`Pr(Chi)`), 3)
 null_mf_anova$`   2 x log-lik.` = round(as.numeric(null_mf_anova$`   2 x log-lik.`), 2)
 
 # add call type column
