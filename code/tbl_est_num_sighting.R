@@ -88,7 +88,7 @@ sightg = anova(lm(num_sighting ~ yday
 ns_df <- rbind(sighta,sightb,sightc,sightg)
 
 # round
-ns_df = round(ns_df,2)
+ns_df = round(ns_df,3)
 
 # add y variable column
 ns_df <- cbind(ns_df, "whale abundance")
