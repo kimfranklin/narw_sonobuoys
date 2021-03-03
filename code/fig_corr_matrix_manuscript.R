@@ -34,10 +34,10 @@ dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
                   df$yday)
 
 # rename columns/rows to make it pretty
-colnames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate", 
+colnames(dfs2) <- c("Upcall rate", "Gunshot rate", "Tonal rate", 
                     "Whale abundance", 
                     "Male/female ratio", "Foraging rate", "Socalizing rate", "Day of year")
-rownames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate", 
+rownames(dfs2) <- c("Upcall rate", "Gunshot rate", "Tonal rate", 
                     "Whale abundance", 
                     "Male/female ratio", "Foraging rate", "Socalizing rate", "Day of year")
 
@@ -90,17 +90,17 @@ dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
                   df$yday)
 
 # rename columns/rows to make it pretty
-colnames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate", 
+colnames(dfs2) <- c("Upcall rate", "Gunshot rate", "Tonal rate", 
                     "Whale abundance", 
                     "Male/female ratio", "Juvenile/adult ratio",
                     "Adult male","Adult female","Juvenile male","Juvenile female","Unknown demographic",
-                    "Foraging rate", "Socalizing rate", "Other behaviour rate",
+                    "Foraging rate", "Socalizing rate", "'Other behavior' rate",
                     "Day of year")
-rownames(dfs2) <- c("Upcall call rate", "Gunshot call rate", "Tonal call rate", 
+rownames(dfs2) <- c("Upcall rate", "Gunshot rate", "Tonal rate", 
                     "Whale abundance", 
                     "Male/female ratio", "Juvenile/adult ratio",
                     "Adult male","Adult female","Juvenile male","Juvenile female","Unknown demographic",
-                    "Foraging rate", "Socalizing rate", "Other behaviour rate",
+                    "Foraging rate", "Socalizing rate", "'Other behavior' rate",
                     "Day of year")
 
 # obtain spearman correlation matrix
