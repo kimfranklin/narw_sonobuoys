@@ -67,8 +67,9 @@ noa1718$datetime = as.POSIXct(tmp, format = "%Y-%m-%d %H%M", tz = "Etc/GMT+4")
 
 # place all numeric ages into categorical age groups calf is 0 years old or 
 # categorized as C (C=0) juvenile is 1 to 9 years old or categorized as J 
-# (1=<J<9) adult is 9 years old or older and categorized as A (9=<A) unknown 
+# (1=<J=<8) adult is 9 years old or older and categorized as A (8<A) unknown 
 # ages are categorized as U see email from Leah Crowe Nov 1, 2019 for reference
+# see manuscript draft 6 for Philip definition on age groups
 
 # change NA ages to 'NA' so data can read NA as a type of age (read as character)
 noa1718$age[is.na(noa1718$age)] = 'NA'
@@ -80,8 +81,8 @@ noa1718sub = noa1718
 noa1718sub$age = as.numeric(noa1718sub$age)
 
 # change subset ages from numeric to age category
-# individuals 9 or under to J for juvenile and individuals older than 9 to A for adult
-noa1718sub$age = ifelse(noa1718sub$age<=9,"J","A")
+# individuals 8 or under is J for juvenile and individuals older than 8 is A for adult
+noa1718sub$age = ifelse(noa1718sub$age<=8,"J","A")
 
 # since this subset was converted to character, all the properly categorized ages got change to na's so removing na's
 noa1718sub = dplyr::filter(noa1718sub,  !is.na(age))
