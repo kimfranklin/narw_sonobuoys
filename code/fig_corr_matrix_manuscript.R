@@ -23,7 +23,7 @@ fig_dir = 'figures/'
 
 # select variables correlation matrix plot (spearman)
 # figure set up
-jpeg (filename = paste0(fig_dir,'fig_corrplot_manu?.jpeg'), 
+jpeg (filename = paste0(fig_dir,'fig_corrplot_manu.jpeg'), 
       width = 10, height = 12, units = 'in', res = 200)
 
 # put data in dataframe so that it can be convereted to correlation and p-value matrix
@@ -35,10 +35,10 @@ dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
 
 # rename columns/rows to make it pretty
 colnames(dfs2) <- c("Upcall rate", "Gunshot rate", "Tonal rate", 
-                    "Whale abundance", 
+                    "Whale count", 
                     "Male/female ratio", "Foraging rate", "Socalizing rate", "Day of year")
 rownames(dfs2) <- c("Upcall rate", "Gunshot rate", "Tonal rate", 
-                    "Whale abundance", 
+                    "Whale count", 
                     "Male/female ratio", "Foraging rate", "Socalizing rate", "Day of year")
 
 # obtain spearman correlation matrix
@@ -78,7 +78,7 @@ dev.off()
 
 # all variables correlation matirx plot (spearman)
 # figure set up
-jpeg (filename = paste0(fig_dir,'fig_corrplot_full_manu?.jpeg'), 
+jpeg (filename = paste0(fig_dir,'fig_corrplot_full_manu.jpeg'), 
       width = 10, height = 12, units = 'in', res = 200)
 
 # put data in dataframe so that it can be convereted to correlation and p-value matrix
@@ -91,13 +91,13 @@ dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
 
 # rename columns/rows to make it pretty
 colnames(dfs2) <- c("Upcall rate", "Gunshot rate", "Tonal rate", 
-                    "Whale abundance", 
+                    "Whale count", 
                     "Male/female ratio", "Juvenile/adult ratio",
                     "Adult male","Adult female","Juvenile male","Juvenile female","Unknown demographic",
                     "Foraging rate", "Socalizing rate", "'Other behavior' rate",
                     "Day of year")
 rownames(dfs2) <- c("Upcall rate", "Gunshot rate", "Tonal rate", 
-                    "Whale abundance", 
+                    "Whale count", 
                     "Male/female ratio", "Juvenile/adult ratio",
                     "Adult male","Adult female","Juvenile male","Juvenile female","Unknown demographic",
                     "Foraging rate", "Socalizing rate", "'Other behavior' rate",
