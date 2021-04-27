@@ -85,7 +85,7 @@ jpeg (filename = paste0(fig_dir,'fig_corrplot_full_manu.jpeg'),
 dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
                   df$num_sighting,
                   df$ratio_male_female,df$ratio_juvenile_adult,
-                  df$adult_male,df$adult_female,df$juvenile_male,df$juvenile_male,df$unknown,
+                  df$adult_male,df$adult_female,df$juvenile_male,df$juvenile_male,df$calf_male,df$calf_female,df$unknown,
                   df$foraging_bhv_whale,df$social_bhv_whale,df$other_bhv_whale,
                   df$yday)
 
@@ -93,13 +93,13 @@ dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
 colnames(dfs2) <- c("Upcall rate", "Gunshot rate", "Tonal rate", 
                     "Whale count", 
                     "Male/female ratio", "Juvenile/adult ratio",
-                    "Adult male","Adult female","Juvenile male","Juvenile female","Unknown demographic",
+                    "Adult male","Adult female","Juvenile male","Juvenile female","Calf male", "Calf female", "Unknown demographic",
                     "Foraging rate", "Socalizing rate", "'Other behavior' rate",
                     "Day of year")
 rownames(dfs2) <- c("Upcall rate", "Gunshot rate", "Tonal rate", 
                     "Whale count", 
                     "Male/female ratio", "Juvenile/adult ratio",
-                    "Adult male","Adult female","Juvenile male","Juvenile female","Unknown demographic",
+                    "Adult male","Adult female","Juvenile male","Juvenile female","Calf male", "Calf female","Unknown demographic",
                     "Foraging rate", "Socalizing rate", "'Other behavior' rate",
                     "Day of year")
 
