@@ -1,0 +1,280 @@
+---
+title: "vert_diel_testing"
+output: 
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown for including vertical diel migration into call rate models
+But this isn't truly by hour because i'm using the hour from which the sono deployment began
+
+```{r, include = FALSE}
+# libraries
+library(tidyverse)
+library(MASS)
+
+# data
+df = readRDS("data/processed/proc_acou_photoid.rds")
+
+# add time category 
+# 8-11 = morning, 12-16 = afternoon, 17-22 = evening
+# Bort et al. 2015 found patterns 4-8,9-12,13-22,23-3
+
+df$hour_catBORT = ifelse(df$hour<=12,"morning","afternoon")
+
+```
+
+## Single variables{.tabset}
+### upcall {.tabset}
+```{r}
+# yday
+a= glm.nb(up ~ yday+offset(log(rec_duration)), data = df, control=glm.control(maxit=100))
+anova(a)
+# hour
+b= glm.nb(up ~ hour+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(b)
+# ratio
+c= glm.nb(up ~ ratio_male_female+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(c)
+# number of whales
+d= glm.nb(up ~ num_sighting+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(d)
+# foraging bhv
+e= glm.nb(up ~ foraging_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(e)
+# social bhv
+f= glm.nb(up ~social_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(e)
+```
+
+### gunshot {.tabset}
+```{r}
+# yday
+a= glm.nb(gs ~ yday+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(a)
+# hour
+b= glm.nb(gs ~ hour+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(b)
+# ratio
+c= glm.nb(gs ~ ratio_male_female+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(c)
+# number of whales
+d= glm.nb(gs ~ num_sighting+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(d)
+# foraging bhv
+e= glm.nb(gs ~ foraging_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(e)
+# social rate
+f= glm.nb(gs ~social_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(f)
+```
+
+### tonal {.tabset}
+```{r}
+# yday
+a= glm.nb(mf ~ yday+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(a)
+# hour
+b= glm.nb(mf ~ hour+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(b)
+# ratio
+c= glm.nb(mf ~ ratio_male_female+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(c)
+# number of whales sighted
+d= glm.nb(mf ~ num_sighting+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(d)
+# foraging bhv
+e= glm.nb(mf ~ foraging_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(e)
+# social bhv
+f= glm.nb(mf ~social_bhv_whale+
+                  offset(log(rec_duration))
+                , data = df, control=glm.control(maxit=100))
+anova(f)
+```
+
+## multivariable models{.tabset}
+### upcall {.tabset}
+```{r}
+sightf1 = glm.nb(up ~yday+hour+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+                   num_sighting+offset(log(rec_duration))
+                 , data = df, control=glm.control(maxit=100))
+
+anova(sightf1)
+```
+### gunshot {.tabset}
+```{r}
+sightf1 = glm.nb(gs ~yday+hour+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+                   num_sighting+offset(log(rec_duration))
+                 , data = df, control=glm.control(maxit=100))
+
+anova(sightf1)
+```
+### tonal {.tabset}
+```{r}
+sightf1 = glm.nb(mf ~yday+hour+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+                   num_sighting+offset(log(rec_duration))
+                 , data = df, control=glm.control(maxit=100))
+
+anova(sightf1)
+```
+
+## stepwise regression multivariable models{.tabset}
+### upcall {.tabset}
+```{r}
+# model
+sightf1 = glm.nb(up ~yday+hour+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+                   num_sighting+offset(log(rec_duration))
+                 , data = df, control=glm.control(maxit=100))
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(sightf1, direction = "both", 
+                        trace = TRUE)
+```
+
+### gunshot {.tabset}
+```{r}
+# model
+sightf1 = glm.nb(gs ~yday+hour+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+                   num_sighting+offset(log(rec_duration))
+                 , data = df, control=glm.control(maxit=100))
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(sightf1, direction = "both", 
+                        trace = TRUE)
+
+```
+
+### tonal {.tabset}
+```{r}
+# model
+sightf1 = glm.nb(mf ~yday+hour+ratio_male_female+foraging_bhv_whale+social_bhv_whale+
+                   num_sighting+offset(log(rec_duration))
+                 , data = df, control=glm.control(maxit=100))
+
+# step model of the previous model to see what models should have in table
+step.modelf1 <- stepAIC(sightf1, direction = "both", 
+                        trace = TRUE)
+```
+
+
+## plots{.tabset}
+### whale count {.tabset}
+```{r}
+library(ggplot2)
+
+
+p1 = df %>%
+  ggplot(aes(x = hour, 
+             y = num_sighting, 
+             #fill = ratio_male_female
+             fill = cut(ratio_male_female,c(0, 1, 2, 3, 4))))+
+  geom_point(size = 3, alpha = 0.7, shape = 21)+
+  #scale_fill_gradient2(low = 'blue', high = 'red', mid = 'white', midpoint = 1)+
+  scale_fill_brewer(palette = "Reds")+
+  scale_y_continuous(limits = c(0,NA))+
+  labs(x = 'hour',
+       y = 'Number of Whales',
+       #fill = "Male/Female",
+       fill = "Male/Female Ratio")+
+  coord_cartesian(clip = 'off', expand = FALSE)+
+  theme_classic() +
+  theme(text = element_text(size=12, family = "serif"))+
+  theme(axis.text.y = element_text(colour = "black"))
+p1
+```
+
+### up {.tabset}
+```{r}
+
+p1 = df %>%
+  ggplot(aes(x = hour, 
+             y = up_per_hr))+
+  geom_point(size = 3, alpha = 0.7, shape = 21)+
+  #scale_fill_gradient2(low = 'blue', high = 'red', mid = 'white', midpoint = 1)+
+  scale_fill_brewer(palette = "Reds")+
+  scale_y_continuous(limits = c(0,NA))+
+  labs(x = 'hour',
+       y = 'up per hr')+
+  coord_cartesian(clip = 'off', expand = FALSE)+
+  theme_classic() +
+  theme(text = element_text(size=12, family = "serif"))+
+  theme(axis.text.y = element_text(colour = "black"))
+p1
+
+```
+
+### gs {.tabset}
+```{r}
+p1 = df %>%
+  ggplot(aes(x = hour, 
+             y = gs_per_hr))+
+  geom_point(size = 3, alpha = 0.7, shape = 21)+
+  #scale_fill_gradient2(low = 'blue', high = 'red', mid = 'white', midpoint = 1)+
+  scale_fill_brewer(palette = "Reds")+
+  scale_y_continuous(limits = c(0,NA))+
+  labs(x = 'hour',
+       y = 'gs per hr')+
+  coord_cartesian(clip = 'off', expand = FALSE)+
+  theme_classic() +
+  theme(text = element_text(size=12, family = "serif"))+
+  theme(axis.text.y = element_text(colour = "black"))
+p1
+
+```
+
+### mf {.tabset}
+```{r}
+p1 = df %>%
+  ggplot(aes(x = hour, 
+             y = mf_per_hr))+
+  geom_point(size = 3, alpha = 0.7, shape = 21)+
+  #scale_fill_gradient2(low = 'blue', high = 'red', mid = 'white', midpoint = 1)+
+  scale_fill_brewer(palette = "Reds")+
+  scale_y_continuous(limits = c(0,NA))+
+  labs(x = 'hour',
+       y = 'mf per hr')+
+  coord_cartesian(clip = 'off', expand = FALSE)+
+  theme_classic() +
+  theme(text = element_text(size=12, family = "serif"))+
+  theme(axis.text.y = element_text(colour = "black"))
+p1
+
+```
