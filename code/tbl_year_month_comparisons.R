@@ -94,6 +94,16 @@ n=kruskal.test(juvenile_female~year, data = df)
 n = do.call(rbind.data.frame, n)
 n=data.table::transpose(n)
 
+# calf male
+na=kruskal.test(calf_male~year, data = df)
+na = do.call(rbind.data.frame, na)
+na=data.table::transpose(na)
+
+# calf female
+nb=kruskal.test(calf_female~year, data = df)
+nb = do.call(rbind.data.frame, nb)
+nb=data.table::transpose(nb)
+
 # unknown dempgraphics
 mno=kruskal.test(unknown~year, data = df)
 mno = do.call(rbind.data.frame, mno)
@@ -133,7 +143,7 @@ s=data.table::transpose(s)
 # kw_df <- data.frame(variablecol)
 
 # combine all rows into a dataframe
-kw_df <- rbind(a,b,c,d,e,f,g,h,i,j,k,jk,l,m,n,mno,o,p,q,r,s)
+kw_df <- rbind(a,b,c,d,e,f,g,h,i,j,k,jk,l,m,n,na,nb,mno,o,p,q,r,s)
 
 # round to 3 decimal places
 kw_df$V1 = round(as.numeric(kw_df$V1), 3)
@@ -229,6 +239,16 @@ n=kruskal.test(juvenile_female~month, data = df)
 n = do.call(rbind.data.frame, n)
 n=data.table::transpose(n)
 
+# calf male
+na=kruskal.test(calf_male~month, data = df)
+na = do.call(rbind.data.frame, na)
+na=data.table::transpose(na)
+
+# calf female
+nb=kruskal.test(calf_female~month, data = df)
+nb = do.call(rbind.data.frame, nb)
+nb=data.table::transpose(nb)
+
 # unknown dempgraphics
 mno=kruskal.test(unknown~month, data = df)
 mno = do.call(rbind.data.frame, mno)
@@ -261,7 +281,7 @@ s = do.call(rbind.data.frame, s)
 s=data.table::transpose(s)
 
 # combine all rows into a dataframe
-kw_df2 <- rbind(a,b,c,d,e,f,g,h,i,j,k,jk,l,m,n,mno,o,p,q,r,s)
+kw_df2 <- rbind(a,b,c,d,e,f,g,h,i,j,k,jk,l,m,n,na,nb,mno,o,p,q,r,s)
 
 # round
 kw_df2$V1 = round(as.numeric(kw_df2$V1), 3)

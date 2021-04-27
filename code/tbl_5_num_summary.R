@@ -16,7 +16,7 @@ tmp = df %>%
           gs,gs_per_hr,gs_per_hr_per_whale,
           mf,mf_per_hr,mf_per_hr_per_whale,
           num_sighting, ratio_male_female,
-          adult_male,adult_female,juvenile_male,juvenile_female,unknown,
+          adult_male,adult_female,juvenile_male,juvenile_female,calf_male,calf_female,unknown,
           foraging_bhv_whale,social_bhv_whale,other_bhv_whale,
           rec_duration_h)
 
@@ -42,6 +42,8 @@ cv = c((sd(df$up)/mean(df$up)*100),
         (sd(df$adult_female)/mean(df$adult_female)*100),
         (sd(df$juvenile_male)/mean(df$juvenile_male)*100),
         (sd(df$juvenile_female)/mean(df$juvenile_female)*100),
+       (sd(df$calf_male)/mean(df$calf_male)*100),
+       (sd(df$calf_female)/mean(df$calf_female)*100),
         (sd(df$unknown)/mean(df$unknown)*100),
         (sd(df$foraging_bhv_whale)/mean(df$foraging_bhv_whale)*100),
         (sd(df$social_bhv_whale)/mean(df$social_bhv_whale)*100),
