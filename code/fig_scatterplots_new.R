@@ -40,7 +40,7 @@ p2 = df %>%
                       labels=c("Upcall", "Gunshot","Tonal"))+
   scale_x_date(date_breaks="weeks", date_labels="%b-%d")+
   labs(x = NULL,
-       y = (bquote('Rate (call'~h^-1~')')),
+       y = (bquote('Rate (calls'~h^-1~')')),
        fill = "Call Type")+
   coord_cartesian(clip = 'off', expand = FALSE)+
   theme_classic() +
