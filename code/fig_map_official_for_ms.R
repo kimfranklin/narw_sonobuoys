@@ -29,6 +29,17 @@ p_inset = ggplot()+
   theme_void()+
   theme(panel.background = element_rect(fill = 'white'))
 
+# box limits for orpheline trough
+shape <- data.frame(
+  x = c(-64.3,-63.8,-63.25,-63.75,-64.3),
+  y = c(47.75,48.5,48.35,47.6,47.75)
+)
+
+# fmin_lat = 47.7
+# fmin_lon = -64.1
+# fmax_lat = 48.4
+# fmax_lon = -63.3
+
 # # for ofile = 'sono_map_more_detailbathy4.png' and for ofile = 'sono_map_more_detailbathy5.png'
 # p_inset = ggplot()+
 #   geom_sf(data = bg_inset,fill = "cornsilk", color = "cornsilk4", size = 0.2)+
@@ -101,7 +112,15 @@ gsl = ggplot() +
     fill = 'Depth (m)',
     shape = 'Year'
   ) +
-  
+  #geom_text(aes(x = -63.65, y = 48.25, label = 'Orpheline Trough', angle = 65), size = 4, family = "serif")+
+
+  # orpheline trough
+  # annotate('rect', xmin = fmin_lon, xmax = fmax_lon, ymin = fmin_lat, ymax = fmax_lat, 
+  #          color = 'black', linetype = 2, fill = NA) +  
+  geom_path(data=shape,aes(x = x, y = y),linetype=2) +
+  geom_line(linetype=2)+
+
+
   # inset
   annotation_custom( # for ofile = 'sono_map_more_detailbathy6.png' 
     grob = ggplotGrob(p_inset),
@@ -142,7 +161,7 @@ gsl = ggplot() +
 gsl
 
 # output file 
-ofile = 'sono_map_more_detailbathy6.png'
+ofile = 'sono_map_more_detailbathy7.png'
 
 # figure directory
 fig_dir = 'figures/'
