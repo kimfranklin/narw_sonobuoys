@@ -40,7 +40,7 @@ p2 = df %>%
                       labels=c("Upcall", "Gunshot","Tonal"))+
   scale_x_date(date_breaks="weeks", date_labels="%b-%d")+
   labs(x = NULL,
-       y = 'Rate (call/h)',
+       y = (bquote('Rate (call'~h^-1~')')),
        fill = "Call Type")+
   coord_cartesian(clip = 'off', expand = FALSE)+
   theme_classic() +
@@ -58,7 +58,7 @@ p3 = df %>%
   scale_fill_viridis_d(labels=c("Foraging", "Socalizing"))+
   scale_x_date(date_breaks="weeks", date_labels="%b-%d")+
   labs(x = NULL,
-       y = 'Behavior rate (behavior/whale)',
+       y = (bquote('Behavior rate (behavior'~whale^-1~')')),
        fill = "Behavior")+
   theme_bw()+
   coord_cartesian(clip = 'off', expand = FALSE)+
@@ -73,4 +73,4 @@ p = wrap_plots(p1,p2,p3, ncol = 1)+
   plot_annotation(tag_levels = 'a', tag_suffix = ')')
 
 # save
-ggsave(filename = 'figures/scatterplot_new.png', plot = p, width = 7, height = 9, units = 'in', dpi = 300)
+ggsave(filename = 'figures/scatterplot_new_updated.png', plot = p, width = 7, height = 9, units = 'in', dpi = 300)
