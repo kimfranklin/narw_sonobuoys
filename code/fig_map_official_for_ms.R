@@ -35,7 +35,6 @@ shape <- data.frame(
   y = c(47.75,48.5,48.35,47.6,47.75)
 )
 
-
 # fmin_lat = 47.7
 # fmin_lon = -64.1
 # fmax_lat = 48.4
