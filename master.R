@@ -48,45 +48,45 @@ source('tests/space_map_variables.R')
 
 # basic info from data set ------------------------------------------------
 
-# plot deployment map
+# plot deployment map (Figure 1)
 source('code/proc_map_data.R')
 source('code/fig_map_official_for_ms.R')
 
-# produce summary table 
+# produce summary table (Table 2 and Table S2)
 source('code/tbl_5_num_summary.R')
 
-# plot correlation matrix (this script includes the one in the app/supp)
+# plot correlation matrix (Figure 2; this script includes the one in the app/supp which its Figure S1)
 source('code/fig_corr_matrix_manuscript.R')
 
-# plot scatter plots
+# plot scatter plots (Figure 3)
 source('code/fig_scatterplots_new.R')
 
 # statistical analyses ----------------------------------------------------
 
-# characterize whale abundance using single variable linear regressions
+# characterize whale count using single variable linear regressions (Table S10)
 source('code/tbl_est_num_sighting.R')
 
-# characterize calling rates using single variable neg. binomial regressions
+# characterize calling rates using single variable neg. binomial regressions (Table S11)
 source('code/tbl_est_call_rates.R')
 
-# characterize calling rates using stepwise multivariate neg. binomial regression
+# characterize calling rates using stepwise multivariate neg. binomial regression (Table S13)
 source('code/tbl_est_call_rates_stepwise.R')
 
 # all models produced above in a single table (note this table is half formatted, 
-# rest of formatting done in excel)
+# rest of formatting done in excel) (Table 3)
 source('code/tbl_all_manuscript_models_combined.R')
 
 # appendix/supplementary --------------------------------------------------
 
-# stepwise process for each call type
+# stepwise process for each call type (Table S12)
 source('code/tbl_est_call_rates_stepwise_process.R')
 
-# compare month and year for monthly/yearly variation in data
+# compare month and year for monthly/yearly variation in data (Table S3)
 source('code/tbl_year_month_comparisons.R')
 
 # checking assumptions for linear and neg. binomial regressions
-source('code/tbl_normality_test.R')
-source('code/tbl_homoscedasticity_est_num_whales.R')
-source('code/tbl_overdis_est_callrate.R')
-source('code/tbl_zero_infla_est_callrate.R')
-source('code/tbl_vif_est_num_sight_est_callrate.R')
+source('code/tbl_normality_test.R') # Table S5 and Table S6
+source('code/tbl_homoscedasticity_est_num_whales.R') # Table S7
+source('code/tbl_overdis_est_callrate.R') # Table S8
+source('code/tbl_zero_infla_est_callrate.R') # Table S9
+source('code/tbl_vif_est_num_sight_est_callrate.R') # Table S4
