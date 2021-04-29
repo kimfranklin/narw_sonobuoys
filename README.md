@@ -19,9 +19,9 @@ NOTE:
 as either png or jpeg
 - tbl = table producing scripts, these produce tables and saved as csv
 - terminology discrepancies used in code and used in manuscript:
-  -num_sighting = whale count = the number of whales sighted/counted with in the time and     space range
+  -num_sighting = whale count = the number of whales sighted/counted with in the time and space range
   -up = upcall count; gs = gunshot count; mf = tonal count
-  -dep_duration = includes hour before recording, hour after recording and time length of     recording (includes weak signals) (not mentioned in manuscript)
+  -dep_duration = includes hour before recording, hour after recording and time length of recording (includes weak signals) (not mentioned in manuscript)
   -rec_duration = duration = duration of recording, weak signals are removed
   -foraging_bhv_whale (same for social and other) = foraging behaviour rate
   -ratio_male_female = male/female ratio = all males/all females
