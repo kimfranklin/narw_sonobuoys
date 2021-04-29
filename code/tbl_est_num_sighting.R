@@ -47,7 +47,7 @@ ns_df <- rbind(sighta,sightb,sightc,sightd)
 ns_df = round(ns_df,2)
 
 # add y variable column
-ns_df <- cbind(ns_df, "whale abundance")
+ns_df <- cbind(ns_df, "whale count")
 
 # save data table 
 write.csv(ns_df,"data/processed/num_sighting_regression_table.csv")
@@ -78,7 +78,7 @@ ns_df <- rbind(sighta,sightb,sightc,sightg)
 ns_df = round(ns_df,3)
 
 # add y variable column
-ns_df <- cbind(ns_df, "whale abundance")
+ns_df <- cbind(ns_df, "whale count")
 
 # save data table 
 write.csv(ns_df,"data/processed/num_sighting_anova_table.csv")

@@ -7,7 +7,7 @@ library(patchwork)
 # data
 df = readRDS("data/processed/proc_acou_photoid.rds")
 
-# whale abundance
+# whale count
 p1 = df %>%
   ggplot(aes(x = as.Date(yday,'1970-01-01'), 
              y = num_sighting, 

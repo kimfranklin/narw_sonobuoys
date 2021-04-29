@@ -18,7 +18,7 @@ cr_reg_pval = read.csv("data/processed/call_rate_stepwise_vs_null_table.csv")
 
 # process -----------------------------------------------------------------
 
-# formatting characterizing whale abundance models
+# formatting characterizing whale count models
 
 # remove columns not needed 
 sight_coeff = sight_coeff[,!(names(sight_coeff) %in% c('t.value','Pr...t..'))] 

@@ -52,10 +52,10 @@ sumf4 = glance(sightf4)
 # combine all models into one large dataframe/table
 smf = rbind(sumf1,sumf2,sumf3,sumf4)
 
-smf$model = c('upcall = day of year + male/female ratio + foraging rate + socializing rate + whale abundance + offset(log(duration))',
-              'upcall = male/female ratio + foraging rate + socializing rate + whale abundance + offset(log(duration))',
-              'upcall = foraging rate + socializing rate + whale abundance + offset(log(duration))',
-              'upcall = socializing rate + whale abundance + offset(log(duration))')
+smf$model = c('upcall = day of year + male/female ratio + foraging rate + socializing rate + whale count + offset(log(duration))',
+              'upcall = male/female ratio + foraging rate + socializing rate + whale count + offset(log(duration))',
+              'upcall = foraging rate + socializing rate + whale count + offset(log(duration))',
+              'upcall = socializing rate + whale count + offset(log(duration))')
 
 # gunshot
 # model
@@ -96,8 +96,8 @@ sumg5 = glance(sightg5)
 # combine all models into one large dataframe/table
 smg = rbind(sumg1,sumg2,sumg3,sumg4,sumg5)
 
-smg$model = c('gunshot = day of year + male/female ratio + foraging rate + socializing rate + whale abundance + offset(log(duration))',
-              'gunshot = day of year + foraging rate + socializing rate + whale abundance + offset(log(duration))',
+smg$model = c('gunshot = day of year + male/female ratio + foraging rate + socializing rate + whale count + offset(log(duration))',
+              'gunshot = day of year + foraging rate + socializing rate + whale count + offset(log(duration))',
               'gunshot = day of year + foraging rate + socializing rate + offset(log(duration))',
               'gunshot = day of year + foraging rate + offset(log(duration))',
               'gunshot = day of year + offset(log(duration))')
@@ -137,9 +137,9 @@ sumh4 = glance(sighth4)
 # combine all models into one large dataframe/table
 smh = rbind(sumh1,sumh2,sumh3,sumh4)
 
-smh$model = c('tonal = day of year + male/female ratio + foraging rate + socializing rate + whale abundance + offset(log(duration))',
-              'tonal = day of year + male/female ratio + socializing rate + whale abundance + offset(log(duration))',
-              'tonal = day of year + male/female ratio + whale abundance + offset(log(duration))',
+smh$model = c('tonal = day of year + male/female ratio + foraging rate + socializing rate + whale count + offset(log(duration))',
+              'tonal = day of year + male/female ratio + socializing rate + whale count + offset(log(duration))',
+              'tonal = day of year + male/female ratio + whale count + offset(log(duration))',
               'tonal = day of year + male/female ratio + offset(log(duration))')
 
 

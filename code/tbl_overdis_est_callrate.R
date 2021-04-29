@@ -68,9 +68,9 @@ tmp_df = tmp_df %>%
     
   )
 
-tmp_df$model = c('upcall ~ day of year + whale abundance + male/female ratio + socializing rate + foraging rate + offset(log(duration))',
-              'gunshot ~ day of year + whale abundance + male/female ratio + socializing rate + foraging rate + offset(log(duration))',
-              'tonal ~ day of year + whale abundance + male/female ratio + socializing rate + foraging rate + offset(log(duration))')
+tmp_df$model = c('upcall ~ day of year + whale count + male/female ratio + socializing rate + foraging rate + offset(log(duration))',
+              'gunshot ~ day of year + whale count + male/female ratio + socializing rate + foraging rate + offset(log(duration))',
+              'tonal ~ day of year + whale count + male/female ratio + socializing rate + foraging rate + offset(log(duration))')
 
 
 # set dataframe to be a table 

@@ -131,15 +131,15 @@ tmp_df = tmp_df %>%
     alpha = V4
   )
 
-tmp_df$model = c('poisson upcall ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
-                 'quasi poisson upcall ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
-                 'neg bin upcall ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
-                 'poisson gunshot ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
-                 'quasi poisson gunshot ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
-                 'neg bin gunshot ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
-                 'poisson tonal ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
-                 'quasi poisson tonal ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
-                 'neg bin tonal ~ day of year + whale abundance + male/female ratio + socializing rate +foraging rate + offset(log(duration))')
+tmp_df$model = c('poisson upcall ~ day of year + whale count + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'quasi poisson upcall ~ day of year + whale count + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'neg bin upcall ~ day of year + whale count + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'poisson gunshot ~ day of year + whale count + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'quasi poisson gunshot ~ day of year + whale count + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'neg bin gunshot ~ day of year + whale count + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'poisson tonal ~ day of year + whale count + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'quasi poisson tonal ~ day of year + whale count + male/female ratio + socializing rate +foraging rate + offset(log(duration))',
+                 'neg bin tonal ~ day of year + whale count + male/female ratio + socializing rate +foraging rate + offset(log(duration))')
 
 
 # set dataframe to be a table 

@@ -40,7 +40,7 @@ tmp_df = a %>%
     yday = V4)
 
 # add column for which model it is
-tmp_df$model = c('whale abundance ~ upcall rate + gunshot rate + tonal rate + day of year')
+tmp_df$model = c('whale count ~ upcall rate + gunshot rate + tonal rate + day of year')
 
 # set dataframe to be a table 
 setDT(tmp_df)
@@ -108,9 +108,9 @@ tmp_df = tmp_df %>%
     whale_abundance = V5)
 
 # add column for which model it is
-tmp_df$model = c('upcall ~ day of year + male/female ratio + socializing rate + foraging rate + whale abundance + offset(log(duration))',
-                 'gunshot ~ day of year + male/female ratio + socializing rate + foraging rate + whale abundance + offset(log(duration))',
-                 'tonal ~ day of year + male/female ratio + socializing rate + foraging rate + whale abundance + offset(log(duration))')
+tmp_df$model = c('upcall ~ day of year + male/female ratio + socializing rate + foraging rate + whale count + offset(log(duration))',
+                 'gunshot ~ day of year + male/female ratio + socializing rate + foraging rate + whale count + offset(log(duration))',
+                 'tonal ~ day of year + male/female ratio + socializing rate + foraging rate + whale count + offset(log(duration))')
 
 
 # set dataframe to be a table 
