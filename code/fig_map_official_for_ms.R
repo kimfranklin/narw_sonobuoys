@@ -15,7 +15,6 @@ df = readRDS("data/processed/proc_acou_photoid.rds")
 # read in map data
 load('data/processed/map.rda')
 
-
 # plot inset map
 bg_inset = ne_countries(scale = "medium", returnclass = "sf")
 
