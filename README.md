@@ -19,7 +19,7 @@ NOTE:
 as either png or jpeg
 - tbl = table producing scripts, these produce tables and saved as csv
 - terminology discrepancies used in code and used in manuscript:
-  - num_sighting = whale count = the number of whales sighted/counted with in the time and     space range
+  - num_sighting = whale count = whale abundance (this term is in the test scripts) = the      number of whales sighted/counted with in the time and space range
   - up = upcall count; gs = gunshot count; mf = tonal count
   - dep_duration = includes hour before recording, hour after recording and time length of     recording (includes weak signals) (not mentioned in manuscript)
   - rec_duration = duration = duration of recording, weak signals are removed
