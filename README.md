@@ -2,7 +2,7 @@
 this is a readme file
 
 ## overview
-North Atlantic Right Whale Sonobuoy Project. This project combines visual from aerial and vessel surveys and acoustic data from sonobuoys. Data were collected simultaneously providing a unique perspective of the whales observed. This project shows trends between call types and associate behaviours. The findings suggest that we may be able to reliably infer whale behavior from acoustics alone, thus advancing acoustic monitoring beyond a presence-only tool.
+North Atlantic Right Whale Sonobuoy Project. This project combines visual from aerial and vessel surveys, and acoustic data from sonobuoys. Data were collected simultaneously providing a unique perspective. This project shows trends between call types and associate behaviours. The findings suggest that we may be able to reliably infer whale behavior from acoustics alone.
 
 For the current (2021) manuscript, only aerial surveys from 2017-2019 were used, the vessel data was not.
 
