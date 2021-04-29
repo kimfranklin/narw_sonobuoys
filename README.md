@@ -13,10 +13,18 @@ visual aid.
 For the current (2021) manuscript being made only aerial surveys from 2017-2019 are being used, the vessel data is not!
 
 NOTE: 
+- All scripts in 'code' folder are necessary to reproduce the data in the manuscript along with its figures and tables. All scripts in 'tests' were used for testing data assumptions, models, and time/space ranges, these scripts are not necessary to run.
 - wrg = wrangling scripts, these produce data and saved as csv
 - fig = figure producing scripts, these produce figures and the figures are saved
 as either png or jpeg
 - tbl = table producing scripts, these produce tables and saved as csv
+- terminology discrepancies used in code and used in manuscript:
+  -num_sighting = whale count = the number of whales sighted/counted with in the time and     space range
+  -up = upcall count; gs = gunshot count; mf = tonal count
+  -dep_duration = includes hour before recording, hour after recording and time length of     recording (includes weak signals) (not mentioned in manuscript)
+  -rec_duration = duration = duration of recording, weak signals are removed
+  -foraging_bhv_whale (same for social and other) = foraging behaviour rate
+  -ratio_male_female = male/female ratio = all males/all females
 
 ## wrangling scripts order
 run the scripts in order staring with #1 to #3 
@@ -50,16 +58,16 @@ From here on out these csv files produced will be data will be used in the rest 
   - needs proc_map_data.R to run properly (in code folder)
   - generic deployment map has all locations for all years and month that NOAA deployed a sonobuoy (used in MS)
 2. fig_target_plot_photoid.R
-  - needs functions.R to run properly (in code folder)
+  - needs functions.R to run properly (in tests folder)
   - this produces a suite of time and space range maps, it was used to figure out what time and space range is best for figuring out what whales were inlcuded or not with different ranges
-3. fig_track_maps.R
+3. fig_track_maps.R (in test folder)
   - sightings data maps with track lines
   - needs map_data.rda (in data/processed folder), whale map track lines, processed photo id
   - theres a version of this script floating around (probably work folder) that uses processed sightings data which is a different script not listed here (only photo id data is processed as described in this readme file)
-4. fig_sono_map_facet_month_yr.R
+4. fig_sono_map_facet_month_yr.R (in test folder)
   - needs map_data.rda (in data/processed folder)
   - faceted map by year and month to see deployment trends in each month for each year
-5. tests/space_map_variables.R
+5. tests/space_map_variables.R (in test folder)
   - needs map_data.rda (in data/processed folder)
   - faceted map by year and month for each behaviour and call rate to see acoustic and behaviour trends in each month for each year
 
@@ -70,13 +78,13 @@ The R markdown files were created to help see patterns and decide what statistic
 1. fig_corr_matrix_manuscript.R
   - this produces two spearman correlation matrices, a short one and full one (the short one has only few variables where as the full one has nearly all the variables in the dataset)
 2. fig_scatterplots_new.R
-  - this produces two scatter plots in one image (call rates in one plot and behaviour rates in the other plot) and another image of a bargraph that is grouped by demographic class with each total bar being the whale abundance
+  - this produces two scatter plots in one image (call rates in one plot and behaviour rates in the other plot) and another image of a bargraph that is grouped by demographic class with each total bar being the whale count
 
 ## statistical analysis
 1. tbl_5_num_summary.R
   - this script produces a table of all variables' 1st and 3rd quartile, mean, median, max and min to give idea of variables' distribution
 2. tbl_est_num_sighting.R
-  - this script produces all the models where num_sighting (or whale abundance) is the y variable, the estimates are produced and saved in one csv file and the anova tables are saved as another (separate) csv file
+  - this script produces all the models where num_sighting (or whale count) is the y variable, the estimates are produced and saved in one csv file and the anova tables are saved as another (separate) csv file
 3. tbl_est_call_rates.R
   - this script produces all the models where call rates (upcall, gunshot, tonal) are the y variable, the estimates are produced and saved in one csv file and the negative binomial likelihood ratio test tables are saved as another (separate) csv file (the negative binomial likelihood ratio test compare the model to a null which is just the intercept and offset)
 4. tbl_est_call_rates_stepwise.R
@@ -91,7 +99,7 @@ THESE PRODUCE TABLES
 3. tbl_normality_test.R
   - test normality of single variables and single vairable models
 4. tbl_homoscedasticity_est_num_whales.R
-  - this is to test whale abundance models because whale abundance is normally distributed
+  - this is to test whale count models because whale count is normally distributed
 5. tbl_overdis_est_callrate.R
   - testing overdispersion in the call rate models
 6. tbl_zero_infla_est_callrate.R
