@@ -96,6 +96,9 @@ gsl = ggplot() +
     family = "serif"
   ) +
   
+  # shediac valley label in ocean
+  geom_text(aes(x = -64.3954, y = 47.3638, label = 'Shediac Valley', angle = 65, family = "serif"), size = 4)+
+  
   # sonobuoy positions
   geom_point(data = df,
              aes(x = lon, y = lat,
@@ -114,10 +117,10 @@ gsl = ggplot() +
   #geom_text(aes(x = -63.65, y = 48.25, label = 'Orpheline Trough', angle = 65), size = 4, family = "serif")+
 
   # orpheline trough
-  # annotate('rect', xmin = fmin_lon, xmax = fmax_lon, ymin = fmin_lat, ymax = fmax_lat, 
-  #          color = 'black', linetype = 2, fill = NA) +  
-  geom_path(data=shape,aes(x = x, y = y),linetype=2) +
-  geom_line(linetype=2)+
+  # # annotate('rect', xmin = fmin_lon, xmax = fmax_lon, ymin = fmin_lat, ymax = fmax_lat, 
+  # #          color = 'black', linetype = 2, fill = NA) +  
+  # geom_path(data=shape,aes(x = x, y = y),linetype=2) +
+  # geom_line(linetype=2)+
 
 
   # inset
@@ -160,7 +163,7 @@ gsl = ggplot() +
 gsl
 
 # output file 
-ofile = 'sono_map_more_detailbathy7.png'
+ofile = 'sono_map_more_detailbathy8.png'
 
 # figure directory
 fig_dir = 'figures/'
