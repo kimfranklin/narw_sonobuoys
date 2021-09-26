@@ -97,8 +97,10 @@ gsl = ggplot() +
   ) +
   
   # shediac valley label in ocean
-  geom_text(aes(x = -64.3954, y = 47.3638, label = 'Shediac Valley', angle = 65, family = "serif"), size = 4)+
-  
+  geom_text(aes(x = -64.204346, y = 47.463980, label = 'Shediac Valley', angle = 65, family = "serif"), size = 4)+
+#   Gulf of St Lawrence
+# 47.463980, -64.204346
+  # x = -64.183257, y = 47.487021
   # sonobuoy positions
   geom_point(data = df,
              aes(x = lon, y = lat,
@@ -163,7 +165,7 @@ gsl = ggplot() +
 gsl
 
 # output file 
-ofile = 'sono_map_more_detailbathy8.png'
+ofile = 'sono_map_more_detailbathy8.5.png'
 
 # figure directory
 fig_dir = 'figures/'
