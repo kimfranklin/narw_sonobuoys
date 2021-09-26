@@ -57,7 +57,7 @@ p3 = df %>%
   geom_point(aes(fill = bhv), shape = 21, alpha = 0.7, size = 3)+
   scale_fill_viridis_d(labels=c("Foraging", "Socalizing"))+
   scale_x_date(date_breaks="weeks", date_labels="%b-%d")+
-  labs(x = NULL,
+  labs(x = "Day of year",
        y = (bquote('Behavior rate (behavior'~whale^-1~')')),
        fill = "Behavior")+
   theme_bw()+
@@ -73,4 +73,4 @@ p = wrap_plots(p1,p2,p3, ncol = 1)+
   plot_annotation(tag_levels = 'a', tag_suffix = ')')
 
 # save
-ggsave(filename = 'figures/scatterplot_new_updated.png', plot = p, width = 7, height = 9, units = 'in', dpi = 300)
+ggsave(filename = 'figures/scatterplot_new_updated_updated.png', plot = p, width = 7, height = 9, units = 'in', dpi = 300)
