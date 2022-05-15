@@ -19,7 +19,7 @@ load('data/processed/map.rda')
 bg_inset = ne_countries(scale = "medium", returnclass = "sf")
 
 p_inset = ggplot()+
-  geom_sf(data = bg_inset,fill = "cornsilk", color = "cornsilk4", size = 0.2)+
+  geom_sf(data = bg_inset,fill = "grey90", color = "grey54", size = 0.2)+
   geom_rect(aes(xmin=min_lon,xmax=max_lon,ymin=min_lat,ymax=max_lat), color = 'black',fill = NA)+
   annotate('rect', xmin = -80, xmax = -58, ymin = 34, ymax = 51, fill = NA, color = 'black', size = 1)+
   coord_sf(xlim = c(-80,-58), ylim = c(34,51), expand = FALSE)+
@@ -53,7 +53,7 @@ df$month = month(df$date, label = T, abbr = F)
 
 # city positions
 cities = data.frame(
-  name = c("Shippagan,\nNB", "Percé,\nQC"),
+  name = c("Shippagan,\nNew Brunswick", "Percé,\nQuebec"),
   lat = c(47.7439, 48.5244),
   lon = c(-64.7057, -64.2127)
 )
@@ -76,8 +76,8 @@ gsl = ggplot() +
   # coastline
   geom_sf(
     data = cf,
-    fill = "cornsilk",
-    color = "cornsilk4",
+    fill = "grey90",
+    color = "grey54",
     size = 0.1
   ) +
   
@@ -165,7 +165,7 @@ gsl = ggplot() +
 gsl
 
 # output file 
-ofile = 'sono_map_more_detailbathy8.5.png'
+ofile = 'sono_map_more_detailbathy8.5b.png'
 
 # figure directory
 fig_dir = 'figures/'
