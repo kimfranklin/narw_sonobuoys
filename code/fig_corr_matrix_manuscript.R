@@ -23,8 +23,8 @@ fig_dir = 'figures/'
 
 # select variables correlation matrix plot (spearman)
 # figure set up
-jpeg (filename = paste0(fig_dir,'fig_corrplot_manu.jpeg'), 
-      width = 10, height = 12, units = 'in', res = 200)
+jpeg (filename = paste0(fig_dir,'fig_corrplot_manu_testing10.jpeg'), 
+      width = 10, height = 9, units = 'in', res = 200)
 
 # put data in dataframe so that it can be convereted to correlation and p-value matrix
 dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
@@ -50,11 +50,21 @@ test2 <- rcorr(as.matrix(dfs2), type="spearman")
 test2$P = round(test2$P, 3)
 
 # change font type
-par(family="Times New Roman")
+par(family="Times New Roman", cex = 1.25)
 
 fig = corrplot(sp2, tl.col = "black", method = 'color', p.mat = test2$P,
-                                   sig.level = 0.05, type = "upper", diag = FALSE, tl.srt = 45,
-                                   col = brewer.pal(n = 8, name = "RdBu"),addCoef.col = "black",)
+               sig.level = 0.05, type = "upper", diag = FALSE, 
+               tl.srt = 45, #colorlegend(colbar = COL2("RdBu"), labels = lgn, 
+                                       #at = seq(0.05, 0.95, len = 12), 
+                                       #xlim = c(0, 6), ylim = c(1.1, 1.2),
+                                       #vertical = TRUE, align = "r"),
+               col = brewer.pal(n = 8, name = "RdBu"),addCoef.col = "black")
+
+# add legend
+lgn = expression(paste(rho, " value"))
+#mtext(text = lgn, side = 4)
+text(9.5,5,lgn,srt = 90)
+
 
 # end figure
 dev.off()
@@ -64,8 +74,8 @@ dev.off()
 
 # all variables correlation matirx plot (spearman)
 # figure set up
-jpeg (filename = paste0(fig_dir,'fig_corrplot_full_manu.jpeg'), 
-      width = 10, height = 12, units = 'in', res = 200)
+jpeg (filename = paste0(fig_dir,'fig_corrplot_full_manu2.jpeg'), 
+      width = 10, height = 9, units = 'in', res = 200)
 
 # put data in dataframe so that it can be convereted to correlation and p-value matrix
 dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
@@ -105,6 +115,9 @@ fig = corrplot(sp2, tl.col = "black", method = 'color', p.mat = test2$P,
                sig.level = 0.05, type = "upper", diag = FALSE, tl.srt = 45,
                col = brewer.pal(n = 8, name = "RdBu"),addCoef.col = "black",)
 
+# add legend
+lgn = expression(paste(rho, " value"))
+text(20,9.5,lgn,srt = 90)
 
 # end figure
 dev.off()
