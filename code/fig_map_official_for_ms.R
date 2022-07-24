@@ -23,8 +23,8 @@ p_inset = ggplot()+
   geom_rect(aes(xmin=min_lon,xmax=max_lon,ymin=min_lat,ymax=max_lat), color = 'black',fill = NA)+
   annotate('rect', xmin = -80, xmax = -58, ymin = 34, ymax = 51, fill = NA, color = 'black', size = 1)+
   coord_sf(xlim = c(-80,-58), ylim = c(34,51), expand = FALSE)+
-  geom_text(aes(x = -71.5, y = 42.8, label = 'United States'), color = 'darkslategrey', size = 4, family = "serif")+
-  geom_text(aes(x = -68.7, y = 48.4, label = 'Canada'), color = 'darkslategrey', size = 4, family = "serif")+
+  geom_text(aes(x = -71.5, y = 42.8, label = 'United States'), color = 'darkslategrey', size = 4, family = "sans")+
+  geom_text(aes(x = -68.7, y = 48.4, label = 'Canada'), color = 'darkslategrey', size = 4, family = "sans")+
   theme_void()+
   theme(panel.background = element_rect(fill = 'white'))
 
@@ -93,11 +93,11 @@ gsl = ggplot() +
       "black",
     nudge_y = 0.07,
     size = 4,
-    family = "serif"
+    family = "sans"
   ) +
   
   # shediac valley label in ocean
-  geom_text(aes(x = -64.204346, y = 47.463980, label = 'Shediac Valley', angle = 65, family = "serif"), size = 4)+
+  geom_text(aes(x = -64.204346, y = 47.463980, label = 'Shediac Valley', angle = 65, family = "sans"), size = 4)+
 #   Gulf of St Lawrence
 # 47.463980, -64.204346
   # x = -64.183257, y = 47.487021
@@ -116,7 +116,7 @@ gsl = ggplot() +
     fill = 'Depth (m)',
     shape = 'Year'
   ) +
-  #geom_text(aes(x = -63.65, y = 48.25, label = 'Orpheline Trough', angle = 65), size = 4, family = "serif")+
+  #geom_text(aes(x = -63.65, y = 48.25, label = 'Orpheline Trough', angle = 65), size = 4, family = "sans")+
 
   # orpheline trough
   # # annotate('rect', xmin = fmin_lon, xmax = fmax_lon, ymin = fmin_lat, ymax = fmax_lat, 
@@ -153,11 +153,11 @@ gsl = ggplot() +
   labs(#x = "Latitude (W)", y = "Longitude (N)",
     x = NULL, y = NULL, fill = 'Depth (m)') +
   theme_bw() +
-  annotation_scale(text_family = "serif", location = 'bl') +
+  annotation_scale(text_family = "sans", location = 'bl') +
   theme(
     legend.position = "right",
     legend.key = element_rect(color = 'black', fill = NA),
-    text = element_text(size = 15, family = "serif"),
+    text = element_text(size = 15, family = "sans"),
     axis.text.x = element_text(colour = "black"),
     axis.text.y = element_text(colour = "black"),
     panel.grid = element_blank()
@@ -165,7 +165,7 @@ gsl = ggplot() +
 gsl
 
 # output file 
-ofile = 'sono_map_more_detailbathy8.5b.png'
+ofile = 'sono_map_more_detailbathy8.5b_sansfont.png'
 
 # figure directory
 fig_dir = 'figures/'
