@@ -33,7 +33,7 @@ p = ggplot()+
   scale_color_viridis_c() +
   labs(x = 'Time (h)', y = 'Cumulative call count', color = 'Day of year')+
   theme_bw()+ 
-  theme(text = element_text(size = 15, family = "serif"))
+  theme(text = element_text(size = 15, family = "sans"))
 
 # assign calls to first or second half of each deployment
 fvs = df %>%
@@ -50,11 +50,11 @@ g = ggplot()+
   geom_boxplot(data = fvs, aes(x = grp, y = n), fill = 'grey') +
   labs(x = 'Deployment time available for calling', y = 'Call count') +
   theme_bw()+ 
-  theme(text = element_text(size = 15, family = "serif"))
+  theme(text = element_text(size = 15, family = "sans"))
 
 # SAVE
 # output file 
-ofile = 'calls_firsthalf_vs_secondhalf.png'
+ofile = 'calls_firsthalf_vs_secondhalf_sansfont.png'
 
 # figure directory
 fig_dir = 'figures/'
