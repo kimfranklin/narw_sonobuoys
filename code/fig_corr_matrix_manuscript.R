@@ -74,7 +74,7 @@ dev.off()
 
 # all variables correlation matirx plot (spearman)
 # figure set up
-jpeg (filename = paste0(fig_dir,'fig_corrplot_full_manu2.jpeg'), 
+jpeg (filename = paste0(fig_dir,'fig_corrplot_full_manu2_sansfont.jpeg'), 
       width = 10, height = 9, units = 'in', res = 200)
 
 # put data in dataframe so that it can be convereted to correlation and p-value matrix
@@ -108,7 +108,7 @@ test2 <- rcorr(as.matrix(dfs2), type="spearman")
 test2$P = round(test2$P, 3)
 
 # change font type
-par(family="Times New Roman") 
+par(family="Helvetica") 
 
 # correlation matrix figure
 fig = corrplot(sp2, tl.col = "black", method = 'color', p.mat = test2$P,
