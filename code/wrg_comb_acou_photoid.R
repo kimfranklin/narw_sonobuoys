@@ -772,5 +772,22 @@ df$social_bi[df$social != 0] <- 1
 df[,"other_bhv_bi"] <- 0
 df$other_bhv_bi[df$other_bhv != 0] <- 1
 
+# add column of photo-documentation time (the time difference between the first 
+# whale photographed and the last whale photographed)
+
+tmp = id_df %>% 
+  group_by(id) %>% 
+  summarise(diff = max(datetime) - min(datetime)) %>%
+  ungroup()
+
+tmp$diff = tmp$diff/60/60
+
+tmp = tmp %>% 
+  rename(photo_timediff_hour = diff)
+
+tmp = subset(tmp, select = -c(id) )
+
+df = cbind(df,tmp)
+
 # save file 
 saveRDS(df, file = ofile)
