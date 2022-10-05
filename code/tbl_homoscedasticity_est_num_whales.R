@@ -10,7 +10,7 @@ library(lmtest)
 
 # input -------------------------------------------------------------------
 
-df = readRDS("data/processed/proc_acou_photoid.rds")
+df = readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 # process -----------------------------------------------------------------
 
@@ -56,4 +56,4 @@ tmp_df$test_stat_bp = round(as.numeric(tmp_df$test_stat_bp), 2)
 tmp_df$p_val = round(as.numeric(tmp_df$p_val), 2)
 
 # save data table 
-write.csv(tmp_df,"data/processed/homoscedasticity_test_num_whales.csv")
+write.csv(tmp_df,"data/processed/homoscedasticity_test_num_whales_fliptest.csv")
