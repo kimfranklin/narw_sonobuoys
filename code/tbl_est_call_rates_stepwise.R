@@ -14,7 +14,7 @@ library(broom)
 # input -------------------------------------------------------------------
 
 # read in data
-df = readRDS("data/processed/proc_acou_photoid.rds")
+df = readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 # process -----------------------------------------------------------------
 
@@ -80,7 +80,7 @@ sightc <- cbind(sightc, "tonal")
 crm_df <- rbind(sighta,sightb,sightc)
 
 # save data table 
-write.csv(crm_df,"data/processed/call_rate_stepregression_coeff_table.csv")
+write.csv(crm_df,"data/processed/call_rate_stepregression_coeff_table_fliptest.csv")
 
 
 
@@ -184,4 +184,4 @@ null_mf_anova = null_mf_anova %>%
 null_anova_bind = rbind(null_up_anova,null_gs_anova,null_mf_anova)
 
 # save data table
-write.csv(null_anova_bind,"data/processed/call_rate_stepwise_vs_null_table.csv")
+write.csv(null_anova_bind,"data/processed/call_rate_stepwise_vs_null_table_fliptest.csv")
