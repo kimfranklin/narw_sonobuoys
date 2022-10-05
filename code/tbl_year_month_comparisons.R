@@ -10,7 +10,7 @@ library(tidyverse)
 # input -------------------------------------------------------------------
 
 # read in data 
-df= readRDS("data/processed/proc_acou_photoid.rds")
+df= readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 # process -----------------------------------------------------------------
 
@@ -304,4 +304,4 @@ kw_df = cbind(kw_df,kw_df2)
 setDT(kw_df)
 
 # save data table 
-write.csv(kw_df,"data/processed/year_month_comparisons.csv")
+write.csv(kw_df,"data/processed/year_month_comparisons_fliptest.csv")
