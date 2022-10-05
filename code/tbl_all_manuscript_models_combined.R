@@ -9,12 +9,12 @@ library(broom)
 library(data.table)
 
 # read in the data
-sight_coeff = read.csv("data/processed/num_sighting_regression_table.csv")
-sight_pval = read.csv("data/processed/num_sighting_anova_table.csv")
-cr_coeff = read.csv("data/processed/call_rate_regression_table.csv")
-cr_pval = read.csv("data/processed/call_rate_likelihood_table.csv")
-cr_reg_coeff = read.csv("data/processed/call_rate_stepregression_coeff_table.csv")
-cr_reg_pval = read.csv("data/processed/call_rate_stepwise_vs_null_table.csv")
+sight_coeff = read.csv("data/processed/num_sighting_regression_table_fliptest.csv")
+sight_pval = read.csv("data/processed/num_sighting_anova_table_fliptest.csv")
+cr_coeff = read.csv("data/processed/call_rate_regression_table_fliptest.csv")
+cr_pval = read.csv("data/processed/call_rate_likelihood_table_fliptest.csv")
+cr_reg_coeff = read.csv("data/processed/call_rate_stepregression_coeff_table_fliptest.csv")
+cr_reg_pval = read.csv("data/processed/call_rate_stepwise_vs_null_table_fliptest.csv")
 
 # process -----------------------------------------------------------------
 
@@ -173,7 +173,7 @@ cr_reg_mods$Pr..F. = NA
 mods = rbind(sight_mods,cr_mods,cr_reg_mods)
 
 # save
-write.csv(mods,"data/processed/manuscript_table_of_models.csv")
+write.csv(mods,"data/processed/manuscript_table_of_models_fliptest.csv")
 
 
 # attempting formatting 
@@ -206,6 +206,6 @@ mods2 = mods %>%
 mods2 = mods2[,!(names(mods2) %in% c('Pr..F.','Pr.Chi.'))]
 
 # save
-write.csv(mods2,"data/processed/manuscript_table_of_models_official.csv")
+write.csv(mods2,"data/processed/manuscript_table_of_models_official_fliptest.csv")
 
 # note in excel will need to do find and replace for space and less than sign
