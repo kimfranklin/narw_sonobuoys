@@ -5,7 +5,7 @@ library(tidyverse)
 
 # input 
 # read in data 
-df = readRDS("data/processed/proc_acou_photoid.rds")
+df = readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 # add column in df for entangled and not entangled
 df$entangled = c('False','False','True','True','False','False','False','False','False','False',
@@ -66,7 +66,7 @@ ns_df = round(ns_df,2)
 ns_df <- cbind(ns_df, "whale count")
 
 # save data table 
-write.csv(ns_df,"data/processed/num_sighting_regression_table_noentangledwhales.csv")
+write.csv(ns_df,"data/processed/num_sighting_regression_table_noentangledwhales_fliptest.csv")
 
 
 
@@ -97,7 +97,7 @@ ns_df = round(ns_df,3)
 ns_df <- cbind(ns_df, "whale count")
 
 # save data table 
-write.csv(ns_df,"data/processed/num_sighting_anova_table_noentangledwhales.csv")
+write.csv(ns_df,"data/processed/num_sighting_anova_table_noentangledwhales_fliptest.csv")
 
 
 # tbl_est_call_rates.R #
@@ -269,7 +269,7 @@ crm_df <- cbind(crm_df, "tonal")
 cr_df = rbind(cru_df,crg_df,crm_df)
 
 # save data table 
-write.csv(cr_df,"data/processed/call_rate_regression_table_noentangledwhales.csv")
+write.csv(cr_df,"data/processed/call_rate_regression_table_noentangledwhales_fliptest.csv")
 
 
 # LIKELIHOOD RATIO TESTS
@@ -468,7 +468,7 @@ crm_df = crm_df %>%
 cr_df = rbind(cru_df,crg_df,crm_df)
 
 # save data table 
-write.csv(cr_df,"data/processed/call_rate_likelihood_table_noentangledwhales.csv")
+write.csv(cr_df,"data/processed/call_rate_likelihood_table_noentangledwhales_fliptest.csv")
 
 
 
@@ -549,7 +549,7 @@ sightc <- cbind(sightc, "tonal")
 crm_df <- rbind(sighta,sightb,sightc)
 
 # save data table 
-write.csv(crm_df,"data/processed/call_rate_stepregression_coeff_table_noentangledwhales.csv")
+write.csv(crm_df,"data/processed/call_rate_stepregression_coeff_table_noentangledwhales_fliptest.csv")
 
 
 
@@ -653,4 +653,4 @@ null_mf_anova = null_mf_anova %>%
 null_anova_bind = rbind(null_up_anova,null_gs_anova,null_mf_anova)
 
 # save data table
-write.csv(null_anova_bind,"data/processed/call_rate_stepwise_vs_null_table_noentangledwhales.csv")
+write.csv(null_anova_bind,"data/processed/call_rate_stepwise_vs_null_table_noentangledwhales_fliptest.csv")
