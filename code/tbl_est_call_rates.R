@@ -14,7 +14,7 @@ library(plyr)
 # input -------------------------------------------------------------------
 
 # read in data
-df = readRDS("data/processed/proc_acou_photoid.rds")
+df = readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 # process -----------------------------------------------------------------
 # Upcall ------------------------------------------------------------------
@@ -172,7 +172,7 @@ crm_df <- cbind(crm_df, "tonal")
 cr_df = rbind(cru_df,crg_df,crm_df)
 
 # save data table 
-write.csv(cr_df,"data/processed/call_rate_regression_table.csv")
+write.csv(cr_df,"data/processed/call_rate_regression_table_fliptest.csv")
 
 
 # LIKELIHOOD RATIO TESTS
@@ -372,4 +372,4 @@ crm_df = crm_df %>%
 cr_df = rbind(cru_df,crg_df,crm_df)
 
 # save data table 
-write.csv(cr_df,"data/processed/call_rate_likelihood_table.csv")
+write.csv(cr_df,"data/processed/call_rate_likelihood_table_fliptest.csv")
