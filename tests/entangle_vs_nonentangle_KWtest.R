@@ -8,7 +8,7 @@ library(tidyverse)
 
 # input 
 # read in data 
-df = readRDS("data/processed/proc_acou_photoid.rds")
+df = readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 # add column in df for entangled and not entangled
 df$entangled = c('False','False','True','True','False','False','False','False','False','False',
@@ -167,4 +167,4 @@ kw_df = kw_df %>%
 setDT(kw_df)
 
 # save data table 
-write.csv(kw_df,"data/processed/entangled_vs_nonentangled.csv")
+write.csv(kw_df,"data/processed/entangled_vs_nonentangled_fliptest.csv")
