@@ -11,7 +11,7 @@ library(AER)
 
 # input -------------------------------------------------------------------
 
-df = readRDS("data/processed/proc_acou_photoid.rds")
+df = readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 
 # process -----------------------------------------------------------------
@@ -83,4 +83,4 @@ tmp_df$dispersion = round(as.numeric(tmp_df$dispersion), 2)
 
 
 # save data table 
-write.csv(tmp_df,"data/processed/overdis_test_callrate.csv")
+write.csv(tmp_df,"data/processed/overdis_test_callrate_fliptest.csv")
