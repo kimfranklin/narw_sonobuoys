@@ -23,8 +23,8 @@ p_inset = ggplot()+
   geom_rect(aes(xmin=min_lon,xmax=max_lon,ymin=min_lat,ymax=max_lat), color = 'black',fill = NA)+
   annotate('rect', xmin = -80, xmax = -58, ymin = 34, ymax = 51, fill = NA, color = 'black', size = 1)+
   coord_sf(xlim = c(-80,-58), ylim = c(34,51), expand = FALSE)+
-  geom_text(aes(x = -71.5, y = 42.8, label = 'United States'), color = 'darkslategrey', size = 4, family = "sans")+
-  geom_text(aes(x = -68.7, y = 48.4, label = 'Canada'), color = 'darkslategrey', size = 4, family = "sans")+
+  geom_text(aes(x = -71.5, y = 42.8, label = 'United States'), color = 'darkslategrey', size = 3, family = "sans")+
+  geom_text(aes(x = -68.7, y = 48.4, label = 'Canada'), color = 'darkslategrey', size = 3, family = "sans")+
   theme_void()+
   theme(panel.background = element_rect(fill = 'white'))
 
@@ -92,12 +92,12 @@ gsl = ggplot() +
     color =
       "black",
     nudge_y = 0.07,
-    size = 4,
+    size = 3,
     family = "sans"
   ) +
   
   # shediac valley label in ocean
-  geom_text(aes(x = -64.204346, y = 47.463980, label = 'Shediac Valley', angle = 65, family = "sans"), size = 4)+
+  geom_text(aes(x = -64.204346, y = 47.463980, label = 'Shediac Valley', angle = 65, family = "sans"), size = 3)+
 #   Gulf of St Lawrence
 # 47.463980, -64.204346
   # x = -64.183257, y = 47.487021
@@ -105,7 +105,7 @@ gsl = ggplot() +
   geom_point(data = df,
              aes(x = lon, y = lat,
                  shape = as.character(year)),
-             size = 4) +
+             size = 3) +
   scale_shape_manual(values = c(1, 2, 0)) +
   
   # labels
@@ -153,11 +153,16 @@ gsl = ggplot() +
   labs(#x = "Latitude (W)", y = "Longitude (N)",
     x = NULL, y = NULL, fill = 'Depth (m)') +
   theme_bw() +
-  annotation_scale(text_family = "sans", location = 'bl') +
+  annotation_scale(text_family = "sans", location = 'bl', 
+                   text_cex = 0.6, tick_height = 0.4,
+                   height = unit(0.15, "cm"),
+                   pad_x = unit(0.15, "cm"),
+                   pad_y = unit(0.15, "cm"),
+                   text_pad = unit(0.05, "cm")) +
   theme(
     legend.position = "right",
     legend.key = element_rect(color = 'black', fill = NA),
-    text = element_text(size = 15, family = "sans"),
+    text = element_text(size = 10, family = "sans"),
     axis.text.x = element_text(colour = "black"),
     axis.text.y = element_text(colour = "black"),
     panel.grid = element_blank()
@@ -165,10 +170,10 @@ gsl = ggplot() +
 gsl
 
 # output file 
-ofile = 'sono_map_more_detailbathy8.5b_sansfont.png'
+ofile = 'sono_map_more_detailbathy8.5b_sansfont_mspretty.pdf'
 
 # figure directory
 fig_dir = 'figures/'
 
 ggsave(gsl, filename = paste0(fig_dir, ofile),
-       height = 7, width = 10, dpi = 300)
+       height = 5, width = 7, dpi = 300)
