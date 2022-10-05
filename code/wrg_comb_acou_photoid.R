@@ -22,7 +22,7 @@ id_df = readRDS("data/processed/all_noaa_photoid.rds")
 # setup -------------------------------------------------------------------
 
 # output file name
-ofile = 'data/processed/proc_acou_photoid.rds'
+ofile = 'data/processed/proc_acou_photoid_fliptest.rds'
 
 
 # process -----------------------------------------------------------------
@@ -616,6 +616,9 @@ if("RACE" %in% colnames(df)){
 if("FCL" %in% colnames(df)){
   df$FCL + df$social -> df$social
 }
+if("FLIP" %in% colnames(df)){
+  df$FLIP + df$social -> df$social
+}
 
 # add other behavior column
 df[,"other_bhv"] <- 0
@@ -642,9 +645,9 @@ if("FL" %in% colnames(df)){
 if("POST" %in% colnames(df)){
   df$POST + df$other_bhv -> df$other_bhv
 }
-if("FLIP" %in% colnames(df)){
-  df$FLIP + df$other_bhv -> df$other_bhv
-}
+# if("FLIP" %in% colnames(df)){
+#   df$FLIP + df$other_bhv -> df$other_bhv
+# }
 if("WIWO" %in% colnames(df)){
   df$WIWO + df$other_bhv -> df$other_bhv
 }
