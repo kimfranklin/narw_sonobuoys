@@ -12,7 +12,7 @@ library(performance)
 
 # input -------------------------------------------------------------------
 
-df = readRDS("data/processed/proc_acou_photoid.rds")
+df = readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 # process -----------------------------------------------------------------
 
@@ -149,4 +149,4 @@ setDT(tmp_df)
 tmp_df$ratio = round(as.numeric(tmp_df$ratio), 2)
 
 # save data table 
-write.csv(tmp_df,"data/processed/zero_infla_est_callrate.csv")
+write.csv(tmp_df,"data/processed/zero_infla_est_callrate_fliptest.csv")
