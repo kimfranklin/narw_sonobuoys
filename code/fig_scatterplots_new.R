@@ -5,7 +5,7 @@ library(tidyverse)
 library(patchwork)
 
 # data
-df = readRDS("data/processed/proc_acou_photoid.rds")
+df = readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 df[nrow(df)+1,] <- NA
 
@@ -33,7 +33,7 @@ p1 = df %>%
        fill = "Male/Female Ratio")+
   theme_classic() +
   theme(axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1, colour = "black"))+
-  theme(text = element_text(size=12, family = "sans"))+
+  theme(text = element_text(size=10, family = "sans"))+
   theme(panel.border = element_rect(colour = "black", fill=NA))+
   #theme(plot.background = element_rect(color = "black"))+
   theme(axis.text.y = element_text(colour = "black"))
@@ -56,7 +56,7 @@ p2 = df %>%
   theme_classic() +
   theme(axis.text.x = element_blank(),
         legend.key = element_rect(color = 'black', fill = NA),
-        text = element_text(size=12, family = "sans"),
+        text = element_text(size=10, family = "sans"),
         panel.border = element_rect(colour = "black", fill=NA),
         #plot.background = element_rect(color = "black"),
         axis.text.y = element_text(colour = "black"))
@@ -78,7 +78,7 @@ p3 = df %>%
   theme_classic()+
   theme(axis.text.x = element_blank(),
         legend.key = element_rect(color = 'black', fill = NA),
-        text = element_text(size=12, family = "sans"),
+        text = element_text(size=10, family = "sans"),
         panel.border = element_rect(colour = "black", fill=NA),
         #plot.background = element_rect(color = "black"),
         axis.text.y = element_text(colour = "black"))
@@ -90,4 +90,4 @@ p = wrap_plots(p2,p3,p1, ncol = 1)+
 
 p
 # save
-ggsave(filename = 'figures/scatterplot_new_updated_updated_withboarderfixed_sansfont.png', plot = p, width = 7, height = 9, units = 'in', dpi = 300)
+ggsave(filename = 'figures/scatterplot_new_updated_updated_withboarderfixed_sansfont_fliptest_mspretty.pdf', plot = p, width = 6.13, height = 7.88, units = 'in', dpi = 300)
