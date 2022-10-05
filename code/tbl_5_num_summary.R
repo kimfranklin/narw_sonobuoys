@@ -8,7 +8,10 @@ library(tidyverse)
 library(data.table)
 
 # read in the data
-df= readRDS("data/processed/proc_acou_photoid.rds")
+df= readRDS("data/processed/proc_acou_photoid_fliptest.rds")
+
+# set time differnece for photo time as numeric
+df$photo_timediff_hour = as.numeric(df$photo_timediff_hour)
 
 # subset data so only variables of interest are shown
 tmp = df %>%
@@ -18,7 +21,7 @@ tmp = df %>%
           num_sighting, ratio_male_female,
           adult_male,adult_female,juvenile_male,juvenile_female,calf_male,calf_female,unknown,
           foraging_bhv_whale,social_bhv_whale,other_bhv_whale,
-          rec_duration_h)
+          rec_duration_h,photo_timediff_hour)
 
 # make matrix/array of 5 number summary stats of variables of interest
 tmps = do.call(cbind, lapply(tmp, summary))
@@ -48,7 +51,8 @@ cv = c((sd(df$up)/mean(df$up)*100),
         (sd(df$foraging_bhv_whale)/mean(df$foraging_bhv_whale)*100),
         (sd(df$social_bhv_whale)/mean(df$social_bhv_whale)*100),
         (sd(df$other_bhv_whale)/mean(df$other_bhv_whale)*100),
-        (sd(df$rec_duration_h)/mean(df$rec_duration_h)*100))
+        (sd(df$rec_duration_h)/mean(df$rec_duration_h)*100),
+       (sd(df$photo_timediff_hour)/mean(df$photo_timediff_hour)*100))
 
 # round
 cv = round(cv,2)
@@ -58,4 +62,4 @@ tmpss = round(tmpss,2)
 tmpss = cbind(tmpss,cv)
 
 # save the matrix/array
-write.csv(tmpss,"data/processed/5_num_summary.csv")
+write.csv(tmpss,"data/processed/5_num_summary_fliptest.csv")
