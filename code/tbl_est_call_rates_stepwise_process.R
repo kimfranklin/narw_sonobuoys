@@ -15,7 +15,7 @@ library(broom)
 # input -------------------------------------------------------------------
 
 # read in data
-df = readRDS("data/processed/proc_acou_photoid.rds")
+df = readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 # process -----------------------------------------------------------------
 
@@ -154,4 +154,4 @@ tmp_df$BIC = round(as.numeric(tmp_df$BIC), 2)
 tmp_df$deviance = round(as.numeric(tmp_df$deviance), 2)
 
 # save data table 
-write.csv(tmp_df,"data/processed/call_rate_stepwise_regression_table.csv")
+write.csv(tmp_df,"data/processed/call_rate_stepwise_regression_table_fliptest.csv")
