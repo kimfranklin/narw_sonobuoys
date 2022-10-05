@@ -17,7 +17,7 @@ library(data.table)
 
 # input -------------------------------------------------------------------
 
-df = readRDS("data/processed/proc_acou_photoid.rds")
+df = readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 
 # process -----------------------------------------------------------------
@@ -119,7 +119,7 @@ shap_df$test_stat_W = round(as.numeric(shap_df$test_stat_W), 3)
 shap_df$p_val = round(as.numeric(shap_df$p_val), 3)
 
 # save data table 
-write.csv(shap_df,"data/processed/shap_normality_test_ind.csv")
+write.csv(shap_df,"data/processed/shap_normality_test_ind_fliptest.csv")
 
 
 # models ------------------------------------------------------------------
@@ -326,4 +326,4 @@ shap_df$test_stat_W = round(as.numeric(shap_df$test_stat_W), 3)
 shap_df$p_val = round(as.numeric(shap_df$p_val), 3)
 
 # save data table 
-write.csv(shap_df,"data/processed/shap_normality_test_model.csv")
+write.csv(shap_df,"data/processed/shap_normality_test_model_fliptest.csv")
