@@ -15,7 +15,7 @@ library(dplyr)
 # input -------------------------------------------------------------------
 
 # data
-df = readRDS("data/processed/proc_acou_photoid.rds")
+df = readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 # process - est num sighting ----------------------------------------------
 
@@ -52,7 +52,7 @@ tmp_df$mf_per_hr = round(as.numeric(tmp_df$mf_per_hr), 2)
 tmp_df$yday = round(as.numeric(tmp_df$yday), 2)
 
 # save data table 
-write.csv(tmp_df,"data/processed/tbl_est_num_sight_vif.csv")
+write.csv(tmp_df,"data/processed/tbl_est_num_sight_vif_fliptest.csv")
 
 
 # process - est call rate (all call rates) --------------------------------
@@ -124,4 +124,4 @@ tmp_df$whale_abundance = round(as.numeric(tmp_df$whale_abundance), 2)
 tmp_df$yday = round(as.numeric(tmp_df$yday), 2)
 
 # save data table 
-write.csv(tmp_df,"data/processed/tbl_est_call_rate_vif.csv")
+write.csv(tmp_df,"data/processed/tbl_est_call_rate_vif_fliptest.csv")
