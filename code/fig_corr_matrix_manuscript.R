@@ -12,7 +12,7 @@ library(RColorBrewer)
 # input -------------------------------------------------------------------
 
 # read in data 
-df= readRDS("data/processed/proc_acou_photoid.rds")
+df= readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 # figure directory
 fig_dir = 'figures/' 
@@ -23,8 +23,10 @@ fig_dir = 'figures/'
 
 # select variables correlation matrix plot (spearman)
 # figure set up
-jpeg (filename = paste0(fig_dir,'fig_corrplot_manu_testing10_sansfont.jpeg'), 
-      width = 10, height = 9, units = 'in', res = 200)
+# jpeg (filename = paste0(fig_dir,'fig_corrplot_manu_testing10_sansfont_fliptest_mspretty.jpeg'), 
+#       width = 6.5, height = 5.85, units = 'in', res = 300)
+pdf (file = paste0(fig_dir,'fig_corrplot_manu_testing10_sansfont_fliptest_mspretty.pdf'),
+      width = 6.5, height = 5.85)
 
 # put data in dataframe so that it can be convereted to correlation and p-value matrix
 dfs2 = data.frame(df$up_per_hr,df$gs_per_hr,df$mf_per_hr,
@@ -50,7 +52,7 @@ test2 <- rcorr(as.matrix(dfs2), type="spearman")
 test2$P = round(test2$P, 3)
 
 # change font type
-par(family="Helvetica", cex = 1.25)
+par(family="Helvetica", cex = 0.9)
 
 fig = corrplot(sp2, tl.col = "black", method = 'color', p.mat = test2$P,
                sig.level = 0.05, type = "upper", diag = FALSE, 
@@ -74,7 +76,7 @@ dev.off()
 
 # all variables correlation matirx plot (spearman)
 # figure set up
-jpeg (filename = paste0(fig_dir,'fig_corrplot_full_manu2_sansfont.jpeg'), 
+jpeg (filename = paste0(fig_dir,'fig_corrplot_full_manu2_sansfont_fliptest.jpeg'), 
       width = 10, height = 9, units = 'in', res = 200)
 
 # put data in dataframe so that it can be convereted to correlation and p-value matrix
@@ -121,3 +123,4 @@ text(20,9.5,lgn,srt = 90)
 
 # end figure
 dev.off()
+
