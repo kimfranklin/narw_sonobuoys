@@ -5,7 +5,7 @@ install.packages("data.table")
 library(data.table)
 library(tidyverse)
 
-df= readRDS("data/processed/proc_acou_photoid.rds")
+df= readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 df_june = df %>%
   filter(month == "6")
@@ -458,4 +458,4 @@ kw_df = cbind(kw_df1,kw_df2,kw_df3)
 setDT(kw_df)
 
 # save data table 
-write.csv(kw_df,"data/processed/year_by_month_comparisons.csv")
+write.csv(kw_df,"data/processed/year_by_month_comparisons_fliptest.csv")
