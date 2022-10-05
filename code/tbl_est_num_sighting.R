@@ -11,7 +11,7 @@ library(data.table)
 # input -------------------------------------------------------------------
 
 # read in data
-df = readRDS("data/processed/proc_acou_photoid.rds")
+df = readRDS("data/processed/proc_acou_photoid_fliptest.rds")
 
 # process -----------------------------------------------------------------
 
@@ -50,7 +50,7 @@ ns_df = round(ns_df,2)
 ns_df <- cbind(ns_df, "whale count")
 
 # save data table 
-write.csv(ns_df,"data/processed/num_sighting_regression_table.csv")
+write.csv(ns_df,"data/processed/num_sighting_regression_table_fliptest.csv")
 
 
 
@@ -81,4 +81,4 @@ ns_df = round(ns_df,3)
 ns_df <- cbind(ns_df, "whale count")
 
 # save data table 
-write.csv(ns_df,"data/processed/num_sighting_anova_table.csv")
+write.csv(ns_df,"data/processed/num_sighting_anova_table_fliptest.csv")
